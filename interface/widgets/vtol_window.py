@@ -2,11 +2,12 @@
 import sys
 
 from PyQt5 import QtCore
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QDialog, QVBoxLayout, QLabel, QApplication
+from PyQt5.QtCore import Qt, QSize
+from PyQt5.QtGui import QPixmap, QImage, QPalette, QBrush
+from PyQt5.QtWidgets import QDialog, QVBoxLayout, QLabel, QApplication, QPushButton, QHBoxLayout, QWidget
 from win32api import GetSystemMetrics
 
+SCALE = 0.5
 
 class VtolWindow(QDialog):
     # def __init__(self, parent, node):
@@ -23,36 +24,46 @@ class VtolWindow(QDialog):
         self._old_height = 0
         self._old_width = 0
 
-        # self._node = node
-        # self._file_server_widget = file_server_widget
+        self.but1 = QPushButton('but1', self)
+        self.but2 = QPushButton('but2', self)
+        self.but3 = QPushButton('but3', self)
+        self.but4 = QPushButton('but4', self)
+        self.but5 = QPushButton('but5', self)
 
-        # self._info_box = InfoBox(self, target_node_id, node_monitor)
-        # self._controls = Controls(self, node, target_node_id, file_server_widget, dynamic_node_id_allocator_widget)
-        # self._config_params = ConfigParams(self, node, target_node_id)
+        # Setting up background image
+        image = QImage('GUI/res/icons/vtol2.jpg').scaledToWidth(int(GetSystemMetrics(0) * SCALE))
+        palette = QPalette()
+        palette.setBrush(QPalette.Window, QBrush(image))
+        self.setPalette(palette)
+        self.resize(image.width(), image.height())
 
-        # self._status_bar = QStatusBar(self)
-        # self._status_bar.setSizeGripEnabled(False)
+        lay1 = QHBoxLayout(self)
+        lay1.addStretch(1)
+        lay1.addWidget(self.but1)
+        lay1.addStretch(1)
+        lay1.addWidget(self.but2)
+        lay1.addStretch(1)
+        lay1.addWidget(self.but3)
+        lay1.addStretch(1)
 
-        self._label = QLabel(self)
-        self._pixmap = QPixmap('GUI/res/icons/vtol2.jpg')
-        self._pixmap = self._pixmap.scaledToWidth(int(GetSystemMetrics(0)/2))
-        self._label.setPixmap(self._pixmap)
+        widget1 = QWidget(self)
+        widget1.setLayout(lay1)
+        widget1.setContentsMargins(0, 0, 0, 0)
 
-        # Optional, resize window to image size
-        # self.resize(self._pixmap.width(), self._pixmap.height())
+        lay2 = QVBoxLayout(self)
+        lay2.addStretch(1)
+        lay2.addWidget(widget1)
+        lay2.addStretch(1)
+        lay2.addWidget(self.but4)
+        lay2.addStretch(4)
+        lay2.addWidget(self.but5)
+        lay2.addStretch(1)
 
-        layout = QVBoxLayout(self)
-        # layout.addWidget(self._info_box)
-        # layout.addWidget(self._controls)
-        # layout.addWidget(self._config_params)
-        layout.addWidget(self._label)
+        # left, top, right, bottom = lay2.getContentsMargins()
+        # lay2.setContentsMargins(left, top, right, bottom)
 
-        left, top, right, bottom = layout.getContentsMargins()
-        layout.setContentsMargins(left, top, right, bottom)
+        self.setLayout(lay2)
 
-        self.setLayout(layout)
-
-        # uic.loadUi('widgets/GUI/UI/vtol.ui', self)
         self.show()  # Show the GUI
 
         self.setFixedWidth(self.width())
