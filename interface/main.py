@@ -85,6 +85,7 @@ from widgets.plotter import PlotterManager
 from widgets.about_window import AboutWindow
 from widgets.can_adapter_control_panel import spawn_window as spawn_can_adapter_control_panel
 from widgets.vtol_widget import VtolWidget
+from widgets.vtol_window import VtolWindow
 
 from panels import PANELS
 
@@ -118,7 +119,9 @@ class MainWindow(QMainWindow):
         self._node_monitor_widget.on_info_window_requested = self._show_node_window
 
         self._local_node_widget = LocalNodeWidget(self, node)
+
         self._vtol_button_widget = VtolWidget(self, node)
+        self._vtol_button_widget.window = self._show_vtol_window
 
         self._log_message_widget = LogMessageDisplayWidget(self, node)
         self._dynamic_node_id_allocation_widget = DynamicNodeIDAllocatorWidget(self, node,
@@ -240,7 +243,6 @@ class MainWindow(QMainWindow):
 
         self.setCentralWidget(make_splitter(Qt.Horizontal,
                                             make_vbox(make_hbox(self._local_node_widget, self._vtol_button_widget),
-                                            # make_vbox(self._vtol_button_widget,
                                                       self._node_monitor_widget,
                                                       self._file_server_widget),
                                             make_splitter(Qt.Vertical,
@@ -546,6 +548,9 @@ class MainWindow(QMainWindow):
                                  self._node_monitor_widget.monitor, self._dynamic_node_id_allocation_widget)
         w.show()
         self._node_windows[node_id] = w
+
+    def _show_vtol_window(self):
+        w = VtolWindow(self, self._node)
 
     def _spin_node(self):
         # We're running the node in the GUI thread.

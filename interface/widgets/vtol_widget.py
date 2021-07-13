@@ -7,11 +7,12 @@
 #
 
 import uavcan
-from PyQt5.QtWidgets import QGroupBox, QLabel, QPushButton, QHBoxLayout, QVBoxLayout
+from PyQt5.QtWidgets import QGroupBox, QPushButton, QHBoxLayout
 from PyQt5.QtCore import QTimer, Qt
 from logging import getLogger
 
 logger = getLogger(__name__)
+
 
 def render_vendor_specific_status_code(s):
     out = '%-5d     0x%04x\n' % (s, s)
@@ -38,6 +39,7 @@ class VtolWidget(QGroupBox):
     def __init__(self, parent, node):
         super(VtolWidget, self).__init__(parent)
 
+        self.parent = parent
         self._node = node
         # self._node_id_collector = uavcan.app.message_collector.MessageCollector(
         #     self._node, uavcan.protocol.NodeStatus, timeout=uavcan.protocol.NodeStatus().OFFLINE_TIMEOUT_MS * 1e-3)
@@ -53,9 +55,9 @@ class VtolWidget(QGroupBox):
         self._update_timer.timeout.connect(self._update_button)
         self._update_timer.start(500)
 
-        self._nodes_timer = QTimer(self)
-        self._nodes_timer.setSingleShot(False)
-        self._nodes_timer.timeout.connect(self._nodes_print)
+        # self._nodes_timer = QTimer(self)
+        # self._nodes_timer.setSingleShot(False)
+        # self._nodes_timer.timeout.connect(self._nodes_print)
 
         self._update_button()
 
@@ -66,6 +68,8 @@ class VtolWidget(QGroupBox):
         self.setLayout(layout)
 
         self._monitor = uavcan.app.node_monitor.NodeMonitor(node)
+
+        self.window = lambda *_: None
 
     # def close(self):
     #     self._node_id_collector.close()
@@ -80,16 +84,21 @@ class VtolWidget(QGroupBox):
 
     def _on_vtol_clicked(self):
         print("clicked", self)
-        self._nodes_timer.start(1000)
+        try:
+            self.window()
+        except Exception as e:
+            logger.info(e)
+        # self._nodes_timer.start(1000)
 
-    def _nodes_print(self):
-        nodes = list(self._monitor.find_all(lambda _: True))
-        print("Nodes:")
-        for e in nodes:
-            print("NID:", e.node_id)
-            print("Name", e.info.name if e.info else '?')
-            print("Mode", e.status.mode)
-            print("Health", e.status.health)
-            print("Uptime", e.status.uptime_sec)
-            print("VSSC", render_vendor_specific_status_code(e.status.vendor_specific_status_code))
-        print()
+    # def _nodes_print(self):
+    #     nodes = list(self._monitor.find_all(lambda _: True))
+    #     print("Nodes:")
+    #     for e in nodes:
+    #         print("NID:", e.node_id)
+    #         print("Name", e.info.name if e.info else '?')
+    #         print("Mode", e.status.mode)
+    #         print("Health", e.status.health)
+    #         print("Uptime", e.status.uptime_sec)
+    #         print("VSSC", render_vendor_specific_status_code(e.status.vendor_specific_status_code))
+    #     print()
+
