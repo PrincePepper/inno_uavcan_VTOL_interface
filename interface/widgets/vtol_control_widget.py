@@ -46,7 +46,8 @@ class PercentSlider(QWidget):
         layout.addWidget(self._zero_button)
         self.setLayout(layout)
 
-        self.setMinimumHeight(400)
+        # self.setMinimumHeight(400)
+        self.setMinimumHeight(int(GetSystemMetrics(1) * 0.35))
 
     def zero(self):
         self._slider.setValue(0)
@@ -189,5 +190,6 @@ def spawn(parent, node):
     _singleton.activateWindow()
 
     return _singleton
+
 
 # get_icon = partial(get_icon, 'asterisk')
