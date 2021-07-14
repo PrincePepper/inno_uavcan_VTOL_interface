@@ -90,7 +90,7 @@ class VtolWindow(QMainWindow):
 
         self.centralwidget = QWidget()
         self.setCentralWidget(self.centralwidget)
-        self.setStyleSheet("VtolWindow {background-image: url(GUI/res/icons/vtol2.jpg); background-repeat: no-repeat;}")
+        self.setStyleSheet("VtolWindow {background-image: url(GUI/res/icons/vtol4.jpg); background-repeat: no-repeat;}")
 
         layout = QHBoxLayout(self.centralwidget)
         layout.addWidget(widget_output)
@@ -109,7 +109,7 @@ class VtolWindow(QMainWindow):
         # image = QImage('GUI/res/icons/vtol3.jpg').scaledToHeight(int(GetSystemMetrics(1) * SCALE))
         margin = layout.getContentsMargins()[0]
 
-        # image = QImage('GUI/res/icons/vtol3.jpg')
+        image = QImage('GUI/res/icons/vtol4.jpg')
         # h1 = image.height()
         # image = image.scaledToHeight(self._control_widget.height() + margin * 2)
         # h2 = image.height()
@@ -118,10 +118,10 @@ class VtolWindow(QMainWindow):
         # palette.setBrush(QPalette.Window, QBrush(image))
 
         # self.setPalette(palette)
-        # self.resize(int(1280 * h2 / h1) + self._control_widget.width() + margin * 2, image.height())
+        self.resize(image.width() + self._control_widget.width() + margin * 2, image.height())
 
-        # self.setFixedWidth(self.width())
-        # self.setFixedHeight(self.height())
+        self.setFixedWidth(self.width())
+        self.setFixedHeight(self.height())
 
         # self._monitor = uavcan.app.node_monitor.NodeMonitor(node)
 
