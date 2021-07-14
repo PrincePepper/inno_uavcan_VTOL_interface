@@ -14,27 +14,6 @@ from logging import getLogger
 logger = getLogger(__name__)
 
 
-def render_vendor_specific_status_code(s):
-    out = '%-5d     0x%04x\n' % (s, s)
-    binary = bin(s)[2:].rjust(16, '0')
-
-    def high_nibble(s):
-        return s.replace('0', '\u2070').replace('1', '\u00B9')  # Unicode 0/1 superscript
-
-    def low_nibble(s):
-        return s.replace('0', '\u2080').replace('1', '\u2081')  # Unicode 0/1 subscript
-
-    nibbles = [
-        high_nibble(binary[:4]),
-        low_nibble(binary[4:8]),
-        high_nibble(binary[8:12]),
-        low_nibble(binary[12:]),
-    ]
-
-    out += ''.join(nibbles)
-    return out
-
-
 class VtolWidget(QGroupBox):
     def __init__(self, parent, node):
         super(VtolWidget, self).__init__(parent)
@@ -89,16 +68,4 @@ class VtolWidget(QGroupBox):
         except Exception as e:
             logger.info(e)
         # self._nodes_timer.start(1000)
-
-    # def _nodes_print(self):
-    #     nodes = list(self._monitor.find_all(lambda _: True))
-    #     print("Nodes:")
-    #     for e in nodes:
-    #         print("NID:", e.node_id)
-    #         print("Name", e.info.name if e.info else '?')
-    #         print("Mode", e.status.mode)
-    #         print("Health", e.status.health)
-    #         print("Uptime", e.status.uptime_sec)
-    #         print("VSSC", render_vendor_specific_status_code(e.status.vendor_specific_status_code))
-    #     print()
 
