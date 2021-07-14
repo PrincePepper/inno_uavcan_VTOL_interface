@@ -47,8 +47,8 @@ class PercentSlider(QWidget):
         layout.addWidget(self._zero_button)
         self.setLayout(layout)
 
-        # self.setMinimumHeight(400)
-        self.setMinimumHeight(int(GetSystemMetrics(1) * 0.35))
+        self.setMinimumHeight(400)
+        # self.setMinimumHeight(int(GetSystemMetrics(1) * 0.35))
 
     def zero(self):
         self._slider.setValue(0)
@@ -64,8 +64,8 @@ class ControlWidget(QGroupBox):
     CMD_MAX = 2 ** (CMD_BIT_LENGTH - 1) - 1
     CMD_MIN = -(2 ** (CMD_BIT_LENGTH - 1))
 
-    # def __init__(self, parent, node):
     def __init__(self, parent):
+    # def __init__(self, parent, node):
         super(ControlWidget, self).__init__(parent)
         # self.setWindowTitle('Vtol Management Panel')
         # self.setAttribute(Qt.WA_DeleteOnClose)              # This is required to stop background timers!
@@ -149,28 +149,6 @@ class ControlWidget(QGroupBox):
         for sl in self._sliders:
             sl.zero()
 
-    # def _update_number_of_sliders(self):
-    #     num_sliders = self._num_sliders.value()
-    #
-    #     while len(self._sliders) > num_sliders:
-    #         removee = self._sliders[-1]
-    #         self._sliders = self._sliders[:-1]
-    #         self._slider_layout.removeWidget(removee)
-    #         removee.close()
-    #         removee.deleteLater()
-    #
-    #     while len(self._sliders) < num_sliders:
-    #         new = PercentSlider(self)
-    #         self._slider_layout.addWidget(new)
-    #         self._sliders.append(new)
-    #
-    #     def deferred_resize():
-    #         self.resize(self.minimumWidth(), self.height())
-    #
-    #     deferred_resize()
-    #     noinspection PyCallByClass,PyTypeChecker
-    #     QTimer.singleShot(200, deferred_resize)
-
     def __del__(self):
         global _singleton
         _singleton = None
@@ -191,6 +169,3 @@ def spawn(parent, node):
     _singleton.activateWindow()
 
     return _singleton
-
-
-# get_icon = partial(get_icon, 'asterisk')
