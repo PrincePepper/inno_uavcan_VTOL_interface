@@ -5,6 +5,7 @@ from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtGui import QImage, QPalette, QBrush
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QLabel, QHBoxLayout, QWidget, QSizePolicy, QComboBox
 
+
 from .vtol_control_widget import ControlWidget
 from .vtol_subscriber import VtolSubscriber
 
@@ -102,10 +103,8 @@ class NodeBlock(QDialog):
 
 
 class VtolWindow(QDialog):
-    # def __init__(self):
     def __init__(self, parent, node):
         super(VtolWindow, self).__init__(parent)
-        # super(VtolWindow, self).__init__()
         self.setAttribute(Qt.WA_DeleteOnClose)
 
         self.setWindowTitle('VTOL Info')
@@ -167,6 +166,7 @@ class VtolWindow(QDialog):
         self.setLayout(layout)
 
         self.show()
+        margin = layout.getContentsMargins()[0]
 
         image = QImage('widgets/GUI/res/icons/vtol3.jpg')
         # image = QImage('GUI/res/icons/vtol3.jpg')
@@ -177,7 +177,7 @@ class VtolWindow(QDialog):
         palette.setBrush(QPalette.Window, QBrush(image))
         self.setPalette(palette)
 
-        margin = layout.getContentsMargins()[0]
+
 
         self.resize(int(1280 * h2 / h1) + self._control_widget.width() + margin * 2, image.height())
 
