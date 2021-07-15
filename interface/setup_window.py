@@ -6,28 +6,27 @@
 # Author: Pavel Kirienko <pavel.kirienko@zubax.com>
 #
 
-import sys
-import glob
-import time
-import threading
 import copy
-from widgets import show_error, get_monospace_font
-from PyQt5.QtWidgets import QComboBox, QCompleter, QDialog, QDirModel, QFileDialog, QGroupBox, QHBoxLayout, QLabel, \
-    QLineEdit, QPushButton, QSpinBox, QVBoxLayout, QGridLayout
-from PyQt5.QtCore import Qt, QTimer
-from PyQt5.QtGui import QIntValidator
-from logging import getLogger
+import glob
+import sys
+import threading
+import time
 from collections import OrderedDict
 from itertools import count
+from logging import getLogger
 
+from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtGui import QIntValidator
+from PyQt5.QtWidgets import QComboBox, QCompleter, QDialog, QDirModel, QFileDialog, QGroupBox, QHBoxLayout, QLabel, \
+    QLineEdit, QPushButton, QSpinBox, QVBoxLayout, QGridLayout
+
+from widgets import show_error, get_monospace_font
 
 STANDARD_BAUD_RATES = 9600, 115200, 460800, 921600, 1000000, 3000000
 DEFAULT_BAUD_RATE = 1000000
 assert DEFAULT_BAUD_RATE in STANDARD_BAUD_RATES
 
-
 RUNNING_ON_LINUX = 'linux' in sys.platform.lower()
-
 
 logger = getLogger(__name__)
 
@@ -298,6 +297,7 @@ def run_setup_window(icon, dsdl_path=None):
         timer.setSingleShot(False)
         timer.timeout.connect(update_iface_list)
         timer.start(int(BackgroundIfaceListUpdater.UPDATE_INTERVAL / 2 * 1000))
+        ok.click()
         win.exec()
 
     return result, kwargs, dir_selection.get_selection()
