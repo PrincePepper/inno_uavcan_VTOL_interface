@@ -3,7 +3,5 @@ pywin32~=301
 QtAwesome~=1.0.3
 qtconsole~=5.1.1
 numpy~=1.21.0
-setuptools~=56.0.0
-QtAwesome~=1.0.3
-PyQt5~=5.15.4
+setuptools==57.1.0
 uavcan~=1.0.0.dev33
