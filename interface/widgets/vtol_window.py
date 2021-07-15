@@ -135,16 +135,15 @@ class VtolWindow(QDialog):
             self.setLayout(layout)
 
             self.show()  # Show the GUI
+            margin = layout.getContentsMargins()[0]
 
             image = QImage('GUI/res/icons/vtol3.jpg')
             h1 = image.width()
-            image = image.scaledToHeight(self._control_widget.height())
+            image = image.scaledToHeight(self._control_widget.height() + margin * 2)
             h2 = image.width()
             palette = QPalette()
             palette.setBrush(QPalette.Window, QBrush(image))
             self.setPalette(palette)
-
-            margin = layout.getContentsMargins()[0]
 
             self.resize(int(1280 * h2 / h1) + self._control_widget.width() + margin * 2, image.height())
 
