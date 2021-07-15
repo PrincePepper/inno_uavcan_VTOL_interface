@@ -1,13 +1,11 @@
-import uavcan
-from functools import partial
-
-from interface.panels.functions import make_icon_button, get_monospace_font, get_icon
-from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget, QLabel, QDialog, QSlider, QSpinBox, QDoubleSpinBox, \
-    QPlainTextEdit, QGroupBox
-from PyQt5.QtCore import QTimer, Qt
 from logging import getLogger
-from win32api import GetSystemMetrics
 
+import uavcan
+from PyQt5.QtCore import QTimer, Qt
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget, QLabel, QSlider, QSpinBox, QDoubleSpinBox, \
+    QPlainTextEdit, QGroupBox
+
+from interface.panels.functions import make_icon_button, get_monospace_font
 
 PANEL_NAME = 'Vtol Panel'
 
@@ -64,21 +62,14 @@ class ControlWidget(QGroupBox):
     CMD_MAX = 2 ** (CMD_BIT_LENGTH - 1) - 1
     CMD_MIN = -(2 ** (CMD_BIT_LENGTH - 1))
 
-    def __init__(self, parent):
-    # def __init__(self, parent, node):
+    # def __init__(self, parent):
+    def __init__(self, parent, node):
         super(ControlWidget, self).__init__(parent)
-        # self.setWindowTitle('Vtol Management Panel')
-        # self.setAttribute(Qt.WA_DeleteOnClose)              # This is required to stop background timers!
+        self.setAttribute(Qt.WA_DeleteOnClose)  # This is required to stop background timers!
 
-        # self._node = node
+        self._node = node
 
         self._sliders = [PercentSlider(self) for _ in range(8)]
-
-        # self._num_sliders = QSpinBox(self)
-        # self._num_sliders.setMinimum(len(self._sliders))
-        # self._num_sliders.setMaximum(20)
-        # self._num_sliders.setValue(len(self._sliders))
-        # self._num_sliders.valueChanged.connect(self._update_number_of_sliders)
 
         self._bcast_interval = QDoubleSpinBox(self)
         self._bcast_interval.setMinimum(0.01)
@@ -158,14 +149,3 @@ class ControlWidget(QGroupBox):
         _singleton = None
         super(ControlWidget, self).closeEvent(event)
 
-
-def spawn(parent, node):
-    global _singleton
-    if _singleton is None:
-        _singleton = ControlWidget(parent, node)
-
-    _singleton.show()
-    _singleton.raise_()
-    _singleton.activateWindow()
-
-    return _singleton

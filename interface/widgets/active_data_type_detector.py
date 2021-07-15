@@ -7,9 +7,9 @@
 #
 
 import logging
+
 import uavcan
 from PyQt5.QtCore import pyqtSignal, QObject
-
 
 logger = logging.getLogger(__name__)
 

@@ -7,18 +7,18 @@
 #
 
 import uavcan
+from PyQt5.QtCore import Qt, QStringListModel, QTimer
+from PyQt5.QtGui import QColor, QPalette, QFontMetrics
 from PyQt5.QtWidgets import QDialog, QWidget, QLabel, QHBoxLayout, QGroupBox, QVBoxLayout, QLineEdit, QSpinBox, \
     QColorDialog, QComboBox, QCompleter, QCheckBox, QApplication
-from PyQt5.QtGui import QColor, QPalette, QFontMetrics
-from PyQt5.QtCore import Qt, QStringListModel, QTimer
-from .. import make_icon_button, get_monospace_font, CommitableComboBoxWithHistory, show_error
-from active_data_type_detector import ActiveDataTypeDetector
+
+from .active_data_type_detector import ActiveDataTypeDetector
 from .value_extractor import EXPRESSION_VARIABLE_FOR_MESSAGE, EXPRESSION_VARIABLE_FOR_SRC_NODE_ID, Expression, \
     Extractor
-
+from .. import make_icon_button, get_monospace_font, CommitableComboBoxWithHistory, show_error
 
 DEFAULT_COLORS = [
-    Qt.red, Qt.green, Qt.cyan,                        # RGB - http://ux.stackexchange.com/questions/79561
+    Qt.red, Qt.green, Qt.cyan,  # RGB - http://ux.stackexchange.com/questions/79561
     Qt.yellow, Qt.magenta, Qt.blue,
     Qt.darkRed, Qt.darkGreen, Qt.darkBlue,
     Qt.darkYellow, Qt.darkCyan, Qt.darkMagenta,

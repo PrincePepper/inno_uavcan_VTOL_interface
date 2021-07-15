@@ -10,8 +10,8 @@ import logging
 import multiprocessing
 import os
 import sys
-import time
 import tempfile
+import time
 
 assert sys.version[0] == '3'
 
@@ -68,7 +68,7 @@ from PyQt5.QtCore import QTimer, Qt, QUrl
 
 from version import __version__
 from setup_window import run_setup_window
-from active_data_type_detector import ActiveDataTypeDetector
+from widgets.active_data_type_detector import ActiveDataTypeDetector
 import update_checker
 
 from widgets import show_error, get_icon, get_app_icon
@@ -90,6 +90,16 @@ from widgets.vtol_window import VtolWindow
 from panels import PANELS
 
 NODE_NAME = 'org.uavcan.gui_tool'
+
+
+def my_excepthook(type, value, tback):
+    # log the exception here
+
+    # then call the default handler
+    sys.__excepthook__(type, value, tback)
+
+
+sys.excepthook = my_excepthook
 
 
 class MainWindow(QMainWindow):
