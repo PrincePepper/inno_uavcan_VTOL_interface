@@ -1,9 +1,9 @@
 import sys
 
-import uavcan
 from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtGui import QImage, QPalette, QBrush
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QLabel, QHBoxLayout, QWidget, QSizePolicy, QApplication
+
 from vtol_control_widget import ControlWidget
 
 SCALE = 0.4
@@ -82,52 +82,11 @@ class NodeBlock(QDialog):
 class VtolWindow(QDialog):
     # def __init__(self, parent, node):
     def __init__(self):
-        # super(VtolWindow, self).__init__(parent)
-        super(VtolWindow, self).__init__()
+        super().__init__()
         self.setAttribute(Qt.WA_DeleteOnClose)
 
         self.setWindowTitle('VTOL Info')
-
-        # self._control_widget = ControlWidget(self, node)
-        # self._control_widget = ControlWidget(self, node)
         self._control_widget = ControlWidget(self)
-
-        # self.motor1 = QLabel('Motor1', self)
-        # self.motor2 = QLabel('Motor2', self)
-        # self.motor3 = QLabel('Motor3', self)
-        # self.motor4 = QLabel('Motor4', self)
-        # self.engine = QLabel('Engine', self)
-        # self.airspeed_sensor = QLabel('Airspeed', self)
-        # self.but4 = QPushButton('but4', self)
-        # self.but5 = QPushButton('but5', self)
-        # self.lbl1 = QLabel()
-
-        # lay1 = QHBoxLayout(self)
-        # lay1.addStretch(1)
-        # lay1.addWidget(self.but1)
-        # lay1.addStretch(5)
-        # lay1.addWidget(self.but2)
-        # lay1.addStretch(1)
-        # lay1.addWidget(self.but3)
-        # lay1.addStretch(1)
-        # lay1.addWidget(self.lbl1)
-        # lay1.addStretch(1)
-
-        # widget1 = QWidget(self)
-        # widget1.setLayout(lay1)
-        # widget1.setContentsMargins(0, 0, 0, 0)
-
-        # lay2 = QVBoxLayout(self)
-        # lay2.addStretch(1)
-        # lay2.addWidget(widget1)
-        # lay2.addStretch(1)
-        # lay2.addWidget(self.but4)
-        # lay2.addStretch(4)
-        # lay2.addWidget(self.but5)
-        # lay2.addStretch(1)
-
-        # widget_output = QWidget(self)
-        # widget_output.setLayout(lay2)
 
         try:
             motor1 = NodeBlock("motor1")
@@ -170,16 +129,13 @@ class VtolWindow(QDialog):
             layout.addWidget(box7)
             layout.addStretch(2)
 
-            self._control_widget.setAlignment(Qt.AlignRight)
             self._control_widget.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Preferred)
-
             layout.addWidget(self._control_widget)
 
             self.setLayout(layout)
 
             self.show()  # Show the GUI
 
-            # image = QImage('widgets/GUI/res/icons/vtol3.jpg')
             image = QImage('GUI/res/icons/vtol3.jpg')
             h1 = image.width()
             image = image.scaledToHeight(self._control_widget.height())
@@ -222,4 +178,3 @@ class VtolWindow(QDialog):
 app = QApplication(sys.argv)
 window = VtolWindow()
 app.exec_()
-

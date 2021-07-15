@@ -4,10 +4,11 @@ import sys
 from IPython.external.qt_for_kernel import QtCore
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QDialog, QVBoxLayout, QLabel, QPushButton, QHBoxLayout, QWidget, QApplication, \
-    QGraphicsView, QGraphicsScene, QGraphicsPixmapItem
+from PyQt5.QtWidgets import QDialog, QVBoxLayout, QLabel, QPushButton, QHBoxLayout, QApplication, \
+    QGraphicsView, QGraphicsScene, QGraphicsPixmapItem, QSizePolicy
 
 from interface.widgets import get_monospace_font
+from interface.widgets.vtol_control_widget import ControlWidget
 
 SCALE = 0.4
 
@@ -25,13 +26,16 @@ class VtolWindow(QDialog):
         self.setWindowTitle('VTOL Info')
         # self.setWindowIcon(get_app_icon())
 
+        self._control_widget = ControlWidget(self)
+        self._control_widget.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Preferred)
+
         self.mainHorizontalLayout = QHBoxLayout(self)
         self.mainHorizontalLayout.setObjectName("mainHorizontalLayout")
 
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
 
-        self.widget_output = QWidget(self)
+        # self.widget_output = QWidget(self)
         # image = QImage('GUI/res/icons/vtol3.jpg')
         # palette = QPalette()
         # palette.setBrush(QPalette.Window, QBrush(image))
@@ -63,10 +67,12 @@ class VtolWindow(QDialog):
 
         # self.widget_output.setLayout(self.verticalLayout)
 
-        self.aaa = ImageLabel()
-        self.aaa.setImage("GUI/res/icons/vtol3.jpg")
-        self.horizontalLayout.addWidget(self.aaa)
+        # self.aaa = ImageLabel()
+        # self.aaa.setImage("GUI/res/icons/vtol3.jpg")
+        # self.horizontalLayout.addWidget(self.aaa)
         self.horizontalLayout.addLayout(self.verticalLayout)
+
+        self.horizontalLayout.addWidget(self._control_widget)
 
         self.mainHorizontalLayout.addLayout(self.horizontalLayout)
 

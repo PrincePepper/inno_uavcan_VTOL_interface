@@ -4,6 +4,7 @@ import uavcan
 from PyQt5.QtCore import QTimer, Qt
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget, QLabel, QSlider, QSpinBox, QDoubleSpinBox, \
     QPlainTextEdit, QGroupBox
+from win32api import GetSystemMetrics
 
 from interface.panels.functions import make_icon_button, get_monospace_font, get_icon
 
@@ -46,8 +47,7 @@ class PercentSlider(QWidget):
         layout.addWidget(self._zero_button)
         self.setLayout(layout)
 
-        self.setMinimumHeight(400)
-        # self.setMinimumHeight(int(GetSystemMetrics(1) * 0.35))
+        self.setMinimumHeight(int(GetSystemMetrics(1) * 0.35))
 
     def zero(self):
         self._slider.setValue(0)
@@ -64,20 +64,9 @@ class ControlWidget(QGroupBox):
     CMD_MIN = -(2 ** (CMD_BIT_LENGTH - 1))
 
     def __init__(self, parent):
-    # def __init__(self, parent, node):
         super(ControlWidget, self).__init__(parent)
-        # self.setWindowTitle('Vtol Management Panel')
-        # self.setAttribute(Qt.WA_DeleteOnClose)              # This is required to stop background timers!
-
-        # self._node = node
 
         self._sliders = [PercentSlider(self) for _ in range(8)]
-
-        # self._num_sliders = QSpinBox(self)
-        # self._num_sliders.setMinimum(len(self._sliders))
-        # self._num_sliders.setMaximum(20)
-        # self._num_sliders.setValue(len(self._sliders))
-        # self._num_sliders.valueChanged.connect(self._update_number_of_sliders)
 
         self._bcast_interval = QDoubleSpinBox(self)
         self._bcast_interval.setMinimum(0.01)
@@ -98,6 +87,7 @@ class ControlWidget(QGroupBox):
         self._msg_viewer.setFont(get_monospace_font())
         self._msg_viewer.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         self._msg_viewer.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self._msg_viewer.setFixedHeight(self.height() * 5)
 
         self._bcast_timer = QTimer(self)
         self._bcast_timer.start(self.DEFAULT_INTERVAL * 1e3)
@@ -114,7 +104,6 @@ class ControlWidget(QGroupBox):
 
         controls_layout = QHBoxLayout(self)
         controls_layout.addWidget(QLabel('Channels:', self))
-        # controls_layout.addWidget(self._num_sliders)
         controls_layout.addWidget(QLabel('Broadcast interval:', self))
         controls_layout.addWidget(self._bcast_interval)
         controls_layout.addWidget(QLabel('sec', self))
