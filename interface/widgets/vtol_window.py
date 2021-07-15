@@ -5,7 +5,6 @@ from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtGui import QImage, QPalette, QBrush
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QLabel, QHBoxLayout, QWidget, QSizePolicy, QComboBox
 
-
 from .vtol_control_widget import ControlWidget
 from .vtol_subscriber import VtolSubscriber
 
@@ -176,8 +175,6 @@ class VtolWindow(QDialog):
         palette = QPalette()
         palette.setBrush(QPalette.Window, QBrush(image))
         self.setPalette(palette)
-
-
 
         self.resize(int(1280 * h2 / h1) + self._control_widget.width() + margin * 2, image.height())
 

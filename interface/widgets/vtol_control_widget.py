@@ -157,3 +157,14 @@ class ControlWidget(QGroupBox):
         _singleton = None
         super(ControlWidget, self).closeEvent(event)
 
+
+def spawn(parent, node):
+    global _singleton
+    if _singleton is None:
+        _singleton = ControlWidget(parent, node)
+
+    _singleton.show()
+    _singleton.raise_()
+    _singleton.activateWindow()
+
+    return _singleton
