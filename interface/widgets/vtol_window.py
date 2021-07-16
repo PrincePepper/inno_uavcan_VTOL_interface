@@ -236,7 +236,7 @@ class VtolWindow(QDialog):
         self._status_update_timer = QTimer(self)
         self._status_update_timer.setSingleShot(False)
         self._status_update_timer.timeout.connect(self._nodes_update)
-        # self._status_update_timer.start(100)
+        self._status_update_timer.start(100)
         self._status_update_timer = QTimer(self)
         self._status_update_timer.setSingleShot(False)
         self._status_update_timer.timeout.connect(self._update_combo_boxes)
