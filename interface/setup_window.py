@@ -69,10 +69,10 @@ def list_ifaces():
 
         # noinspection PyBroadException
         try:
-            ifaces = _linux_parse_ip_link_show(ifaces)       # Primary
+            ifaces = _linux_parse_ip_link_show(ifaces)  # Primary
         except Exception as ex:
             logger.warning('Could not parse "ip link show": %s', ex, exc_info=True)
-            ifaces = _linux_parse_proc_net_dev(ifaces)       # Fallback
+            ifaces = _linux_parse_proc_net_dev(ifaces)  # Fallback
 
         out = OrderedDict()
         for x in ifaces:
@@ -161,7 +161,7 @@ def run_setup_window(icon, dsdl_path=None):
     win.setWindowTitle('Application Setup')
     win.setWindowIcon(icon)
     win.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint | Qt.WindowCloseButtonHint)
-    win.setAttribute(Qt.WA_DeleteOnClose)              # This is required to stop background timers!
+    win.setAttribute(Qt.WA_DeleteOnClose)  # This is required to stop background timers!
 
     combo = QComboBox(win)
     combo.setEditable(True)
@@ -297,7 +297,7 @@ def run_setup_window(icon, dsdl_path=None):
         timer.setSingleShot(False)
         timer.timeout.connect(update_iface_list)
         timer.start(int(BackgroundIfaceListUpdater.UPDATE_INTERVAL / 2 * 1000))
-        ok.click()
+        # ok.click()
         win.exec()
 
     return result, kwargs, dir_selection.get_selection()
