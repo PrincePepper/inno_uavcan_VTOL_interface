@@ -62,7 +62,6 @@ class ControlWidget(QGroupBox):
     CMD_MAX = 2 ** (CMD_BIT_LENGTH - 1) - 1
     CMD_MIN = -(2 ** (CMD_BIT_LENGTH - 1))
 
-    # def __init__(self, parent):
     def __init__(self, parent, node, save_file_func):
         super(ControlWidget, self).__init__(parent)
         self.setAttribute(Qt.WA_DeleteOnClose)  # This is required to stop background timers!
@@ -70,12 +69,6 @@ class ControlWidget(QGroupBox):
         self._node = node
 
         self._sliders = [PercentSlider(self) for _ in range(8)]
-
-        # self._num_sliders = QSpinBox(self)
-        # self._num_sliders.setMinimum(len(self._sliders))
-        # self._num_sliders.setMaximum(20)
-        # self._num_sliders.setValue(len(self._sliders))
-        # self._num_sliders.valueChanged.connect(self._update_number_of_sliders)
 
         self._bcast_interval = QDoubleSpinBox(self)
         self._bcast_interval.setMinimum(0.01)

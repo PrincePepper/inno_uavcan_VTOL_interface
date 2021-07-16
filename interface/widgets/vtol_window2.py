@@ -14,10 +14,8 @@ SCALE = 0.4
 
 
 class VtolWindow(QDialog):
-    # def __init__(self, parent, node):
     def __init__(self):
-        super().__init__()
-        self.setObjectName("VTOL Info")
+        super(VtolWindow, self).__init__()
         self.setWindowModality(QtCore.Qt.NonModal)
         self.setAttribute(Qt.WA_DeleteOnClose)
 
@@ -26,15 +24,15 @@ class VtolWindow(QDialog):
         self.setWindowTitle('VTOL Info')
         # self.setWindowIcon(get_app_icon())
 
-        self._control_widget = ControlWidget(self)
+        self._control_widget = ControlWidget(self, 1)
         self.widget_output = QWidget(self)
         self.mainHorizontalLayout = QHBoxLayout(self)
         self.mainHorizontalLayout.setObjectName("mainHorizontalLayout")
 
-        self.horizontalLayout = QHBoxLayout()
+        self.horizontalLayout = QHBoxLayout(self)
         self.horizontalLayout.setObjectName("horizontalLayout")
 
-        self.verticalLayout = QVBoxLayout()
+        self.verticalLayout = QVBoxLayout(self)
         self.verticalLayout.setObjectName("verticalLayout")
 
         self.setContentsMargins(0, 0, 0, 0)
@@ -44,14 +42,21 @@ class VtolWindow(QDialog):
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
 
-        image = QImage('GUI/res/icons/vtol2.jpg')
+        margin = self.getContentsMargins()[0]
+        image = QImage('GUI/res/icons/vtol3.jpg')
         h1 = image.width()
-        image = image.scaledToHeight(self._control_widget.height())
+        image = image.scaledToHeight(self._control_widget.height() + margin * 2)
         h2 = image.width()
         palette = QPalette()
         palette.setBrush(QPalette.Window, QBrush(image))
         self.setPalette(palette)
-        # self.resize(int(1280 * h2 / h1) + self._control_widget.width(), image.height())
+
+        self.resize(int(1280 * h2 / h1) + self._control_widget.width() + margin * 2, image.height())
+
+        # image = QImage('GUI/res/icons/vtol2.jpg')
+        # palette = QPalette()
+        # palette.setBrush(QPalette.Window, QBrush(image))
+        # self.setPalette(palette)
 
         # self.widget_output.setStyleSheet("background-image: url(GUI/res/icons/vtol4.jpg); background-repeat: no-repeat;")
         # self._label = QLabel(self)
@@ -67,8 +72,6 @@ class VtolWindow(QDialog):
 
         self.but1 = QPushButton('but1', self)
         self.but2 = QPushButton('but2', self)
-        self.but2.setAutoFillBackground(True)
-        self.but2.setStyleSheet("background-color: #ffffff")
         self.horizontalLayoutEleron.addStretch()
         self.horizontalLayoutEleron.addWidget(self.but1)
         self.horizontalLayoutEleron.addStretch()

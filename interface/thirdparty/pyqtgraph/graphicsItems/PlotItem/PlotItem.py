@@ -16,9 +16,8 @@ This class is very heavily featured:
   - Control panel with a huge feature set including averaging, decimation,
     display, power spectrum, svg/png export, plot linking, and more.
 """
-from ...Qt import QtGui, QtCore, QT_LIB
 from ... import pixmaps
-import sys
+from ...Qt import QtCore, QT_LIB
 
 if QT_LIB == 'PyQt4':
     from .plotConfigTemplate_pyqt import *
@@ -1061,7 +1060,7 @@ class PlotItem(GraphicsWidget):
         self._menuEnabled = enableMenu
         if enableViewBoxMenu is None:
             return
-        if enableViewBoxMenu is 'same':
+        if enableViewBoxMenu == 'same':
             enableViewBoxMenu = enableMenu 
         self.vb.setMenuEnabled(enableViewBoxMenu)
     

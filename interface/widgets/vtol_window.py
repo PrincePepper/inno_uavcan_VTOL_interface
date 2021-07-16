@@ -1,9 +1,11 @@
 import json
 import logging
 
+import numpy
 import uavcan
+from PIL import Image, ImageQt
 from PyQt5.QtCore import Qt, QTimer
-from PyQt5.QtGui import QImage, QPalette, QBrush
+from PyQt5.QtGui import QPalette, QBrush
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QLabel, QHBoxLayout, QWidget, QSizePolicy, QComboBox, QFileDialog
 
 from .vtol_control_widget import ControlWidget
@@ -205,9 +207,14 @@ class VtolWindow(QDialog):
         self.show()
         margin = layout.getContentsMargins()[0]
 
-        image = QImage('widgets/GUI/res/icons/vtol3.jpg')
+        I = numpy.asarray(Image.open('widgets/GUI/res/icons/vtol2.jpg'))
 
-        # image = QImage('GUI/res/icons/vtol3.jpg')
+        new = numpy.zeros((960, 2640, 3))
+        new[:960, :1280, :3] = I
+        new[:960, 1280:, :3] = float(255)
+        image = Image.fromarray(numpy.uint8(new))
+        # Image turn QImage
+        image = ImageQt.ImageQt(image)
         h1 = image.width()
         image = image.scaledToHeight(self._control_widget.height() + margin * 2)
         h2 = image.width()
@@ -292,5 +299,5 @@ class VtolWindow(QDialog):
         # print()
 
 # app = QApplication(sys.argv)
-# window = VtolWindow()
+# window = VtolWindow(1)
 # app.exec_()

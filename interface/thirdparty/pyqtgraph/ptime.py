@@ -21,7 +21,7 @@ def unixTime():
     return systime.time()
 
 if sys.platform.startswith('win'):
-    cstart = systime.clock()  ### Required to start the clock in windows
+    cstart = systime.process_time()  ### Required to start the clock in windows
     START_TIME = systime.time() - cstart
     
     time = winTime
