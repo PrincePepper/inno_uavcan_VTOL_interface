@@ -83,26 +83,36 @@ class NodeBlock(QDialog):
         self._combo_box = QComboBox(self)
         self._combo_box.activated[str].connect(self.on_changed)
         self.data = [self._combo_box, QLabel('0', self), QLabel('0', self)]
+        self.voltage_lbl = QLabel("0V", self)
+        self.current_lbl = QLabel("0A", self)
         self.widget = None
 
+        self.id = -1
         if name in AIRFRAME.keys():
-            self.data[0].addItem(str(AIRFRAME[name]))
-        else:
-            self.data[0].addItem("-1")
-            print("there is no name in the airframe", name, AIRFRAME.keys())
+            self.id = AIRFRAME[name]
+
+        self.data[0].addItem(str(self.id))
 
         self.make_widget()
 
+    def set_voltage(self, v):
+        self.voltage_lbl.setText(str("{:1.2f}".format(v)) + 'V')
+
+    def set_current(self, i):
+        self.current_lbl.setText(str("{:1.2f}".format(i)) + 'A')
+
     def on_changed(self, text):
-        global update, AIRFRAME
-        AIRFRAME[self.name] = int(text)
+        global update  # , AIRFRAME
+        # AIRFRAME[self.name] = int(text)
+        self.id = int(text)
         update = True
 
     def make_widget(self, stretch1=0, stretch2=0):
         vlay = QHBoxLayout(self)
         vlay.addStretch(stretch1)
         box = make_vbox(make_hbox(self.label, self.status),
-                        make_hbox(make_vbox(*self.fields), make_vbox(*self.data)))
+                        make_hbox(make_vbox(*self.fields), make_vbox(*self.data)),
+                        make_hbox(self.voltage_lbl, self.current_lbl, stretch_index=[1, 0], s=0))
         box.setContentsMargins(0, 0, 0, 0)
         vlay.addWidget(box)
         vlay.addStretch(stretch2)
@@ -120,9 +130,12 @@ class VtolWindow(QDialog):
         super(VtolWindow, self).__init__(parent)
         self.setAttribute(Qt.WA_DeleteOnClose)
 
-        with open('airframe.json', 'r') as f:
-            global AIRFRAME
-            AIRFRAME = json.load(f)
+        try:
+            with open('airframe.json', 'r') as f:
+                global AIRFRAME
+                AIRFRAME = json.load(f)
+        except FileNotFoundError:
+            pass
 
         self.setWindowTitle('VTOL Info')
 
@@ -209,20 +222,24 @@ class VtolWindow(QDialog):
 
         self._monitor = uavcan.app.node_monitor.NodeMonitor(node)
 
-        # self._status_update_timer = QTimer(self)
-        # self._status_update_timer.setSingleShot(False)
-        # self._status_update_timer.timeout.connect(self._nodes_print)
-        # self._status_update_timer.start(200)
+        self._status_update_timer = QTimer(self)
+        self._status_update_timer.setSingleShot(False)
+        self._status_update_timer.timeout.connect(self._nodes_update)
+        self._status_update_timer.start(100)
 
         self._status_update_timer = QTimer(self)
         self._status_update_timer.setSingleShot(False)
         self._status_update_timer.timeout.connect(self._update_combo_boxes)
         self._status_update_timer.start(500)
 
-        self.sub = VtolSubscriber(node)
+        self.subscriber = VtolSubscriber(node)
 
     def save_file(self):
+        global AIRFRAME
         name = QFileDialog.getSaveFileName(self, 'Save File', "airframe.json")
+        AIRFRAME = {}
+        for block in self.blocks:
+            AIRFRAME[block.name] = block.id
         with open(name[0], 'w') as f:
             json.dump(AIRFRAME, f)
 
@@ -233,14 +250,15 @@ class VtolWindow(QDialog):
             update = False
             self.nodes = nodes
             for block in self.blocks:
-                if block.name not in AIRFRAME.keys():
-                    first = -1
-                else:
-                    first = AIRFRAME[block.name]
+                first = block.id
+                # if block.name not in AIRFRAME.keys():
+                #     first = -1
+                # else:
+                #     first = AIRFRAME[block.name]
                 n = [*nodes]
                 if first in n:
                     n.remove(first)
-                    block.status.setText("ok")
+                    block.status.setText("connect")
                     block.status.setStyleSheet("color:#008000;")
                     # block.widget.setStyleSheet("background-color:#ffffff;")
                 else:
@@ -251,12 +269,16 @@ class VtolWindow(QDialog):
                 block.data[0].addItem(str(first))
                 block.data[0].addItems(str(i) for i in n)
 
-    def _nodes_print(self):
-        if self.sub.has_next():
-            text = self.sub.next()
-            print(text[0].source_node_id)
-            print(text[0].payload.voltage)
-            print(text[1])
+    def _nodes_update(self):
+        if self.subscriber.has_next():
+            data = self.subscriber.next()
+            node_id = data[0].source_node_id
+            for block in filter(lambda a: a.id == node_id, self.blocks):
+                block.set_voltage(data[0].payload.voltage)
+                block.set_current(data[0].payload.current)
+            print(data[0].source_node_id)
+            print(data[0].payload.voltage)
+            print(data[1])
         # nodes = list(self._monitor.find_all(lambda _: True))
         # print("Nodes:")
         # for e in nodes:
