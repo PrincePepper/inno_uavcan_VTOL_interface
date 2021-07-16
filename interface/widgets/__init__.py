@@ -7,17 +7,17 @@
 #
 
 import os
-import re
-import pkg_resources
 import queue
-from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem, QAbstractItemView, QHeaderView, QApplication, QWidget, \
-    QComboBox, QCompleter, QPushButton, QHBoxLayout, QVBoxLayout, QMessageBox
+import re
+from functools import partial
+from logging import getLogger
+
+import pkg_resources
+import qtawesome
 from PyQt5.QtCore import Qt, QTimer, QStringListModel
 from PyQt5.QtGui import QColor, QKeySequence, QFont, QFontInfo, QIcon
-from logging import getLogger
-import qtawesome
-from functools import partial
-
+from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem, QAbstractItemView, QHeaderView, QApplication, QWidget, \
+    QComboBox, QCompleter, QPushButton, QHBoxLayout, QVBoxLayout, QMessageBox
 
 logger = getLogger(__name__)
 
@@ -640,7 +640,7 @@ def get_app_icon():
         pass
     # noinspection PyBroadException
     try:
-        fn = pkg_resources.resource_filename('uavcan_gui_tool', os.path.join('icons', 'logo_256x256.png'))
+        fn = pkg_resources.resource_filename('interface', os.path.join('icons', 'logo_256x256.png'))
         _APP_ICON_OBJECT = QIcon(fn)
     except Exception:
         logger.error('Could not load icon', exc_info=True)

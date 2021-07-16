@@ -1,9 +1,10 @@
+import json
 import logging
 
 import uavcan
 from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtGui import QImage, QPalette, QBrush
-from PyQt5.QtWidgets import QDialog, QVBoxLayout, QLabel, QHBoxLayout, QWidget, QSizePolicy, QComboBox
+from PyQt5.QtWidgets import QDialog, QVBoxLayout, QLabel, QHBoxLayout, QWidget, QSizePolicy, QComboBox, QFileDialog
 
 from .vtol_control_widget import ControlWidget
 from .vtol_subscriber import VtolSubscriber
@@ -11,6 +12,8 @@ from .vtol_subscriber import VtolSubscriber
 SCALE = 0.4
 
 logger = logging.getLogger(__name__)
+
+update = False
 
 AIRFRAME = {
     'motor1': 50,
@@ -75,8 +78,12 @@ class NodeBlock(QDialog):
         super().__init__()
         self.name = name
         self.label = QLabel(name, self)
+        self.status = QLabel("", self)
         self.fields = [QLabel('id:', self), QLabel('Status:', self), QLabel('Data:', self)]
-        self.data = [QComboBox(self), QLabel('0', self), QLabel('0', self)]
+        self._combo_box = QComboBox(self)
+        self._combo_box.activated[str].connect(self.on_changed)
+        self.data = [self._combo_box, QLabel('0', self), QLabel('0', self)]
+        self.widget = None
 
         if name in AIRFRAME.keys():
             self.data[0].addItem(str(AIRFRAME[name]))
@@ -84,10 +91,17 @@ class NodeBlock(QDialog):
             self.data[0].addItem("-1")
             print("there is no name in the airframe", name, AIRFRAME.keys())
 
-    def get_widget(self, stretch1=0, stretch2=0):
+        self.make_widget()
+
+    def on_changed(self, text):
+        global update, AIRFRAME
+        AIRFRAME[self.name] = int(text)
+        update = True
+
+    def make_widget(self, stretch1=0, stretch2=0):
         vlay = QHBoxLayout(self)
         vlay.addStretch(stretch1)
-        box = make_vbox(self.label,
+        box = make_vbox(make_hbox(self.label, self.status),
                         make_hbox(make_vbox(*self.fields), make_vbox(*self.data)))
         box.setContentsMargins(0, 0, 0, 0)
         vlay.addWidget(box)
@@ -98,13 +112,17 @@ class NodeBlock(QDialog):
         container.setContentsMargins(0, 0, 0, 0)
         container.setStyleSheet("background-color:#ffffff;")
 
-        return container
+        self.widget = container
 
 
 class VtolWindow(QDialog):
     def __init__(self, parent, node):
         super(VtolWindow, self).__init__(parent)
         self.setAttribute(Qt.WA_DeleteOnClose)
+
+        with open('airframe.json', 'r') as f:
+            global AIRFRAME
+            AIRFRAME = json.load(f)
 
         self.setWindowTitle('VTOL Info')
 
@@ -127,13 +145,13 @@ class VtolWindow(QDialog):
 
         layout = QHBoxLayout(self)
 
-        box1 = make_vbox(rudder1.get_widget(), aileron1.get_widget(), stretch_index=[1, 1], s=3)
-        box2 = make_vbox(elevator.get_widget(), motor2.get_widget(), stretch_index=[0, 1], s=6)
-        box3 = make_vbox(rudder2.get_widget(), engine.get_widget(), stretch_index=[0, 1], s=10)
-        box4 = make_vbox(motor3.get_widget(), gps.get_widget(), motor1.get_widget(), stretch_index=[2, 2, 3], s=6)
-        box5 = make_vbox(airspeed.get_widget(), stretch_index=[1], s=1)
-        box6 = make_vbox(aileron2.get_widget(), pressure.get_widget(), stretch_index=[1, 2, 1], s=3)
-        box7 = make_vbox(motor4.get_widget(), stretch_index=[1], s=2)
+        box1 = make_vbox(rudder1.widget, aileron1.widget, stretch_index=[1, 1], s=3)
+        box2 = make_vbox(elevator.widget, motor2.widget, stretch_index=[0, 1], s=6)
+        box3 = make_vbox(rudder2.widget, engine.widget, stretch_index=[0, 1], s=10)
+        box4 = make_vbox(motor3.widget, gps.widget, motor1.widget, stretch_index=[2, 2, 3], s=6)
+        box5 = make_vbox(airspeed.widget, stretch_index=[1], s=1)
+        box6 = make_vbox(aileron2.widget, pressure.widget, stretch_index=[1, 2, 1], s=3)
+        box7 = make_vbox(motor4.widget, stretch_index=[1], s=2)
 
         self.blocks = [motor1, motor2, motor3, motor4,
                        aileron1, aileron2, rudder1, rudder2, elevator,
@@ -155,10 +173,17 @@ class VtolWindow(QDialog):
         layout.addWidget(box7)
         layout.addStretch(2)
 
-        self._control_widget = ControlWidget(self, node)
+        self._control_widget = ControlWidget(self, node, self.save_file)
         # self._control_widget = ControlWidget(self)
         self._control_widget.setAlignment(Qt.AlignRight)
         self._control_widget.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Preferred)
+
+        # self._save_button = QPushButton('Save airframe', self)
+        # self._save_button.setFocusPolicy(Qt.NoFocus)
+        # self._save_button.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        # self._save_button.clicked.connect(self.save_file)
+
+        # right_vbox = make_vbox(self._save_button, self._control_widget)
 
         layout.addWidget(self._control_widget)
 
@@ -168,9 +193,10 @@ class VtolWindow(QDialog):
         margin = layout.getContentsMargins()[0]
 
         image = QImage('widgets/GUI/res/icons/vtol3.jpg')
+
         # image = QImage('GUI/res/icons/vtol3.jpg')
         h1 = image.width()
-        image = image.scaledToHeight(self._control_widget.height())
+        image = image.scaledToHeight(self._control_widget.height() + margin * 2)
         h2 = image.width()
         palette = QPalette()
         palette.setBrush(QPalette.Window, QBrush(image))
@@ -183,9 +209,9 @@ class VtolWindow(QDialog):
 
         self._monitor = uavcan.app.node_monitor.NodeMonitor(node)
 
-        self._status_update_timer = QTimer(self)
-        self._status_update_timer.setSingleShot(False)
-        self._status_update_timer.timeout.connect(self._nodes_print)
+        # self._status_update_timer = QTimer(self)
+        # self._status_update_timer.setSingleShot(False)
+        # self._status_update_timer.timeout.connect(self._nodes_print)
         # self._status_update_timer.start(200)
 
         self._status_update_timer = QTimer(self)
@@ -195,9 +221,16 @@ class VtolWindow(QDialog):
 
         self.sub = VtolSubscriber(node)
 
+    def save_file(self):
+        name = QFileDialog.getSaveFileName(self, 'Save File', "airframe.json")
+        with open(name[0], 'w') as f:
+            json.dump(AIRFRAME, f)
+
     def _update_combo_boxes(self):
+        global update
         nodes = list(e.node_id for e in self._monitor.find_all(lambda _: True))
-        if nodes != self.nodes:
+        if nodes != self.nodes or update:
+            update = False
             self.nodes = nodes
             for block in self.blocks:
                 if block.name not in AIRFRAME.keys():
@@ -207,6 +240,13 @@ class VtolWindow(QDialog):
                 n = [*nodes]
                 if first in n:
                     n.remove(first)
+                    block.status.setText("ok")
+                    block.status.setStyleSheet("color:#008000;")
+                    # block.widget.setStyleSheet("background-color:#ffffff;")
+                else:
+                    block.status.setText("nc")
+                    block.status.setStyleSheet("color:#ff0000;")
+                    # block.widget.setStyleSheet("background-color:#ff0000;")
                 block.data[0].clear()
                 block.data[0].addItem(str(first))
                 block.data[0].addItems(str(i) for i in n)

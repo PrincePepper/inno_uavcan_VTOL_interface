@@ -1,13 +1,11 @@
-import uavcan
-from functools import partial
-
-from interface.panels.functions import make_icon_button, get_monospace_font, get_icon
-from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget, QLabel, QDialog, QSlider, QSpinBox, QDoubleSpinBox, \
-    QPlainTextEdit, QGroupBox
-from PyQt5.QtCore import QTimer, Qt
 from logging import getLogger
-from win32api import GetSystemMetrics
 
+import uavcan
+from PyQt5.QtCore import QTimer, Qt
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget, QLabel, QSlider, QSpinBox, QDoubleSpinBox, \
+    QPlainTextEdit, QGroupBox, QPushButton
+
+from interface.panels.functions import make_icon_button, get_monospace_font
 
 PANEL_NAME = 'Vtol Panel'
 
@@ -65,7 +63,7 @@ class ControlWidget(QGroupBox):
     CMD_MIN = -(2 ** (CMD_BIT_LENGTH - 1))
 
     # def __init__(self, parent):
-    def __init__(self, parent, node):
+    def __init__(self, parent, node, save_file_func):
         super(ControlWidget, self).__init__(parent)
         self.setAttribute(Qt.WA_DeleteOnClose)  # This is required to stop background timers!
 
@@ -105,6 +103,13 @@ class ControlWidget(QGroupBox):
         self._bcast_timer.timeout.connect(self._do_broadcast)
 
         layout = QVBoxLayout(self)
+
+        self._save_button = QPushButton('Save airframe', self)
+        self._save_button.setFocusPolicy(Qt.NoFocus)
+        # self._save_button.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        self._save_button.clicked.connect(save_file_func)
+
+        layout.addWidget(self._save_button)
 
         self._slider_layout = QHBoxLayout(self)
         for sl in self._sliders:
@@ -156,15 +161,3 @@ class ControlWidget(QGroupBox):
         global _singleton
         _singleton = None
         super(ControlWidget, self).closeEvent(event)
-
-
-def spawn(parent, node):
-    global _singleton
-    if _singleton is None:
-        _singleton = ControlWidget(parent, node)
-
-    _singleton.show()
-    _singleton.raise_()
-    _singleton.activateWindow()
-
-    return _singleton
