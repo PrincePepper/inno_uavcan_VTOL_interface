@@ -49,17 +49,21 @@ def render_vendor_specific_status_code(s):
     return out
 
 
-def make_vbox(*widgets, stretch_index=None, s=1):
+def make_vbox(*widgets, stretch_index=None, s=1, margin=False):
     box = QVBoxLayout()
     for idx, w in enumerate(widgets):
         if stretch_index is not None:
             box.addStretch(stretch_index[idx])
         box.addWidget(w)
     box.addStretch(s)
-    box.setContentsMargins(0, 0, 0, 0)
     container = QWidget()
     container.setLayout(box)
-    container.setContentsMargins(0, 0, 0, 0)
+    if margin:
+        m = int(box.getContentsMargins()[0] / 2)
+        container.setContentsMargins(m, m, m, m)
+    else:
+        container.setContentsMargins(0, 0, 0, 0)
+    box.setContentsMargins(0, 0, 0, 0)
     return container
 
 
@@ -75,33 +79,54 @@ def make_hbox(*widgets, stretch_index=None, s=1):
     return container
 
 
+def node_health_to_str_color(health):
+    return {
+        0: ("OK", "color: green"),
+        1: ("WARNING", "color: orange"),
+        2: ("ERROR", "color: magenta"),
+        3: ("CRITICAL", "color: red"),
+    }.get(health)
+
+
 class NodeBlock(QDialog):
     def __init__(self, name: str):
         super().__init__()
         self.name = name
         self.label = QLabel(name, self)
         self.status = QLabel("", self)
-        self.fields = [QLabel('id:', self), QLabel('Status:', self), QLabel('Data:', self)]
-        self._combo_box = QComboBox(self)
-        self._combo_box.activated[str].connect(self.on_changed)
-        self.data = [self._combo_box, QLabel('0', self), QLabel('0', self)]
-        self.voltage_lbl = QLabel("0V", self)
-        self.current_lbl = QLabel("0A", self)
+        self.fields = [QLabel('id:', self), QLabel('Health:', self), QLabel('Data:', self)]
+
+        self.combo_box = QComboBox(self)
+        self.combo_box.activated[str].connect(self.on_changed)
+        self.data = [self.combo_box, QLabel('0', self), QLabel('0', self)]
+        self.voltage_lbl = QLabel('-', self)
+        self.current_lbl = QLabel('-', self)
         self.widget = None
 
         self.id = -1
         if name in AIRFRAME.keys():
             self.id = AIRFRAME[name]
 
-        self.data[0].addItem(str(self.id))
+        self.combo_box.addItem(str(self.id))
 
         self.make_widget()
 
     def set_voltage(self, v):
-        self.voltage_lbl.setText(str("{:1.2f}".format(v)) + 'V')
+        if type(v) == str:
+            self.voltage_lbl.setText(v)
+        else:
+            self.voltage_lbl.setText(str("{:1.2f}".format(v)) + 'V')
 
     def set_current(self, i):
-        self.current_lbl.setText(str("{:1.2f}".format(i)) + 'A')
+        if type(i) == str:
+            self.current_lbl.setText(i)
+        else:
+            self.current_lbl.setText(str("{:1.2f}".format(i)) + 'A')
+
+    def set_health(self, h):
+        text, style = node_health_to_str_color(h)
+        self.data[1].setText(text)
+        self.data[1].setStyleSheet(style)
 
     def on_changed(self, text):
         global update  # , AIRFRAME
@@ -109,22 +134,12 @@ class NodeBlock(QDialog):
         self.id = int(text)
         update = True
 
-    def make_widget(self, stretch1=0, stretch2=0):
-        vlay = QHBoxLayout(self)
-        vlay.addStretch(stretch1)
+    def make_widget(self):
         box = make_vbox(make_hbox(self.label, self.status),
                         make_hbox(make_vbox(*self.fields), make_vbox(*self.data)),
-                        make_hbox(self.voltage_lbl, self.current_lbl, stretch_index=[1, 0], s=0))
-        box.setContentsMargins(0, 0, 0, 0)
-        vlay.addWidget(box)
-        vlay.addStretch(stretch2)
-
-        container = QWidget(self)
-        container.setLayout(vlay)
-        container.setContentsMargins(0, 0, 0, 0)
-        container.setStyleSheet("background-color:#ffffff;")
-
-        self.widget = container
+                        make_hbox(self.voltage_lbl, self.current_lbl, stretch_index=[1, 0], s=0), margin=True)
+        box.setStyleSheet("background-color: white;")
+        self.widget = box
 
 
 class VtolWindow(QDialog):
@@ -141,7 +156,7 @@ class VtolWindow(QDialog):
 
         self.setWindowTitle('VTOL Info')
 
-        self.nodes = []
+        self.nodes_id = []
 
         # motor1 = NodeBlock("motor1")
         motor1 = NodeBlock("pwm")
@@ -158,8 +173,6 @@ class VtolWindow(QDialog):
         pressure = NodeBlock("pressure")
         engine = NodeBlock("engine")
 
-        layout = QHBoxLayout(self)
-
         box1 = make_vbox(rudder1.widget, aileron1.widget, stretch_index=[1, 1], s=3)
         box2 = make_vbox(elevator.widget, motor2.widget, stretch_index=[0, 1], s=6)
         box3 = make_vbox(rudder2.widget, engine.widget, stretch_index=[0, 1], s=10)
@@ -172,11 +185,12 @@ class VtolWindow(QDialog):
                        aileron1, aileron2, rudder1, rudder2, elevator,
                        gps, airspeed, pressure, engine]
 
-        layout.addStretch(8)
+        layout = QHBoxLayout(self)
+        layout.addStretch(18)
         layout.addWidget(box1)
-        layout.addStretch(2)
+        layout.addStretch(6)
         layout.addWidget(box2)
-        layout.addStretch(2)
+        layout.addStretch(4)
         layout.addWidget(box3)
         layout.addStretch(1)
         layout.addWidget(box4)
@@ -207,22 +221,23 @@ class VtolWindow(QDialog):
         self.show()
         margin = layout.getContentsMargins()[0]
 
-        I = numpy.asarray(Image.open('widgets/GUI/res/icons/vtol2.jpg'))
-
-        new = numpy.zeros((960, 2640, 3))
-        new[:960, :1280, :3] = I
-        new[:960, 1280:, :3] = float(255)
+        jpeg = numpy.asarray(Image.open('widgets/GUI/res/icons/vtol.jpg'))
+        x = jpeg.shape[1]
+        y = jpeg.shape[0]
+        new = numpy.zeros((y, x + 4000, 3))
+        new[:y, :x, :3] = jpeg
+        new[:y, x:, :3] = float(255)
         image = Image.fromarray(numpy.uint8(new))
-        # Image turn QImage
+        # Image turn to QImage
         image = ImageQt.ImageQt(image)
-        h1 = image.width()
+        h1 = image.height()
         image = image.scaledToHeight(self._control_widget.height() + margin * 2)
-        h2 = image.width()
+        h2 = image.height()
         palette = QPalette()
         palette.setBrush(QPalette.Window, QBrush(image))
         self.setPalette(palette)
 
-        self.resize(int(1280 * h2 / h1) + self._control_widget.width() + margin * 2, image.height())
+        self.resize(int(x * h2 / h1) + self._control_widget.width() + margin * 2, image.height())
 
         self.setFixedWidth(self.width())
         self.setFixedHeight(self.height())
@@ -252,40 +267,41 @@ class VtolWindow(QDialog):
 
     def _update_combo_boxes(self):
         global update
-        nodes = list(e.node_id for e in self._monitor.find_all(lambda _: True))
-        if nodes != self.nodes or update:
+        nodes = self._monitor.find_all(lambda _: True)
+        nodes_id = list(e.node_id for e in nodes)
+        if nodes_id != self.nodes_id or update:
             update = False
-            self.nodes = nodes
+            self.nodes_id = nodes_id
             for block in self.blocks:
                 first = block.id
-                # if block.name not in AIRFRAME.keys():
-                #     first = -1
-                # else:
-                #     first = AIRFRAME[block.name]
-                n = [*nodes]
+                n = [*nodes_id]
                 if first in n:
                     n.remove(first)
                     block.status.setText("connect")
-                    block.status.setStyleSheet("color:#008000;")
-                    # block.widget.setStyleSheet("background-color:#ffffff;")
+                    block.status.setStyleSheet("color:green;")
                 else:
                     block.status.setText("nc")
-                    block.status.setStyleSheet("color:#ff0000;")
-                    # block.widget.setStyleSheet("background-color:#ff0000;")
-                block.data[0].clear()
-                block.data[0].addItem(str(first))
-                block.data[0].addItems(str(i) for i in n)
+                    block.status.setStyleSheet("color:red;")
+                    block.set_voltage('-')
+                    block.set_current('-')
+                block.combo_box.clear()
+                block.combo_box.addItem(str(first))
+                block.combo_box.addItems(str(i) for i in n)
 
     def _nodes_update(self):
         if self.subscriber.has_next():
+            nodes = self._monitor.find_all(lambda _: True)
+            nodes_health = {k.node_id: k.status.health for k in nodes}
+
             data = self.subscriber.next()
             node_id = data[0].source_node_id
             for block in filter(lambda a: a.id == node_id, self.blocks):
                 block.set_voltage(data[0].payload.voltage)
                 block.set_current(data[0].payload.current)
-            print(data[0].source_node_id)
-            print(data[0].payload.voltage)
-            print(data[1])
+                block.set_health(nodes_health[block.id])
+            # print(data[0].source_node_id)
+            # print(data[0].payload.voltage)
+            print(data[0])
         # nodes = list(self._monitor.find_all(lambda _: True))
         # print("Nodes:")
         # for e in nodes:

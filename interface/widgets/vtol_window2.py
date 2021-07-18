@@ -53,14 +53,14 @@ class VtolWindow(QDialog):
 
         self.resize(int(1280 * h2 / h1) + self._control_widget.width() + margin * 2, image.height())
 
-        # image = QImage('GUI/res/icons/vtol2.jpg')
+        # image = QImage('GUI/res/icons/vtol.jpg')
         # palette = QPalette()
         # palette.setBrush(QPalette.Window, QBrush(image))
         # self.setPalette(palette)
 
         # self.widget_output.setStyleSheet("background-image: url(GUI/res/icons/vtol4.jpg); background-repeat: no-repeat;")
         # self._label = QLabel(self)
-        # self._pixmap = QPixmap('GUI/res/icons/vtol2.jpg')
+        # self._pixmap = QPixmap('GUI/res/icons/vtol.jpg')
         # self._pixmap = self._pixmap.scaledToWidth(int(GetSystemMetrics(0) / 2))
         # self._label.setPixmap(self._pixmap)
         # self.verticalLayout.addWidget(self._label)
