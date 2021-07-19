@@ -16,20 +16,20 @@ _singleton = None
 
 
 class PercentSlider(QWidget):
-    def __init__(self, parent):
+    def __init__(self, parent, val):
         super(PercentSlider, self).__init__(parent)
 
         self._slider = QSlider(Qt.Vertical, self)
         self._slider.setMinimum(-1)
-        self._slider.setMaximum(8191)
+        self._slider.setMaximum(val)
         self._slider.setValue(-1)
-        self._slider.setTickInterval(2048)
+        self._slider.setTickInterval(int(val / 4))
         self._slider.setTickPosition(QSlider.TicksBothSides)
         self._slider.valueChanged.connect(lambda: self._spinbox.setValue(self._slider.value()))
 
         self._spinbox = QSpinBox(self)
         self._spinbox.setMinimum(-1)
-        self._spinbox.setMaximum(8191)
+        self._spinbox.setMaximum(val)
         self._spinbox.setValue(-1)
         self._spinbox.valueChanged.connect(lambda: self._slider.setValue(self._spinbox.value()))
 
@@ -51,7 +51,7 @@ class PercentSlider(QWidget):
             print(str(m))
 
     def zero(self):
-        self._slider.setValue(0)
+        self._slider.setValue(-1)
 
     def get_value(self):
         return self._slider.value()
@@ -70,7 +70,8 @@ class ControlWidget(QGroupBox):
 
         self._node = node
 
-        self._sliders = [PercentSlider(self) for _ in range(8)]
+        self._sliders = [PercentSlider(self, 8191) for _ in range(4)]
+        self._sliders += [PercentSlider(self, 2000) for _ in range(4)]
 
         self._bcast_interval = QDoubleSpinBox(self)
         self._bcast_interval.setMinimum(0.01)
@@ -142,7 +143,7 @@ class ControlWidget(QGroupBox):
                     raw_value = sl.get_value() / 8191
                     value = (-self.CMD_MIN if raw_value < 0 else self.CMD_MAX) * raw_value
                     msg.cmd.append(int(value))
-
+                print()
                 self._node.broadcast(msg)
                 self._msg_viewer.setPlainText(uavcan.to_yaml(msg))
             else:
