@@ -4,7 +4,6 @@ import uavcan
 from PyQt5.QtCore import QTimer, Qt
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget, QLabel, QSlider, QSpinBox, QDoubleSpinBox, \
     QPlainTextEdit, QGroupBox, QPushButton
-from win32api import GetSystemMetrics
 
 from interface.panels.functions import make_icon_button, get_monospace_font
 
@@ -44,11 +43,11 @@ class PercentSlider(QWidget):
         layout.addWidget(self._spinbox)
         layout.addWidget(self._zero_button)
         self.setLayout(layout)
-        #
-        # TODO: надо сделать определение операционной системы и настроить под linux
-        #
-        # self.setMinimumHeight(400)
-        self.setMinimumHeight(int(GetSystemMetrics(1) * 0.35))
+
+        from screeninfo import get_monitors
+        for m in get_monitors():
+            self.setMinimumHeight(int(m.height * 0.35))
+            print(str(m))
 
     def zero(self):
         self._slider.setValue(0)
