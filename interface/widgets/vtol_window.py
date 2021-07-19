@@ -6,12 +6,20 @@ import uavcan
 from PIL import Image, ImageQt
 from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtGui import QPalette, QBrush
-from PyQt5.QtWidgets import QDialog, QVBoxLayout, QLabel, QHBoxLayout, QWidget, QSizePolicy, QComboBox, QFileDialog
+from PyQt5.QtWidgets import QDialog, QVBoxLayout, QLabel, QHBoxLayout, QWidget, QSizePolicy, QComboBox, QFileDialog, \
+    QMessageBox, QPushButton
 
+from . import request_confirmation, show_error
+from .dynamic_node_id_allocator import DynamicNodeIDAllocatorWidget
+from .file_server import FileServerWidget
+from .node_monitor import NodeMonitorWidget
+from .node_properties import NodePropertiesWindow
 from .vtol_control_widget import ControlWidget
 from .vtol_subscriber import VtolSubscriber
 
 SCALE = 0.4
+REQUEST_PRIORITY = 30
+global node_block_properties
 
 logger = logging.getLogger(__name__)
 
@@ -81,11 +89,38 @@ def make_hbox(*widgets, stretch_index=None, s=1):
 
 def node_health_to_str_color(health):
     return {
+        -1: ("-", "color: black"),
         0: ("OK", "color: green"),
         1: ("WARNING", "color: orange"),
         2: ("ERROR", "color: magenta"),
         3: ("CRITICAL", "color: red"),
     }.get(health)
+
+
+class NodeBlockProperties:
+    def __init__(self, node, widget, file_server_widget, node_monitor_widget, dynamic_node_id_allocation_widget):
+        self._node_windows = {}
+        self._node = node
+        self.widget = widget
+        self._file_server_widget = file_server_widget
+        self._node_monitor_widget = node_monitor_widget
+        self._dynamic_node_id_allocation_widget = dynamic_node_id_allocation_widget
+
+    def on_properties_clicked(self, node_id):
+        if node_id in self._node_windows:
+            # noinspection PyBroadException
+            try:
+                self._node_windows[node_id].close()
+                self._node_windows[node_id].setParent(None)
+                self._node_windows[node_id].deleteLater()
+            except Exception:
+                pass  # Sometimes fails with "wrapped C/C++ object of type NodePropertiesWindow has been deleted"
+            del self._node_windows[node_id]
+
+        w = NodePropertiesWindow(self.widget, self._node, node_id, self._file_server_widget,
+                                 self._node_monitor_widget.monitor, self._dynamic_node_id_allocation_widget)
+        w.show()
+        self._node_windows[node_id] = w
 
 
 class NodeBlock(QDialog):
@@ -97,10 +132,16 @@ class NodeBlock(QDialog):
         self.fields = [QLabel('id:', self), QLabel('Health:', self), QLabel('Data:', self)]
 
         self.combo_box = QComboBox(self)
-        self.combo_box.activated[str].connect(self.on_changed)
+        self.combo_box.activated[str].connect(self._on_changed)
         self.data = [self.combo_box, QLabel('0', self), QLabel('0', self)]
         self.voltage_lbl = QLabel('-', self)
         self.current_lbl = QLabel('-', self)
+
+        self.properties_button = QPushButton('Properties', self)
+        self.properties_button.setFocusPolicy(Qt.NoFocus)
+        self.properties_button.clicked.connect(self.on_clicked)
+        self.properties_button.setEnabled(False)
+
         self.widget = None
 
         self.id = -1
@@ -128,7 +169,11 @@ class NodeBlock(QDialog):
         self.data[1].setText(text)
         self.data[1].setStyleSheet(style)
 
-    def on_changed(self, text):
+    def on_clicked(self):
+        global node_block_properties
+        node_block_properties.on_properties_clicked(self.id)
+
+    def _on_changed(self, text):
         global update  # , AIRFRAME
         # AIRFRAME[self.name] = int(text)
         self.id = int(text)
@@ -137,6 +182,7 @@ class NodeBlock(QDialog):
     def make_widget(self):
         box = make_vbox(make_hbox(self.label, self.status),
                         make_hbox(make_vbox(*self.fields), make_vbox(*self.data)),
+                        self.properties_button,
                         make_hbox(self.voltage_lbl, self.current_lbl, stretch_index=[1, 0], s=0), margin=True)
         box.setStyleSheet("background-color: white;")
         self.widget = box
@@ -145,6 +191,17 @@ class NodeBlock(QDialog):
 class VtolWindow(QDialog):
     def __init__(self, parent, node):
         super(VtolWindow, self).__init__(parent)
+        self._file_server_widget = FileServerWidget(self, node)
+
+        self._node_monitor_widget = NodeMonitorWidget(self, node)
+        # self._node_monitor_widget.on_info_window_requested = self._show_node_window
+
+        self._dynamic_node_id_allocation_widget = DynamicNodeIDAllocatorWidget(self, node,
+                                                                               self._node_monitor_widget.monitor)
+        global node_block_properties
+
+        node_block_properties = NodeBlockProperties(node, self, self._file_server_widget,
+                                                    self._node_monitor_widget, self._dynamic_node_id_allocation_widget)
         self.setAttribute(Qt.WA_DeleteOnClose)
 
         try:
@@ -157,6 +214,8 @@ class VtolWindow(QDialog):
         self.setWindowTitle('VTOL Info')
 
         self.nodes_id = []
+
+        self._node = node
 
         # motor1 = NodeBlock("motor1")
         motor1 = NodeBlock("pwm")
@@ -202,7 +261,7 @@ class VtolWindow(QDialog):
         layout.addWidget(box7)
         layout.addStretch(2)
 
-        self._control_widget = ControlWidget(self, node, self.save_file)
+        self._control_widget = ControlWidget(self, node, self.save_file, self._do_restart_all)
         # self._control_widget = ControlWidget(self)
         self._control_widget.setAlignment(Qt.AlignRight)
         self._control_widget.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Preferred)
@@ -265,6 +324,22 @@ class VtolWindow(QDialog):
         with open(name[0], 'w') as f:
             json.dump(AIRFRAME, f)
 
+    def _do_restart_all(self):
+        request = uavcan.protocol.RestartNode.Request(magic_number=uavcan.protocol.RestartNode.Request().MAGIC_NUMBER)
+        if not request_confirmation('Confirm node restart',
+                                    'Do you really want to send request uavcan.protocol.RestartNode?', self):
+            return
+
+        def callback(e):
+            if e is not None:
+                QMessageBox.about(self, 'Response', 'Restart request response: ' + str(e.response))
+
+        try:
+            for node_id in self.nodes_id:
+                self._node.request(request, node_id, callback, priority=REQUEST_PRIORITY)
+        except Exception as ex:
+            show_error('Node error', 'Could not send restart request', ex, self)
+
     def _update_combo_boxes(self):
         global update
         nodes = self._monitor.find_all(lambda _: True)
@@ -279,11 +354,14 @@ class VtolWindow(QDialog):
                     n.remove(first)
                     block.status.setText("connect")
                     block.status.setStyleSheet("color:green;")
+                    block.properties_button.setEnabled(True)
                 else:
                     block.status.setText("nc")
                     block.status.setStyleSheet("color:red;")
+                    block.properties_button.setEnabled(False)
                     block.set_voltage('-')
                     block.set_current('-')
+                    block.set_health(-1)
                 block.combo_box.clear()
                 block.combo_box.addItem(str(first))
                 block.combo_box.addItems(str(i) for i in n)
@@ -301,7 +379,7 @@ class VtolWindow(QDialog):
                 block.set_health(nodes_health[block.id])
             # print(data[0].source_node_id)
             # print(data[0].payload.voltage)
-            print(data[0])
+            # print(data[0])
         # nodes = list(self._monitor.find_all(lambda _: True))
         # print("Nodes:")
         # for e in nodes:

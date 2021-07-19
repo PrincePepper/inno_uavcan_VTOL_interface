@@ -4,11 +4,11 @@ import uavcan
 from PyQt5.QtCore import QTimer, Qt
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget, QLabel, QSlider, QSpinBox, QDoubleSpinBox, \
     QPlainTextEdit, QGroupBox, QPushButton
-from win32api import GetSystemMetrics
 
 from interface.panels.functions import make_icon_button, get_monospace_font
 
 PANEL_NAME = 'Vtol Panel'
+
 
 logger = getLogger(__name__)
 
@@ -23,7 +23,7 @@ class PercentSlider(QWidget):
         self._slider.setMinimum(-1)
         self._slider.setMaximum(8191)
         self._slider.setValue(-1)
-        self._slider.setTickInterval(1024)
+        self._slider.setTickInterval(2048)
         self._slider.setTickPosition(QSlider.TicksBothSides)
         self._slider.valueChanged.connect(lambda: self._spinbox.setValue(self._slider.value()))
 
@@ -44,11 +44,9 @@ class PercentSlider(QWidget):
         layout.addWidget(self._spinbox)
         layout.addWidget(self._zero_button)
         self.setLayout(layout)
-        #
-        # TODO: надо сделать определение операционной системы и настроить под linux
-        #
-        # self.setMinimumHeight(400)
-        self.setMinimumHeight(int(GetSystemMetrics(1) * 0.35))
+
+        self.setMinimumHeight(400)
+        # self.setMinimumHeight(int(GetSystemMetrics(1) * 0.35))
 
     def zero(self):
         self._slider.setValue(0)
@@ -64,7 +62,7 @@ class ControlWidget(QGroupBox):
     CMD_MAX = 2 ** (CMD_BIT_LENGTH - 1) - 1
     CMD_MIN = -(2 ** (CMD_BIT_LENGTH - 1))
 
-    def __init__(self, parent, node, save_file_func):
+    def __init__(self, parent, node, save_file_func, restart_func):
         super(ControlWidget, self).__init__(parent)
         self.setAttribute(Qt.WA_DeleteOnClose)  # This is required to stop background timers!
 
@@ -101,10 +99,16 @@ class ControlWidget(QGroupBox):
 
         self._save_button = QPushButton('Save airframe', self)
         self._save_button.setFocusPolicy(Qt.NoFocus)
-        # self._save_button.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
         self._save_button.clicked.connect(save_file_func)
 
-        layout.addWidget(self._save_button)
+        self._restart_button = QPushButton('Restart all', self)
+        self._restart_button.setFocusPolicy(Qt.NoFocus)
+        self._restart_button.clicked.connect(restart_func)
+
+        box1 = QHBoxLayout(self)
+        box1.addWidget(self._save_button)
+        box1.addWidget(self._restart_button)
+        layout.addLayout(box1)
 
         self._slider_layout = QHBoxLayout(self)
         for sl in self._sliders:
@@ -133,7 +137,7 @@ class ControlWidget(QGroupBox):
             if not self._pause.isChecked():
                 msg = uavcan.equipment.esc.RawCommand()
                 for sl in self._sliders:
-                    raw_value = sl.get_value() / 100
+                    raw_value = sl.get_value() / 8191
                     value = (-self.CMD_MIN if raw_value < 0 else self.CMD_MAX) * raw_value
                     msg.cmd.append(int(value))
 
