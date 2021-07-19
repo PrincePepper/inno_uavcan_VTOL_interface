@@ -45,8 +45,10 @@ class PercentSlider(QWidget):
         layout.addWidget(self._zero_button)
         self.setLayout(layout)
 
-        self.setMinimumHeight(400)
-        # self.setMinimumHeight(int(GetSystemMetrics(1) * 0.35))
+        from screeninfo import get_monitors
+        for m in get_monitors():
+            self.setMinimumHeight(int(m.height * 0.35))
+            print(str(m))
 
     def zero(self):
         self._slider.setValue(0)
