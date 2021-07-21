@@ -152,6 +152,9 @@ class NodeBlock(QDialog):
         for i, sub in enumerate(self.subscriptions):
             if sub.has_next():
                 data = sub.next()
+                #
+                #  TODO: тут нужно исправить ниже строчку, ее нужно сделать как то ультимативной наверное
+                #
                 self.data[i + 2].setText(str("{:1.2f}".format(data[0].payload.voltage)))
 
     def set_subs(self):
