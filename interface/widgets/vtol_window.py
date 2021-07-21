@@ -10,6 +10,7 @@ from PyQt5.QtWidgets import QDialog, QVBoxLayout, QLabel, QHBoxLayout, QWidget, 
     QMessageBox, QPushButton
 
 from . import request_confirmation, show_error
+from .active_data_type_detector import ActiveDataTypeDetector
 from .dynamic_node_id_allocator import DynamicNodeIDAllocatorWidget
 from .file_server import FileServerWidget
 from .node_monitor import NodeMonitorWidget
@@ -17,44 +18,14 @@ from .node_properties import NodePropertiesWindow
 from .vtol_control_widget import ControlWidget
 from .vtol_subscriber import VtolSubscriber
 
-SCALE = 0.4
 REQUEST_PRIORITY = 30
 global node_block_properties
+global AIRFRAME
+global main_node
 
 logger = logging.getLogger(__name__)
 
 update = False
-
-AIRFRAME = {
-    'motor1': 50,
-    'motor2': 51,
-    'motor3': 52,
-    'motor4': 53,
-    'aileron1': 60,
-    'aileron2': 61,
-    'pwm': 15
-}
-
-
-def render_vendor_specific_status_code(s):
-    out = '%-5d     0x%04x\n' % (s, s)
-    binary = bin(s)[2:].rjust(16, '0')
-
-    def high_nibble(s):
-        return s.replace('0', '\u2070').replace('1', '\u00B9')  # Unicode 0/1 superscript
-
-    def low_nibble(s):
-        return s.replace('0', '\u2080').replace('1', '\u2081')  # Unicode 0/1 subscript
-
-    nibbles = [
-        high_nibble(binary[:4]),
-        low_nibble(binary[4:8]),
-        high_nibble(binary[8:12]),
-        low_nibble(binary[12:]),
-    ]
-
-    out += ''.join(nibbles)
-    return out
 
 
 def make_vbox(*widgets, stretch_index=None, s=1, margin=False):
@@ -129,11 +100,20 @@ class NodeBlock(QDialog):
         self.name = name
         self.label = QLabel(name, self)
         self.status = QLabel("", self)
-        self.fields = [QLabel('id:', self), QLabel('Health:', self), QLabel('Data:', self)]
-
         self.combo_box = QComboBox(self)
+
+        self.subscriptions = []
+        self.to_subscribe = []
+
         self.combo_box.activated[str].connect(self._on_changed)
-        self.data = [self.combo_box, QLabel('0', self), QLabel('0', self)]
+
+        global main_node
+        self._node = main_node
+
+        global AIRFRAME
+        self.fields, self.data = self.parse_fields(AIRFRAME)
+        self.set_subs()
+
         self.voltage_lbl = QLabel('-', self)
         self.current_lbl = QLabel('-', self)
 
@@ -146,11 +126,37 @@ class NodeBlock(QDialog):
 
         self.id = -1
         if name in AIRFRAME.keys():
-            self.id = AIRFRAME[name]
-
+            self.id = int(AIRFRAME[name]["id"])
         self.combo_box.addItem(str(self.id))
 
         self.make_widget()
+
+    def parse_fields(self, fields):
+        list_fields = []
+        list_data = []
+        list_fields.append(QLabel('id:', self))
+        list_data.append(self.combo_box)
+        list_fields.append(QLabel('Health:', self))
+        list_data.append(QLabel('0', self))
+        if self.name in AIRFRAME.keys():
+            temp_data_fields = AIRFRAME[self.name]
+            for i in temp_data_fields:
+                if i != "id":
+                    list_fields.append(QLabel(str(i), self))
+                    list_data.append(QLabel("0", self))
+                    self.to_subscribe.append(temp_data_fields[i])
+
+        return list_fields, list_data
+
+    def update_data(self):
+        for i, sub in enumerate(self.subscriptions):
+            if sub.has_next():
+                data = sub.next()
+                self.data[i + 2].setText(str("{:1.2f}".format(data[0].payload.voltage)))
+
+    def set_subs(self):
+        for i in self.to_subscribe:
+            self.subscriptions.append(VtolSubscriber(self._node, i))
 
     def set_voltage(self, v):
         if type(v) == str:
@@ -192,7 +198,8 @@ class VtolWindow(QDialog):
     def __init__(self, parent, node):
         super(VtolWindow, self).__init__(parent)
         self._file_server_widget = FileServerWidget(self, node)
-
+        global main_node
+        main_node = node
         self._node_monitor_widget = NodeMonitorWidget(self, node)
         # self._node_monitor_widget.on_info_window_requested = self._show_node_window
 
@@ -232,33 +239,24 @@ class VtolWindow(QDialog):
         pressure = NodeBlock("pressure")
         engine = NodeBlock("engine")
 
-        box1 = make_vbox(rudder1.widget, aileron1.widget, stretch_index=[1, 1], s=3)
-        box2 = make_vbox(elevator.widget, motor2.widget, stretch_index=[0, 1], s=6)
-        box3 = make_vbox(rudder2.widget, engine.widget, stretch_index=[0, 1], s=10)
-        box4 = make_vbox(motor3.widget, gps.widget, motor1.widget, stretch_index=[2, 2, 3], s=6)
-        box5 = make_vbox(airspeed.widget, stretch_index=[1], s=1)
-        box6 = make_vbox(aileron2.widget, pressure.widget, stretch_index=[1, 2, 1], s=3)
-        box7 = make_vbox(motor4.widget, stretch_index=[1], s=2)
+        self.box_1 = make_vbox(rudder1.widget, aileron1.widget, stretch_index=[1, 1], s=3)
+        self.box_2 = make_vbox(elevator.widget, motor2.widget, stretch_index=[0, 1], s=6)
+        self.box_3 = make_vbox(rudder2.widget, engine.widget, stretch_index=[0, 1], s=10)
+        self.box_4 = make_vbox(motor3.widget, gps.widget, motor1.widget, stretch_index=[2, 2, 3], s=6)
+        self.box_5 = make_vbox(airspeed.widget, stretch_index=[1], s=1)
+        self.box_6 = make_vbox(aileron2.widget, pressure.widget, stretch_index=[1, 2, 1], s=3)
+        self.box_7 = make_vbox(motor4.widget, stretch_index=[1], s=2)
 
         self.blocks = [motor1, motor2, motor3, motor4,
                        aileron1, aileron2, rudder1, rudder2, elevator,
                        gps, airspeed, pressure, engine]
 
         layout = QHBoxLayout(self)
-        layout.addStretch(18)
-        layout.addWidget(box1)
-        layout.addStretch(6)
-        layout.addWidget(box2)
-        layout.addStretch(4)
-        layout.addWidget(box3)
-        layout.addStretch(1)
-        layout.addWidget(box4)
-        layout.addStretch(2)
-        layout.addWidget(box5)
-        layout.addStretch(0)
-        layout.addWidget(box6)
-        layout.addStretch(2)
-        layout.addWidget(box7)
+        listStretch = [18, 6, 4, 1, 2, 0, 2]
+        listWidget = [self.box_1, self.box_2, self.box_3, self.box_4, self.box_5, self.box_6, self.box_7]
+        for i in range(len(listWidget)):
+            layout.addStretch(listStretch[i])
+            layout.addWidget(listWidget[i])
         layout.addStretch(2)
 
         self._control_widget = ControlWidget(self, node, self.save_file, self._do_restart_all)
@@ -313,7 +311,9 @@ class VtolWindow(QDialog):
         self._status_update_timer.timeout.connect(self._update_combo_boxes)
         self._status_update_timer.start(500)
 
-        self.subscriber = VtolSubscriber(node)
+        self.CircuitSubscriber = VtolSubscriber(node, "uavcan.equipment.power.CircuitStatus")
+        aaaa = ActiveDataTypeDetector(node).get_names_of_all_message_types_with_data_type_id()
+        print(aaaa)
 
     def save_file(self):
         global AIRFRAME
@@ -367,19 +367,21 @@ class VtolWindow(QDialog):
                 block.combo_box.addItems(str(i) for i in n)
 
     def _nodes_update(self):
-        if self.subscriber.has_next():
+        if self.CircuitSubscriber.has_next():
             nodes = self._monitor.find_all(lambda _: True)
             nodes_health = {k.node_id: k.status.health for k in nodes}
 
-            data = self.subscriber.next()
+            data = self.CircuitSubscriber.next()
+
             node_id = data[0].source_node_id
             for block in filter(lambda a: a.id == node_id, self.blocks):
                 block.set_voltage(data[0].payload.voltage)
                 block.set_current(data[0].payload.current)
                 block.set_health(nodes_health[block.id])
-            # print(data[0].source_node_id)
-            # print(data[0].payload.voltage)
-            # print(data[0])
+                block.update_data()
+            # print(data2[0].source_node_id)
+            # print(data2[0].payload)
+            # print(data2[0])
         # nodes = list(self._monitor.find_all(lambda _: True))
         # print("Nodes:")
         # for e in nodes:
@@ -391,7 +393,3 @@ class VtolWindow(QDialog):
         #     print("Uptime", e.status.uptime_sec)
         #     print("VSSC", render_vendor_specific_status_code(e.status.vendor_specific_status_code))
         # print()
-
-# app = QApplication(sys.argv)
-# window = VtolWindow(1)
-# app.exec_()

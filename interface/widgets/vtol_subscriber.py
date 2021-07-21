@@ -1,4 +1,3 @@
-import uavcan
 import logging
 import queue
 
@@ -65,7 +64,7 @@ logger = logging.getLogger(__name__)
 class VtolSubscriber(QDialog):
     # WINDOW_NAME_PREFIX = 'Subscriber'
 
-    def __init__(self, node):
+    def __init__(self, node, type: str):
         super(VtolSubscriber, self).__init__()
         # self.setWindowTitle(self.WINDOW_NAME_PREFIX)
         # self.setAttribute(Qt.WA_DeleteOnClose)              # This is required to stop background timers!
@@ -77,105 +76,13 @@ class VtolSubscriber(QDialog):
         self._message_queue = queue.Queue()
 
         self._subscriber_handle = None
-
-        # self._update_timer = QTimer(self)
-        # self._update_timer.setSingleShot(False)
-        # self._update_timer.timeout.connect(self._do_print)
-        # self._update_timer.start(100)
-
-        # self._log_viewer = QPlainTextEdit(self)
-        # self._log_viewer.setReadOnly(True)
-        # self._log_viewer.setLineWrapMode(QPlainTextEdit.NoWrap)
-        # self._log_viewer.setFont(get_monospace_font())
-        # self._log_viewer.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
-        # try:
-        #     self._log_viewer.setPlaceholderText('Received messages will be printed here in YAML format')
-        # except AttributeError:      # Old PyQt
-        #     pass
-
-        # self._num_rows_spinbox = QSpinBox(self)
-        # self._num_rows_spinbox.setToolTip('Number of rows to display; large number will impair performance')
-        # self._num_rows_spinbox.valueChanged.connect(
-        #     lambda: self._log_viewer.setMaximumBlockCount(self._num_rows_spinbox.value()))
-        # self._num_rows_spinbox.setMinimum(1)
-        # self._num_rows_spinbox.setMaximum(1000000)
-        # self._num_rows_spinbox.setValue(100)
-
         self._num_errors = 0
-        # self._num_messages_total = 0
-        # self._num_messages_past_filter = 0
-
-        # self._msgs_per_sec_estimator = RateEstimator()
-
-        # self._num_messages_total_label = QuantityDisplay(self, 'Total', 'msgs')
-        # self._num_messages_past_filter_label = QuantityDisplay(self, 'Accepted', 'msgs')
-        # self._msgs_per_sec_label = QuantityDisplay(self, 'Accepting', 'msg/sec')
-
-        # self._type_selector = CommitableComboBoxWithHistory(self)
-        # self._type_selector.setToolTip('Name of the message type to subscribe to')
-        # self._type_selector.setInsertPolicy(QComboBox.NoInsert)
-        # completer = QCompleter(self._type_selector)
-        # completer.setCaseSensitivity(Qt.CaseSensitive)
-        # completer.setModel(self._type_selector.model())
-        # self._type_selector.setCompleter(completer)
-        # self._type_selector.on_commit = self._do_start
-        # self._type_selector.setFont(get_monospace_font())
-        # self._type_selector.setSizeAdjustPolicy(QComboBox.AdjustToContents)
-        # self._type_selector.setFocus(Qt.OtherFocusReason)
-
-        # self._active_filter = None
-        # self._filter_bar = FilterBar(self)
-        # self._filter_bar.on_filter = self._install_filter
-
-        # self._start_stop_button = make_icon_button('video-camera', 'Begin subscription', self, checkable=True,
-        #                                            on_clicked=self._toggle_start_stop)
-        # self._pause_button = make_icon_button('pause', 'Pause updates, non-displayed messages will be queued in memory',
-        #                                       self, checkable=True)
-        # self._clear_button = make_icon_button('trash-o', 'Clear output and reset stat counters', self,
-        #                                       on_clicked=self._do_clear)
-
-        # self._show_all_message_types = make_icon_button('puzzle-piece',
-        #                                                 'Show all known message types, not only those that are '
-        #                                                 'currently being exchanged over the bus',
-        #                                                 self, checkable=True, on_clicked=self._update_data_type_list)
-
-        # layout = QVBoxLayout(self)
-
-        # controls_layout = QHBoxLayout(self)
-        # controls_layout.addWidget(self._start_stop_button)
-        # controls_layout.addWidget(self._pause_button)
-        # controls_layout.addWidget(self._clear_button)
-        # controls_layout.addWidget(self._filter_bar.add_filter_button)
-        # controls_layout.addWidget(self._show_all_message_types)
-        # controls_layout.addWidget(self._type_selector, 1)
-        # controls_layout.addWidget(self._num_rows_spinbox)
-
-        # layout.addLayout(controls_layout)
-        # layout.addWidget(self._filter_bar)
-        # layout.addWidget(self._log_viewer, 1)
-
-        # stats_layout = QHBoxLayout(self)
-        # stats_layout.addWidget(self._num_messages_total_label)
-        # stats_layout.addWidget(self._num_messages_past_filter_label)
-        # stats_layout.addWidget(self._msgs_per_sec_label)
-        # layout.addLayout(stats_layout)
-
-        # self.setLayout(layout)
 
         # Initial updates
         self._update_data_type_list(True)
         self._update_data_type_list(False)
 
-        self._do_start('uavcan.equipment.power.CircuitStatus')
-
-    # def _install_filter(self, f):
-    #     self._active_filter = f
-
-    # def _apply_filter(self, yaml_message):
-    #     """This function will throw if the filter expression is malformed!"""
-    #     if self._active_filter is None:
-    #         return True
-    #     return self._active_filter.match(yaml_message)
+        self._do_start(type)
 
     def _on_message(self, e):
         # Global statistics
@@ -199,15 +106,6 @@ class VtolSubscriber(QDialog):
             self._message_queue.put_nowait(text)
         except queue.Full:
             pass
-
-    # def _toggle_start_stop(self):
-    #     try:
-    #         if self._subscriber_handle is None:
-    #             self._do_start()
-    #         else:
-    #             self._do_stop()
-    #     finally:
-    #         self._start_stop_button.setChecked(self._subscriber_handle is not None)
 
     def _do_stop(self):
         if self._subscriber_handle is not None:

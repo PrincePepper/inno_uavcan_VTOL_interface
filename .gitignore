@@ -1,6 +1,5 @@
 .idea
 venv
-interface/airframe.json
 interface/thirdparty
 interface/thirdparty/pyqtgraph
 interface/widgets/bus_monitor/thirdparty

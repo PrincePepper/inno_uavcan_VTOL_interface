@@ -48,7 +48,6 @@ class PercentSlider(QWidget):
         from screeninfo import get_monitors
         for m in get_monitors():
             self.setMinimumHeight(int(m.height * 0.35))
-            print(str(m))
 
     def zero(self):
         self._slider.setValue(-1)
@@ -143,7 +142,6 @@ class ControlWidget(QGroupBox):
                     raw_value = sl.get_value() / 8191
                     value = (-self.CMD_MIN if raw_value < 0 else self.CMD_MAX) * raw_value
                     msg.cmd.append(int(value))
-                print()
                 self._node.broadcast(msg)
                 self._msg_viewer.setPlainText(uavcan.to_yaml(msg))
             else:

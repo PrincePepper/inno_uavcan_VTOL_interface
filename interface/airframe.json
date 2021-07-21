@@ -1,0 +1,54 @@
+{
+  "pwm": {
+    "id": 15,
+    "Motor": "uavcan.equipment.power.CircuitStatus"
+  },
+  "motor2": {
+    "id": 51,
+    "Data": "uavcan.equipment.power.CircuitStatus"
+  },
+  "motor3": {
+    "id": 14,
+    "Data": "uavcan.equipment.power.CircuitStatus"
+  },
+  "motor4": {
+    "id": 53,
+    "Data": "0"
+  },
+  "aileron1": {
+    "id": 60,
+    "Data": "0"
+  },
+  "aileron2": {
+    "id": 15,
+    "Data": "0"
+  },
+  "rudder1": {
+    "id": 15,
+    "Data": "0"
+  },
+  "rudder2": {
+    "id": -1,
+    "Data": "0"
+  },
+  "elevator": {
+    "id": -1,
+    "Data": "0"
+  },
+  "gps": {
+    "id": -1,
+    "Data": "0"
+  },
+  "airspeed": {
+    "id": 15,
+    "Data": "0"
+  },
+  "pressure": {
+    "id": -1,
+    "Data": "0"
+  },
+  "engine": {
+    "id": -1,
+    "Data": "0"
+  }
+}
