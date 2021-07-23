@@ -1,54 +1,51 @@
 {
-  "pwm": {
-    "id": 15,
-    "Motor": "uavcan.equipment.power.CircuitStatus"
+  "motor_1": {
+    "id": -1
   },
-  "motor2": {
-    "id": 51,
-    "Data": "uavcan.equipment.power.CircuitStatus"
-  },
-  "motor3": {
-    "id": 14,
-    "Data": "uavcan.equipment.power.CircuitStatus"
-  },
-  "motor4": {
-    "id": 53,
-    "Data": "0"
-  },
-  "aileron1": {
-    "id": 60,
-    "Data": "0"
-  },
-  "aileron2": {
-    "id": 15,
-    "Data": "0"
-  },
-  "rudder1": {
-    "id": 15,
-    "Data": "0"
-  },
-  "rudder2": {
+  "motor_2": {
     "id": -1,
-    "Data": "0"
+    "data": "uavcan.equipment.power.CircuitStatus voltage"
+  },
+  "motor_3": {
+    "id": -1
+  },
+  "motor_4": {
+    "id": -1,
+    "data_x": "uavcan.equipment.ahrs.MagneticFieldStrength magnetic_field_ga[0]",
+    "data_y": "uavcan.equipment.ahrs.MagneticFieldStrength magnetic_field_ga[1]",
+    "data_z": "uavcan.equipment.ahrs.MagneticFieldStrength magnetic_field_ga[2]"
+  },
+  "aileron_1": {
+    "id": -1
+  },
+  "aileron_2": {
+    "id": -1
+  },
+  "rudder_1": {
+    "id": -1
+  },
+  "rudder_2": {
+    "id": -1
   },
   "elevator": {
-    "id": -1,
-    "Data": "0"
+    "id": -1
   },
   "gps": {
-    "id": -1,
-    "Data": "0"
+    "id": -1
   },
   "airspeed": {
-    "id": 15,
-    "Data": "0"
+    "id": -1
   },
   "pressure": {
-    "id": -1,
-    "Data": "0"
+    "id": -1
   },
   "engine": {
-    "id": -1,
-    "Data": "0"
+    "id": -1
+  },
+  "_control_widget": {
+    "aileron_1": -1,
+    "aileron_2": -1,
+    "rudder_1": -1,
+    "rudder_2": 1000
   }
 }

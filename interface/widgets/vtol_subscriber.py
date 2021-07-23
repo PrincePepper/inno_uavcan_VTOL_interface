@@ -175,13 +175,13 @@ class VtolSubscriber(QDialog):
         # self._log_viewer.setUpdatesEnabled(True)
 
     def _update_data_type_list(self, a=False):
-        logger.info('Updating data type list')
+        # logger.info('Updating data type list')
         try:
             if a:
                 items = self._active_data_type_detector.get_names_of_all_message_types_with_data_type_id()
             else:
                 items = self._active_data_type_detector.get_names_of_active_messages()
-            print("items:", items)
+            # print("items:", items)
         except Exception as e:
             print(e)
         # self._type_selector.clear()

@@ -2,13 +2,13 @@ from logging import getLogger
 
 import uavcan
 from PyQt5.QtCore import QTimer, Qt
-from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget, QLabel, QSlider, QSpinBox, QDoubleSpinBox, \
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget, QLabel, QSlider, QSpinBox, \
+    QDoubleSpinBox, \
     QPlainTextEdit, QGroupBox, QPushButton
 
 from interface.panels.functions import make_icon_button, get_monospace_font
 
 PANEL_NAME = 'Vtol Panel'
-
 
 logger = getLogger(__name__)
 
@@ -55,23 +55,36 @@ class PercentSlider(QWidget):
     def get_value(self):
         return self._slider.value()
 
+    def set_value(self, val):
+        self._slider.setValue(val)
+
 
 class ControlWidget(QGroupBox):
     DEFAULT_INTERVAL = 0.1
 
-    CMD_BIT_LENGTH = uavcan.get_uavcan_data_type(uavcan.equipment.esc.RawCommand().cmd).value_type.bitlen
+    CMD_BIT_LENGTH = uavcan.get_uavcan_data_type(
+        uavcan.equipment.esc.RawCommand().cmd).value_type.bitlen
     CMD_MAX = 2 ** (CMD_BIT_LENGTH - 1) - 1
     CMD_MIN = -(2 ** (CMD_BIT_LENGTH - 1))
 
-    def __init__(self, parent, node, save_file_func, restart_func):
+    def __init__(self, parent, node, AIRFRAME, save_file_func, restart_func):
         super(ControlWidget, self).__init__(parent)
         self.setAttribute(Qt.WA_DeleteOnClose)  # This is required to stop background timers!
 
         self._node = node
+        self.save_file_func = save_file_func
+        TEMP_AIRFRAME = AIRFRAME["_control_widget"]
 
         self._sliders = [PercentSlider(self, 8191) for _ in range(4)]
         self._sliders += [PercentSlider(self, 2000) for _ in range(4)]
 
+        try:
+            self._sliders[4].set_value(int(TEMP_AIRFRAME['aileron_1']))
+            self._sliders[5].set_value(int(TEMP_AIRFRAME['aileron_2']))
+            self._sliders[6].set_value(int(TEMP_AIRFRAME['rudder_1']))
+            self._sliders[7].set_value(int(TEMP_AIRFRAME['rudder_2']))
+        except:
+            logger.error("Your structure json kill program")
         self._bcast_interval = QDoubleSpinBox(self)
         self._bcast_interval.setMinimum(0.01)
         self._bcast_interval.setMaximum(1.0)
@@ -101,7 +114,7 @@ class ControlWidget(QGroupBox):
 
         self._save_button = QPushButton('Save airframe', self)
         self._save_button.setFocusPolicy(Qt.NoFocus)
-        self._save_button.clicked.connect(save_file_func)
+        self._save_button.clicked.connect(self.create_dist_to_save_file_func)
 
         self._restart_button = QPushButton('Restart all', self)
         self._restart_button.setFocusPolicy(Qt.NoFocus)
@@ -161,3 +174,10 @@ class ControlWidget(QGroupBox):
         global _singleton
         _singleton = None
         super(ControlWidget, self).closeEvent(event)
+
+    def create_dist_to_save_file_func(self):
+        temp_dist = {"aileron_1": self._sliders[4].get_value(),
+                     "aileron_2": self._sliders[5].get_value(),
+                     "rudder_1": self._sliders[6].get_value(),
+                     "rudder_2": self._sliders[7].get_value()}
+        self.save_file_func(temp_dist)

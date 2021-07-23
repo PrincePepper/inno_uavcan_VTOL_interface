@@ -594,7 +594,6 @@ class MainWindow(QMainWindow):
 def main():
     logger.info('Starting the application')
     app = QApplication(sys.argv)
-    # app.setStyle('Fusion')
 
     while True:
         # Asking the user to specify which interface to work with
