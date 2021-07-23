@@ -2,13 +2,22 @@
 
 ## Place and period of internship:
 
-NTI Center for Component «Technologies robotics and mechatronics», unmanned technology laboratory. The Unmanned Technology Laboratory develops specialized robotic systems designed for specific tasks in a variety of applications. The field of special robotics includes both the sphere of interaction with a person and the replacement of a person in hazardous and harmful operations, such as work on nuclear reactors or in the immediate vicinity of hazardous substances and emissions, work on oil production plants, maintenance of infrastructure in difficult natural conditions, work under extreme weather conditions and strong magnetic fields.
+NTI Center for Component «Technologies robotics and mechatronics», unmanned technology laboratory.
+The Unmanned Technology Laboratory develops specialized robotic systems designed for specific tasks
+in a variety of applications. The field of special robotics includes both the sphere of interaction
+with a person and the replacement of a person in hazardous and harmful operations, such as work on
+nuclear reactors or in the immediate vicinity of hazardous substances and emissions, work on oil
+production plants, maintenance of infrastructure in difficult natural conditions, work under extreme
+weather conditions and strong magnetic fields.
 
 ## Technical task
 
 ## A little bit of theory
 
-**VTOL** (Vertical Take-Off and Landing) — aircraft is one that can hover, take off, and land vertically. This classification can include a variety of types of aircraft including fixed-wing aircraft as well as helicopters and other aircraft with powered rotors, such as cyclogyros/cyclocopters and tiltrotors
+**VTOL** (Vertical Take-Off and Landing) — aircraft is one that can hover, take off, and land
+vertically. This classification can include a variety of types of aircraft including fixed-wing
+aircraft as well as helicopters and other aircraft with powered rotors, such as
+cyclogyros/cyclocopters and tiltrotors
 
 ***the project was released for our internship in Innopolis***
 
