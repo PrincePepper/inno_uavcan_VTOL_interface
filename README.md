@@ -10,6 +10,18 @@ NTI Center for Component «Technologies robotics and mechatronics», unmanned te
 
 **VTOL** (Vertical Take-Off and Landing) — aircraft is one that can hover, take off, and land vertically. This classification can include a variety of types of aircraft including fixed-wing aircraft as well as helicopters and other aircraft with powered rotors, such as cyclogyros/cyclocopters and tiltrotors
 
+## Revisions
+
+### v2.0
+
+-
+
+### v1.0
+
+-
+
+The initial release.
+
 ***the project was released for our internship in Innopolis***
 
 ## Responsible for the project
