@@ -28,3 +28,10 @@ The initial release.
 
 - [Semen Sereda](https://github.com/PrincePepper)
 - [Alexander Terletsky](https://github.com/GinormousSalmon)
+
+## Our teachers - mentors
+
+- [Kostya😎](https://github.com/sainquake)
+- [Dima P.👨‍💻](https://github.com/PonomarevDA)
+- [Ayrat🧑‍🔬](https://github.com/beljjay)
+- [Dima D.👨‍✈️](https://github.com/GigaFlopsis)
