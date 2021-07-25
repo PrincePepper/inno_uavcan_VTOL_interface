@@ -19,9 +19,28 @@ vertically. This classification can include a variety of types of aircraft inclu
 aircraft as well as helicopters and other aircraft with powered rotors, such as
 cyclogyros/cyclocopters and tiltrotors
 
+## Revisions
+
+### v2.0
+
+-
+
+### v1.0
+
+-
+
+The initial release.
+
 ***the project was released for our internship in Innopolis***
 
 ## Responsible for the project
 
 - [Semen Sereda](https://github.com/PrincePepper)
 - [Alexander Terletsky](https://github.com/GinormousSalmon)
+
+## Our teachers - mentors
+
+- [Kostya😎](https://github.com/sainquake)
+- [Dima P.👨‍💻](https://github.com/PonomarevDA)
+- [Ayrat🧑‍🔬](https://github.com/beljjay)
+- [Dima D.👨‍✈️](https://github.com/GigaFlopsis)
