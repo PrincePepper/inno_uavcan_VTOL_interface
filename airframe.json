@@ -1,0 +1,101 @@
+{
+  "motor_front_left": {
+    "id": -1,
+    "item": 1,
+    "name": "FL_motor",
+    "turnovers": "",
+    "voltage": "uavcan.equipment.power.CircuitStatus voltage"
+  },
+  "motor_front_right": {
+    "id": -1,
+    "item": 2,
+    "name": "FR_motor",
+    "turnovers": ""
+  },
+  "motor_back_left": {
+    "id": -1,
+    "item": 3,
+    "name": "BL_motor",
+    "turnovers": ""
+  },
+  "motor_back_right": {
+    "id": -1,
+    "item": 4,
+    "name": "BR_motor",
+    "turnovers": ""
+  },
+  "aileron_left": {
+    "id": -1,
+    "item": 5,
+    "name": "L_aileron",
+    "min": "",
+    "max": "",
+    "def": ""
+  },
+  "aileron_right": {
+    "id": -1,
+    "item": 6,
+    "name": "R_aileron",
+    "min": "",
+    "max": "",
+    "def": ""
+  },
+  "rudder_left": {
+    "id": -1,
+    "item": 7,
+    "name": "L_rudder",
+    "min": "",
+    "max": "",
+    "def": ""
+  },
+  "rudder_right": {
+    "id": -1,
+    "item": 8,
+    "name": "R_rudder",
+    "min": "",
+    "max": "",
+    "def": ""
+  },
+  "magnetometer": {
+    "id": -1,
+    "item": 11,
+    "name": "Magnetometer",
+    "data_x": "uavcan.equipment.ahrs.MagneticFieldStrength magnetic_field_ga[0]",
+    "data_y": "uavcan.equipment.ahrs.MagneticFieldStrength magnetic_field_ga[1]",
+    "data_z": "uavcan.equipment.ahrs.MagneticFieldStrength magnetic_field_ga[2]"
+  },
+  "gps": {
+    "id": 51,
+    "item": 12,
+    "name": "gps",
+    "satellites": "",
+    "frequence": "",
+    "accuracy": ""
+  },
+  "airspeed": {
+    "id": -1,
+    "item": 13,
+    "name": "airspeed"
+  },
+  "pressure": {
+    "id": -1,
+    "item": 14,
+    "name": "pressure"
+  },
+  "engine": {
+    "id": -1,
+    "item": 15,
+    "name": "engine",
+    "fuel level": ""
+  },
+  "_control_widget": {
+    "motor_front_left": -1,
+    "motor_front_right": -1,
+    "motor_back_left": -1,
+    "motor_back_right": -1,
+    "aileron_left": -1,
+    "aileron_right": -1,
+    "rudder_left": -1,
+    "rudder_right": -1
+  }
+}
