@@ -1,3 +1,8 @@
+#
+# This software is distributed under the terms of the MIT License.
+#
+# Author: Semen Sereda and Alexander Terletsky
+#
 import json
 import logging
 
@@ -9,7 +14,7 @@ from PyQt5.QtGui import QPalette, QBrush
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QLabel, QHBoxLayout, QWidget, QSizePolicy, \
     QComboBox, QFileDialog, QMessageBox, QPushButton
 
-from . import request_confirmation, show_error
+from . import request_confirmation, show_error, Bcolors
 from .dynamic_node_id_allocator import DynamicNodeIDAllocatorWidget
 from .file_server import FileServerWidget
 from .node_monitor import NodeMonitorWidget
@@ -19,7 +24,7 @@ from .vtol_subscriber import VtolSubscriber
 
 REQUEST_PRIORITY = 30
 global node_block_properties
-global AIRFRAME
+global AIRFRAME, CONFIG_CONTROL_WIDGET
 global circuit_subscriber  # not all devices transmit current and voltage
 global main_node  # provides access to nodes throughout the file
 
@@ -102,29 +107,86 @@ class NodeBlockProperties:
         self._node_windows[node_id] = w
 
 
+# the class is responsible for checking and stabilizing the fields in the JSON file when it is read
+class JsonFileValidator:
+    def __init__(self, path_file_name: str):
+        self.file_name = path_file_name
+        self.len = 0
+        self.name_node = []
+        self.data_types = []
+        self._open_file()
+        self._test_file()
+
+    # checking for the existence of a file, as well as reading it into a local object
+    def _open_file(self):
+        try:
+            with open(self.file_name, 'r') as f:
+                self.AIRFRAME = json.load(f)
+                self.len = len(self.AIRFRAME)
+                with open("widgets/data_types", 'r') as d:
+                    self.data_types = d.read().split()
+        except FileNotFoundError as e:
+            logger.error("For some reason the file fell: " + str(e))
+
+    # testing the AIRFRAME object to remove errors and warn the user about them
+    def _test_file(self):
+        for i, node in enumerate(self.AIRFRAME.items()):
+            if node[0] != "_control_widget":
+                self.name_node.append(node[0])
+                node[1].setdefault("id", -1)
+                node[1].setdefault("item", -1)
+                node[1].setdefault("name", "def_name")
+
+                popped_value = []
+                for data_node in node[1]:
+                    if data_node != "id" and data_node != "item" and data_node != "name":
+                        if not node[1][data_node] == "":
+                            split_temp_data = node[1][data_node].split()
+                            if not split_temp_data[0] in self.data_types:
+                                logger.info(Bcolors.WARNING +
+                                            "This data type does not exist:" + "«" +
+                                            str(split_temp_data[0]) + "»" +
+                                            Bcolors.ENDC)
+                                popped_value.append(data_node)
+                        else:
+                            popped_value.append(data_node)
+                for delete_item in popped_value:
+                    node[1].pop(delete_item)
+            else:
+                for j in self.name_node[:8]:
+                    if not j in node[1].keys():
+                        node[1].setdefault(str(j), -1)
+
+    # check for the existence of the configuration file otherwise use the default settings
+    def parse_config(self):
+        config_control_widget = self.AIRFRAME.pop('_control_widget')
+        return self.AIRFRAME, config_control_widget
+
+
 class NodeBlock(QDialog):
-    def __init__(self, name: str):
+    def __init__(self, data_nodes, config_control_widget):
         super().__init__()
 
-        self.name = name
+        self.id = data_nodes['id']
+        self.name = data_nodes['name']
+        self.item = data_nodes['item']
+
         self.temp_data_fields = None
 
         global main_node
         self._node = main_node
-
-        global AIRFRAME
 
         # lists for our output
         self.subscriptions = []
         self.to_subscribe = []
         self.to_subscribe_parametr = []
 
-        self.label = QLabel(name, self)
+        self.label = QLabel(self.name, self)
         self.status = QLabel("", self)
         self.combo_box = QComboBox(self)
         self.combo_box.activated[str].connect(self._on_changed)
         # get the name of the fields and what it stores
-        self.fields, self.data = self.parse_fields(AIRFRAME)
+        self.fields, self.data = self.parse_fields(data_nodes)
 
         self.set_subscribe()
 
@@ -138,9 +200,6 @@ class NodeBlock(QDialog):
 
         self.widget = None
 
-        self.id = -1
-        if name in AIRFRAME.keys():
-            self.id = int(AIRFRAME[name]["id"])
         self.combo_box.addItem(str(self.id))
 
         self.voltage_and_current_box = make_hbox(self.voltage_lbl,
@@ -159,14 +218,12 @@ class NodeBlock(QDialog):
         list_data.append(self.combo_box)
         list_fields.append(QLabel('Health:', self))
         list_data.append(QLabel('0', self))
-
-        if self.name in AIRFRAME.keys():
-            self.temp_data_fields = AIRFRAME[self.name]
-            for i in self.temp_data_fields:
-                if i != "id":
-                    list_fields.append(QLabel(str(i), self))
-                    list_data.append(QLabel("0", self))
-                    split_temp_data_fields = self.temp_data_fields[i].split()
+        for i in fields:
+            if i != "id" and i != "item" and i != "name":
+                list_fields.append(QLabel(str(i), self))
+                list_data.append(QLabel("0", self))
+                if not fields[i] == "":
+                    split_temp_data_fields = fields[i].split()
                     self.to_subscribe.append(split_temp_data_fields[0])
                     self.to_subscribe_parametr.append(split_temp_data_fields[1])
 
@@ -255,6 +312,7 @@ class VtolWindow(QDialog):
         main_node = node
         self._node = node
         self.nodes_id = []
+        self.blocks = []
 
         self._node_monitor_widget = NodeMonitorWidget(self, node)
         # self._node_monitor_widget.on_info_window_requested = self._show_node_window
@@ -267,37 +325,29 @@ class VtolWindow(QDialog):
                                                     self._node_monitor_widget,
                                                     self._dynamic_node_id_allocation_widget)
         self.setAttribute(Qt.WA_DeleteOnClose)
+        global AIRFRAME, CONFIG_CONTROL_WIDGET
+        AIRFRAME, CONFIG_CONTROL_WIDGET = JsonFileValidator("../airframe.json").parse_config()
 
-        # check for the existence of the configuration file otherwise use the default settings
-        try:
-            with open('airframe.json', 'r') as f:
-                global AIRFRAME
-                AIRFRAME = json.load(f)
-        except FileNotFoundError:
-            dic = {"motor_1": {"id": -1}, "motor_2": {"id": -1}, "motor_3": {"id": -1},
-                   "motor_4": {"id": -1},
-                   "aileron_1": {"id": -1}, "aileron_2": {"id": -1}, "rudder_1": {"id": -1},
-                   "rudder_2": {"id": -1},
-                   "elevator": {"id": -1}, "gps": {"id": -1}, "airspeed": {"id": -1},
-                   "pressure": {"id": -1},
-                   "engine": {"id": -1}, "_control_widjet": {"eleron": -1}}
-            AIRFRAME = dic
-            with open('airframe.json', 'w') as outfile:
-                json.dump(dic, outfile)
+        for item in AIRFRAME:
+            self.blocks.append(NodeBlock(AIRFRAME[item], CONFIG_CONTROL_WIDGET))
 
-        motor1 = NodeBlock("motor_1")
-        motor2 = NodeBlock("motor_2")
-        motor3 = NodeBlock("motor_3")
-        motor4 = NodeBlock("motor_4")
-        aileron1 = NodeBlock("aileron_1")
-        aileron2 = NodeBlock("aileron_2")
-        rudder1 = NodeBlock("rudder_1")
-        rudder2 = NodeBlock("rudder_2")
-        elevator = NodeBlock("elevator")
-        gps = NodeBlock("gps")
-        airspeed = NodeBlock("airspeed")
-        pressure = NodeBlock("pressure")
-        engine = NodeBlock("engine")
+        #
+        # TODO: убрать затычку ввиде создания нод, также требуется переделка картинки и
+        #  отображения нод, больше не требуется отображения их на картинке
+        #
+        motor1 = self.blocks[0]
+        motor2 = self.blocks[1]
+        motor3 = self.blocks[2]
+        motor4 = self.blocks[3]
+        aileron1 = self.blocks[4]
+        aileron2 = self.blocks[5]
+        rudder1 = self.blocks[6]
+        rudder2 = self.blocks[7]
+        elevator = self.blocks[8]
+        gps = self.blocks[9]
+        airspeed = self.blocks[10]
+        pressure = self.blocks[11]
+        engine = self.blocks[12]
 
         self.box_1 = make_vbox(rudder1.widget, aileron1.widget, stretch_index=[1, 1], s=3)
         self.box_2 = make_vbox(elevator.widget, motor2.widget, stretch_index=[0, 1], s=6)
@@ -308,10 +358,6 @@ class VtolWindow(QDialog):
         self.box_6 = make_vbox(aileron2.widget, pressure.widget, stretch_index=[1, 2, 1], s=3)
         self.box_7 = make_vbox(motor4.widget, stretch_index=[1], s=2)
 
-        self.blocks = [motor1, motor2, motor3, motor4,
-                       aileron1, aileron2, rudder1, rudder2, elevator,
-                       gps, airspeed, pressure, engine]
-
         layout = QHBoxLayout(self)
         listStretch = [18, 6, 4, 1, 2, 0, 2]
         listWidget = [self.box_1, self.box_2, self.box_3, self.box_4, self.box_5, self.box_6,
@@ -321,7 +367,7 @@ class VtolWindow(QDialog):
             layout.addWidget(listWidget[i])
         layout.addStretch(2)
 
-        self._control_widget = ControlWidget(self, node, AIRFRAME, self.save_file,
+        self._control_widget = ControlWidget(self, node, CONFIG_CONTROL_WIDGET, self.save_file,
                                              self._do_restart_all)
         self._control_widget.setAlignment(Qt.AlignRight)
         self._control_widget.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Preferred)
@@ -371,6 +417,9 @@ class VtolWindow(QDialog):
         global circuit_subscriber
         circuit_subscriber = VtolSubscriber(node, "uavcan.equipment.power.CircuitStatus")
 
+    #
+    # TODO: требуется исправить сохранения json файла из за нового формата
+    #
     def save_file(self, temp_dist):
         name = QFileDialog.getSaveFileName(self, 'Save File', "airframe.json")
         AIRFRAME2 = {}

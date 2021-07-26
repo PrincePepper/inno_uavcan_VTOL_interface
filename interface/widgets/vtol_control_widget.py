@@ -33,7 +33,8 @@ class PercentSlider(QWidget):
         self._spinbox.setValue(-1)
         self._spinbox.valueChanged.connect(lambda: self._slider.setValue(self._spinbox.value()))
 
-        self._zero_button = make_icon_button('hand-stop-o', 'Zero setpoint', self, on_clicked=self.zero)
+        self._zero_button = make_icon_button('hand-stop-o', 'Zero setpoint', self,
+                                             on_clicked=self.zero)
 
         layout = QVBoxLayout(self)
         sub_layout = QHBoxLayout(self)
@@ -67,22 +68,25 @@ class ControlWidget(QGroupBox):
     CMD_MAX = 2 ** (CMD_BIT_LENGTH - 1) - 1
     CMD_MIN = -(2 ** (CMD_BIT_LENGTH - 1))
 
-    def __init__(self, parent, node, AIRFRAME, save_file_func, restart_func):
+    def __init__(self, parent, node, CONFIG_CONTROL_WIDGET, save_file_func, restart_func):
         super(ControlWidget, self).__init__(parent)
         self.setAttribute(Qt.WA_DeleteOnClose)  # This is required to stop background timers!
 
         self._node = node
         self.save_file_func = save_file_func
-        TEMP_AIRFRAME = AIRFRAME["_control_widget"]
+        TEMP_AIRFRAME = CONFIG_CONTROL_WIDGET
 
         self._sliders = [PercentSlider(self, 8191) for _ in range(4)]
         self._sliders += [PercentSlider(self, 2000) for _ in range(4)]
 
+        #
+        # TODO: требуется привязать значения из json(TEMP_AIRFRAME), а также их привязка к слайдерам
+        #
         try:
-            self._sliders[4].set_value(int(TEMP_AIRFRAME['aileron_1']))
-            self._sliders[5].set_value(int(TEMP_AIRFRAME['aileron_2']))
-            self._sliders[6].set_value(int(TEMP_AIRFRAME['rudder_1']))
-            self._sliders[7].set_value(int(TEMP_AIRFRAME['rudder_2']))
+            self._sliders[4].set_value(int(TEMP_AIRFRAME['aileron_left']))
+            self._sliders[5].set_value(int(TEMP_AIRFRAME['aileron_right']))
+            self._sliders[6].set_value(int(TEMP_AIRFRAME['rudder_left']))
+            self._sliders[7].set_value(int(TEMP_AIRFRAME['rudder_right']))
         except:
             logger.error("Your structure json kill program")
         self._bcast_interval = QDoubleSpinBox(self)
@@ -96,7 +100,8 @@ class ControlWidget(QGroupBox):
         self._stop_all = make_icon_button('hand-stop-o', 'Zero all channels', self, text='Stop All',
                                           on_clicked=self._do_stop_all)
 
-        self._pause = make_icon_button('pause', 'Pause publishing', self, checkable=True, text='Pause')
+        self._pause = make_icon_button('pause', 'Pause publishing', self, checkable=True,
+                                       text='Pause')
 
         self._msg_viewer = QPlainTextEdit(self)
         self._msg_viewer.setReadOnly(True)

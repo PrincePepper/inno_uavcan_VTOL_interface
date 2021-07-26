@@ -35,10 +35,12 @@ else:
 logging.basicConfig(stream=sys.stderr, level=logging_level,
                     format='%(asctime)s %(levelname)s %(name)s %(message)s')
 
-log_file = tempfile.NamedTemporaryFile(mode='w', prefix='uavcan_gui_tool-', suffix='.log', delete=False)
+log_file = tempfile.NamedTemporaryFile(mode='w', prefix='uavcan_gui_tool-', suffix='.log',
+                                       delete=False)
 file_handler = logging.FileHandler(log_file.name)
 file_handler.setLevel(logging_level)
-file_handler.setFormatter(logging.Formatter('%(asctime)s [%(process)d] %(levelname)-8s %(name)-25s %(message)s'))
+file_handler.setFormatter(
+    logging.Formatter('%(asctime)s [%(process)d] %(levelname)-8s %(name)-25s %(message)s'))
 logging.root.addHandler(file_handler)
 
 logger = logging.getLogger(__name__.replace('__', ''))
@@ -47,7 +49,8 @@ logger.info('Spawned')
 #
 # Applying Windows-specific hacks
 #
-os.environ['PATH'] = os.environ['PATH'] + ';' + os.path.dirname(sys.executable)  # Otherwise it fails to load on Win 10
+os.environ['PATH'] = os.environ['PATH'] + ';' + os.path.dirname(
+    sys.executable)  # Otherwise it fails to load on Win 10
 
 #
 # Configuring multiprocessing.
@@ -62,7 +65,8 @@ if multiprocessing.get_start_method(True) != 'spawn':
 #
 import uavcan
 
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QSplitter, QAction, QHBoxLayout
+from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QSplitter, QAction, \
+    QHBoxLayout
 from PyQt5.QtGui import QKeySequence, QDesktopServices
 from PyQt5.QtCore import QTimer, Qt, QUrl
 
@@ -177,10 +181,13 @@ class MainWindow(QMainWindow):
         new_plotter_action.setStatusTip('Open new graph plotter window')
         new_plotter_action.triggered.connect(self._plotter_manager.spawn_plotter)
 
-        show_can_adapter_controls_action = QAction(get_icon('plug'), 'CAN &Adapter Control Panel', self)
+        show_can_adapter_controls_action = QAction(get_icon('plug'), 'CAN &Adapter Control Panel',
+                                                   self)
         show_can_adapter_controls_action.setShortcut(QKeySequence('Ctrl+Shift+A'))
-        show_can_adapter_controls_action.setStatusTip('Open CAN adapter control panel (if supported by the adapter)')
-        show_can_adapter_controls_action.triggered.connect(self._try_spawn_can_adapter_control_panel)
+        show_can_adapter_controls_action.setStatusTip(
+            'Open CAN adapter control panel (if supported by the adapter)')
+        show_can_adapter_controls_action.triggered.connect(
+            self._try_spawn_can_adapter_control_panel)
 
         tools_menu = self.menuBar().addMenu('&Tools')
         tools_menu.addAction(show_bus_monitor_action)
@@ -208,9 +215,11 @@ class MainWindow(QMainWindow):
         # Help menu
         #
         uavcan_website_action = QAction(get_icon('globe'), 'Open UAVCAN &Website', self)
-        uavcan_website_action.triggered.connect(lambda: QDesktopServices.openUrl(QUrl('http://uavcan.org')))
+        uavcan_website_action.triggered.connect(
+            lambda: QDesktopServices.openUrl(QUrl('http://uavcan.org')))
 
-        show_log_directory_action = QAction(get_icon('pencil-square-o'), 'Open &Log Directory', self)
+        show_log_directory_action = QAction(get_icon('pencil-square-o'), 'Open &Log Directory',
+                                            self)
         show_log_directory_action.triggered.connect(
             lambda: QDesktopServices.openUrl(QUrl.fromLocalFile(os.path.dirname(log_file.name))))
 
@@ -252,19 +261,22 @@ class MainWindow(QMainWindow):
             return spl
 
         self.setCentralWidget(make_splitter(Qt.Horizontal,
-                                            make_vbox(make_hbox(self._local_node_widget, self._vtol_button_widget),
+                                            make_vbox(make_hbox(self._local_node_widget,
+                                                                self._vtol_button_widget),
                                                       self._node_monitor_widget,
                                                       self._file_server_widget),
                                             make_splitter(Qt.Vertical,
                                                           make_vbox(self._log_message_widget),
-                                                          make_vbox(self._dynamic_node_id_allocation_widget,
-                                                                    stretch_index=1))))
+                                                          make_vbox(
+                                                              self._dynamic_node_id_allocation_widget,
+                                                              stretch_index=1))))
 
     def _try_spawn_can_adapter_control_panel(self):
         try:
             spawn_can_adapter_control_panel(self, self._node, self._iface_name)
         except Exception as ex:
-            show_error('CAN Adapter Control Panel error', 'Could not spawn CAN Adapter Control Panel', ex, self)
+            show_error('CAN Adapter Control Panel error',
+                       'Could not spawn CAN Adapter Control Panel', ex, self)
 
     def _make_console_context(self):
         default_transfer_priority = 30
@@ -303,7 +315,8 @@ class MainWindow(QMainWindow):
             throw_if_anonymous()
             priority = priority or default_transfer_priority
             callback = callback or print_yaml
-            return self._node.request(payload, server_node_id, callback, priority=priority, timeout=timeout)
+            return self._node.request(payload, server_node_id, callback, priority=priority,
+                                      timeout=timeout)
 
         def serve(uavcan_type, callback):
             """
@@ -395,7 +408,8 @@ class MainWindow(QMainWindow):
                         timer_handle.remove()
                     else:
                         num_broadcasted += 1
-                        if (count is not None and num_broadcasted >= count) or (time.monotonic() >= deadline):
+                        if (count is not None and num_broadcasted >= count) or (
+                                time.monotonic() >= deadline):
                             logger.info('Background publisher for %r has stopped',
                                         uavcan.get_uavcan_data_type(payload).full_name)
                             timer_handle.remove()
@@ -419,8 +433,9 @@ class MainWindow(QMainWindow):
             Returns:    Handler with method .remove(). Calling this method will terminate the subscription.
             """
             if (count is None and duration is None) and on_end is not None:
-                raise RuntimeError('on_end is set, but it will never be called because the subscription has '
-                                   'no termination condition')
+                raise RuntimeError(
+                    'on_end is set, but it will never be called because the subscription has '
+                    'no termination condition')
 
             if uavcan_type.kind != uavcan_type.KIND_MESSAGE:
                 raise RuntimeError('Expected a message type, got a different kind')
@@ -433,8 +448,9 @@ class MainWindow(QMainWindow):
                 try:
                     callback(e)
                 except Exception:
-                    logger.error('Unhandled exception in subscription callback for %r, subscription terminated',
-                                 uavcan_type, exc_info=True)
+                    logger.error(
+                        'Unhandled exception in subscription callback for %r, subscription terminated',
+                        uavcan_type, exc_info=True)
                     stop_now = True
                 else:
                     if count is not None:
@@ -555,7 +571,8 @@ class MainWindow(QMainWindow):
             del self._node_windows[node_id]
 
         w = NodePropertiesWindow(self, self._node, node_id, self._file_server_widget,
-                                 self._node_monitor_widget.monitor, self._dynamic_node_id_allocation_widget)
+                                 self._node_monitor_widget.monitor,
+                                 self._dynamic_node_id_allocation_widget)
         w.show()
         self._node_windows[node_id] = w
 
@@ -571,7 +588,8 @@ class MainWindow(QMainWindow):
         except Exception as ex:
             self._successive_node_errors += 1
 
-            msg = 'Node spin error [%d of %d]: %r' % (self._successive_node_errors, self.MAX_SUCCESSIVE_NODE_ERRORS, ex)
+            msg = 'Node spin error [%d of %d]: %r' % (
+                self._successive_node_errors, self.MAX_SUCCESSIVE_NODE_ERRORS, ex)
 
             if self._successive_node_errors >= self.MAX_SUCCESSIVE_NODE_ERRORS:
                 show_error('Node failure',
@@ -617,7 +635,8 @@ def main():
                 # setup an environment variable for sub-processes to know where to load custom DSDL from
                 os.environ['UAVCAN_CUSTOM_DSDL_PATH'] = dsdl_directory
         except Exception as ex:
-            logger.exception('No DSDL loaded from %r, only standard messages will be supported', dsdl_directory)
+            logger.exception('No DSDL loaded from %r, only standard messages will be supported',
+                             dsdl_directory)
             show_error('DSDL not loaded',
                        'Could not load DSDL definitions from %r.\n'
                        'The application will continue to work without the custom DSDL definitions.' % dsdl_directory,

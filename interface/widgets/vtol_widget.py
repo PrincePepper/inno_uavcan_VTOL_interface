@@ -5,11 +5,12 @@
 #
 # Author: Pavel Kirienko <pavel.kirienko@zubax.com>
 #
+import os
+from logging import getLogger
 
 import uavcan
-from PyQt5.QtWidgets import QGroupBox, QPushButton, QHBoxLayout
 from PyQt5.QtCore import QTimer, Qt
-from logging import getLogger
+from PyQt5.QtWidgets import QGroupBox, QPushButton, QHBoxLayout
 
 logger = getLogger(__name__)
 
@@ -20,8 +21,6 @@ class VtolWidget(QGroupBox):
 
         self.parent = parent
         self._node = node
-        # self._node_id_collector = uavcan.app.message_collector.MessageCollector(
-        #     self._node, uavcan.protocol.NodeStatus, timeout=uavcan.protocol.NodeStatus().OFFLINE_TIMEOUT_MS * 1e-3)
 
         self.setTitle('Vtol monitor')
 
@@ -34,24 +33,17 @@ class VtolWidget(QGroupBox):
         self._update_timer.timeout.connect(self._update_button)
         self._update_timer.start(500)
 
-        # self._nodes_timer = QTimer(self)
-        # self._nodes_timer.setSingleShot(False)
-        # self._nodes_timer.timeout.connect(self._nodes_print)
-
         self._update_button()
 
         layout = QHBoxLayout(self)
         layout.addWidget(self._vtol_open)
-        layout.addStretch(1)
+        layout.addStretch()
 
         self.setLayout(layout)
 
         self._monitor = uavcan.app.node_monitor.NodeMonitor(node)
 
         self.window = lambda *_: None
-
-    # def close(self):
-    #     self._node_id_collector.close()
 
     def _update_button(self):
         # Syncing the GUI state
@@ -63,9 +55,7 @@ class VtolWidget(QGroupBox):
 
     def _on_vtol_clicked(self):
         print("clicked", self)
-        try:
+        if os.path.exists('../airframe.json'):
             self.window()
-        except Exception as e:
-            logger.info(e)
-        # self._nodes_timer.start(1000)
-
+        else:
+            logger.error("json file not exist. Please create him, otherwise i won't work!")

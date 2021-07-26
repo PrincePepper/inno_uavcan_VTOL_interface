@@ -16,7 +16,8 @@ import pkg_resources
 import qtawesome
 from PyQt5.QtCore import Qt, QTimer, QStringListModel
 from PyQt5.QtGui import QColor, QKeySequence, QFont, QFontInfo, QIcon
-from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem, QAbstractItemView, QHeaderView, QApplication, QWidget, \
+from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem, QAbstractItemView, QHeaderView, \
+    QApplication, QWidget, \
     QComboBox, QCompleter, QPushButton, QHBoxLayout, QVBoxLayout, QMessageBox
 
 logger = getLogger(__name__)
@@ -36,7 +37,7 @@ def show_error(title, text, informative_text, parent=None, blocking=False):
     if blocking:
         mbox.exec()
     else:
-        mbox.show()     # Not exec() because we don't want it to block!
+        mbox.show()  # Not exec() because we don't want it to block!
 
 
 # FIXME TODO: MAKE SURE THIS DOESN'T BLOCK THE MAIN EVENT LOOP IN ALL SCENARIOS
@@ -77,7 +78,8 @@ class BasicTable(QTableWidget):
             self.setAlternatingRowColors(True)
         else:
             self.verticalHeader().setSectionResizeMode(QHeaderView.Fixed)
-            self.verticalHeader().setDefaultSectionSize(20)             # TODO: I feel this is not very portable
+            self.verticalHeader().setDefaultSectionSize(
+                20)  # TODO: I feel this is not very portable
         self.horizontalHeader().setSectionResizeMode(QHeaderView.Fixed)
 
         for idx, col in enumerate(self.columns):
@@ -205,7 +207,7 @@ class CommitableComboBoxWithHistory(QComboBox):
         text = self.currentText()
         idx = self.findText(text)
         if idx >= 0:
-            self.removeItem(idx)     # Moving to top, unique
+            self.removeItem(idx)  # Moving to top, unique
         self.insertItem(0, text)
         self.setCurrentText(text)
 
@@ -280,7 +282,8 @@ class SearchBar(QWidget):
 
         self.show_search_bar_button = \
             make_icon_button('search', 'Show search bar', self, checkable=True,
-                             on_clicked=lambda: self.setVisible(self.show_search_bar_button.isChecked()))
+                             on_clicked=lambda: self.setVisible(
+                                 self.show_search_bar_button.isChecked()))
 
         self._bar = SearchBarComboBox(self)
         self._bar.on_commit = lambda: self._do_search(self._default_search_direction)
@@ -288,7 +291,8 @@ class SearchBar(QWidget):
         self._use_regex = make_icon_button('code', 'Search using regular expressions', self,
                                            checkable=True)
 
-        self._case_sensitive = make_icon_button('text-height', 'Search query is case sensitive', self,
+        self._case_sensitive = make_icon_button('text-height', 'Search query is case sensitive',
+                                                self,
                                                 checkable=True)
 
         self._button_search_down = make_icon_button('caret-down', 'Search down', self,
@@ -355,17 +359,22 @@ class FilterBar(QWidget):
             self._bar.on_commit = self._on_commit
             self._bar.setFocus(Qt.OtherFocusReason)
 
-            self._apply_button = make_icon_button('check', 'Apply this filter expression [Enter]', self,
+            self._apply_button = make_icon_button('check', 'Apply this filter expression [Enter]',
+                                                  self,
                                                   on_clicked=self._on_commit)
 
             self._inverse_button = make_icon_button('random', 'Negate filter', self, checkable=True,
                                                     on_clicked=self._on_commit)
 
-            self._regex_button = make_icon_button('code', 'Use regular expressions', self, checkable=True,
+            self._regex_button = make_icon_button('code', 'Use regular expressions', self,
+                                                  checkable=True,
                                                   checked=True, on_clicked=self._on_commit)
 
-            self._case_sensitive_button = make_icon_button('text-height', 'Filter expression is case sensitive', self,
-                                                           checkable=True, on_clicked=self._on_commit)
+            self._case_sensitive_button = make_icon_button('text-height',
+                                                           'Filter expression is case sensitive',
+                                                           self,
+                                                           checkable=True,
+                                                           on_clicked=self._on_commit)
 
             layout = QHBoxLayout(self)
             layout.setContentsMargins(0, 0, 0, 0)
@@ -396,7 +405,8 @@ class FilterBar(QWidget):
     def __init__(self, parent):
         super(FilterBar, self).__init__(parent)
 
-        self.add_filter_button = make_icon_button('filter', 'Add filter', self, on_clicked=self._on_add_filter)
+        self.add_filter_button = make_icon_button('filter', 'Add filter', self,
+                                                  on_clicked=self._on_add_filter)
 
         self.on_filter = lambda *_: None
 
@@ -435,7 +445,7 @@ class FilterBar(QWidget):
     def _on_remove_filter(self, instance):
         orig_len = len(self._filters)
         self._filters.remove(instance)
-        assert(orig_len - 1 == len(self._filters))
+        assert (orig_len - 1 == len(self._filters))
 
         self._layout.removeWidget(instance)
         instance.setParent(None)
@@ -443,7 +453,7 @@ class FilterBar(QWidget):
 
         self.setVisible(len(self._filters) > 0)
 
-        self._do_filter()                           # Re-applying all remaining filters on removal
+        self._do_filter()  # Re-applying all remaining filters on removal
 
 
 class LabelWithIcon(QPushButton):
@@ -467,7 +477,9 @@ class RealtimeLogWidget(QWidget):
 
         self._clear_button = make_icon_button('trash-o', 'Clear', self, on_clicked=self._clear)
 
-        self._pause = make_icon_button('pause', 'Pause updates; data received while paused will not be lost', self,
+        self._pause = make_icon_button('pause',
+                                       'Pause updates; data received while paused will not be lost',
+                                       self,
                                        checkable=True)
 
         self._start_button = make_icon_button('video-camera', 'Start/stop capturing', self,
@@ -591,7 +603,8 @@ def get_icon(name):
     return qtawesome.icon('fa.' + name)
 
 
-def make_icon_button(icon_name, tool_tip, parent, checkable=False, checked=False, on_clicked=None, text=''):
+def make_icon_button(icon_name, tool_tip, parent, checkable=False, checked=False, on_clicked=None,
+                     text=''):
     b = QPushButton(text, parent)
     b.setFocusPolicy(Qt.NoFocus)
     if icon_name:
@@ -608,9 +621,10 @@ def make_icon_button(icon_name, tool_tip, parent, checkable=False, checked=False
 def map_7bit_to_color(value):
     value = int(value) & 0x7f
 
-    red = ((value >> 5) & 0b11) * 48        # 2 bits to red
-    green = ((value >> 2) & 0b111) * 12     # 3 bits to green, because human eye is more sensitive in this wavelength
-    blue = (value & 0b11) * 48              # 2 bits to blue
+    red = ((value >> 5) & 0b11) * 48  # 2 bits to red
+    green = ((
+                     value >> 2) & 0b111) * 12  # 3 bits to green, because human eye is more sensitive in this wavelength
+    blue = (value & 0b11) * 48  # 2 bits to blue
 
     col = QColor()
     col.setRgb(0xFF - red, 0xFF - green, 0xFF - blue)
@@ -650,3 +664,17 @@ def get_app_icon():
 
 def flash(sender, message, *format_args, duration=0):
     sender.window().statusBar().showMessage(message % format_args, duration * 1000)
+
+
+# helps to better navigate the displayed logs
+class Bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKCYAN = '\033[96m'
+    OKGREEN = '\033[92m'
+
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
