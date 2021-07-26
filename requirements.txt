@@ -1,11 +1,12 @@
+# You should not change the version of the uavcan library if it is not a conscious decision,
+# the rest is as you like
+
 PyQt5~=5.15.4
-pywin32~=301
 QtAwesome~=1.0.3
 qtconsole~=5.1.1
 numpy~=1.21.0
 setuptools==57.2.0
 screeninfo
-uavcan~=1.0.0.dev33
 pyzmq~=22.1.0
 Pygments~=2.9.0
 ipython~=7.25.0
@@ -16,3 +17,5 @@ pyqtgraph~=0.12.2
 colorama~=0.4.4
 Pillow~=8.3.1
 PyYAML~=5.4.1
+PySerial
+uavcan~=1.0.0.dev33
