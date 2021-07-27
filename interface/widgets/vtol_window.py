@@ -24,7 +24,7 @@ from .vtol_subscriber import VtolSubscriber
 
 REQUEST_PRIORITY = 30
 global node_block_properties
-global AIRFRAME, CONFIG_CONTROL_WIDGET
+global AIRFRAME, CONFIG_CONTROL_WIDGET, VTOL_TYPE
 global circuit_subscriber  # not all devices transmit current and voltage
 global main_node  # provides access to nodes throughout the file
 
@@ -130,8 +130,13 @@ class JsonFileValidator:
 
     # testing the AIRFRAME object to remove errors and warn the user about them
     def _test_file(self):
+        if not "_control_widget" in self.AIRFRAME.keys() \
+                or not "vtol_object" in self.AIRFRAME.keys():
+            logger.info(Bcolors.WARNING +
+                        "Json file dont have _control_widget or vtol_object" +
+                        Bcolors.ENDC)
         for i, node in enumerate(self.AIRFRAME.items()):
-            if node[0] != "_control_widget":
+            if node[0] != "_control_widget" and node[0] != "vtol_object":
                 self.name_node.append(node[0])
                 node[1].setdefault("id", -1)
                 node[1].setdefault("item", -1)
@@ -153,14 +158,16 @@ class JsonFileValidator:
                 for delete_item in popped_value:
                     node[1].pop(delete_item)
             else:
-                for j in self.name_node[:8]:
-                    if not j in node[1].keys():
-                        node[1].setdefault(str(j), -1)
+                if node[0] == "_control_widget":
+                    for j in self.name_node[:8]:
+                        if j not in node[1].keys():
+                            node[1].setdefault(str(j), -1)
 
     # check for the existence of the configuration file otherwise use the default settings
     def parse_config(self):
         config_control_widget = self.AIRFRAME.pop('_control_widget')
-        return self.AIRFRAME, config_control_widget
+        vtol_type = self.AIRFRAME.pop('vtol_object')
+        return self.AIRFRAME, config_control_widget, vtol_type
 
 
 class NodeBlock(QDialog):
@@ -171,7 +178,7 @@ class NodeBlock(QDialog):
         self.name = data_nodes['name']
         self.item = data_nodes['item']
 
-        self.temp_data_fields = None
+        self.temp_data_fields = data_nodes
 
         global main_node
         self._node = main_node
@@ -325,8 +332,9 @@ class VtolWindow(QDialog):
                                                     self._node_monitor_widget,
                                                     self._dynamic_node_id_allocation_widget)
         self.setAttribute(Qt.WA_DeleteOnClose)
-        global AIRFRAME, CONFIG_CONTROL_WIDGET
-        AIRFRAME, CONFIG_CONTROL_WIDGET = JsonFileValidator("../airframe.json").parse_config()
+        global AIRFRAME, CONFIG_CONTROL_WIDGET, VTOL_TYPE
+        AIRFRAME, CONFIG_CONTROL_WIDGET, VTOL_TYPE = JsonFileValidator(
+            "../airframe.json").parse_config()
 
         for item in AIRFRAME:
             self.blocks.append(NodeBlock(AIRFRAME[item], CONFIG_CONTROL_WIDGET))
@@ -427,6 +435,7 @@ class VtolWindow(QDialog):
             AIRFRAME2[block.name] = block.temp_data_fields
             AIRFRAME2[block.name]["id"] = block.id
         AIRFRAME2["_control_widget"] = temp_dist
+        AIRFRAME2["vtol_object"] = VTOL_TYPE
         with open(name[0], 'w') as f:
             json.dump(AIRFRAME2, f)
 

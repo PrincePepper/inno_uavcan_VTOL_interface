@@ -97,5 +97,6 @@
     "aileron_right": -1,
     "rudder_left": -1,
     "rudder_right": -1
-  }
+  },
+  "vtol_object": 1
 }
