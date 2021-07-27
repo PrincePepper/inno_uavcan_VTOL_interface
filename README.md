@@ -24,6 +24,36 @@ communication, based on modern network standards (Ethernet, CAN FD, etc.). It wa
 to solve the problem of onboard deterministic computing and data distribution in next-generation
 intelligent vehicles: manned and unmanned aircraft, spacecraft, robots and cars.
 
+## AIRFRAME.JSON
+We have a configuration file, thanks to which we can determine which devices(nodes) we will have, 
+as well as which VTOL we use.
+
+**Example:**
+```
+{
+  "motor_front_left": {
+    "id": -1,
+    "item": 1,
+    "name": "FL_motor",
+    "turnovers": "",
+    "voltage": "uavcan.equipment.power.CircuitStatus voltage"
+  },
+  "engine": {
+    "id": -1,
+    "item": 15,
+    "name": "engine",
+    "fuel level": ""
+  },
+  "_control_widget": {
+    "motor_front_left": -1,
+  },
+  "vtol_object": 1
+}
+```
+«_control_widget» - responsible for connections to control sliders and their default values  
+«vtol_object» - responsible for selecting the VTOL of the device
+
+
 ## Revisions
 
 ### v2.0
@@ -42,7 +72,8 @@ intelligent vehicles: manned and unmanned aircraft, spacecraft, robots and cars.
 ```
 ### v1.0
 ```
-the code was written on my knees, which somehow worked, but we were not satisfied with it, so read the next version
+the code was written on my knees, which somehow worked, but we were not satisfied with it, 
+so read the next version
 ```
 
 
