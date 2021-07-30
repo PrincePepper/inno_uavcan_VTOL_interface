@@ -6,13 +6,11 @@
 import json
 import logging
 
-import numpy
 import uavcan
-from PIL import Image, ImageQt
 from PyQt5.QtCore import Qt, QTimer
-from PyQt5.QtGui import QPalette, QBrush
+from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QLabel, QHBoxLayout, QWidget, QSizePolicy, \
-    QComboBox, QFileDialog, QMessageBox, QPushButton
+    QComboBox, QFileDialog, QMessageBox, QPushButton, QScrollArea
 
 from . import request_confirmation, show_error, Bcolors
 from .dynamic_node_id_allocator import DynamicNodeIDAllocatorWidget
@@ -314,19 +312,17 @@ class VtolWindow(QDialog):
         super(VtolWindow, self).__init__(parent)
         self.setWindowTitle('VTOL Info')
 
-        self._file_server_widget = FileServerWidget(self, node)
+
         global main_node
         main_node = node
         self._node = node
         self.nodes_id = []
         self.blocks = []
 
+        self._file_server_widget = FileServerWidget(self, node)
         self._node_monitor_widget = NodeMonitorWidget(self, node)
-        # self._node_monitor_widget.on_info_window_requested = self._show_node_window
-
         self._dynamic_node_id_allocation_widget = DynamicNodeIDAllocatorWidget(self, node,
                                                                                self._node_monitor_widget.monitor)
-
         global node_block_properties
         node_block_properties = NodeBlockProperties(node, self, self._file_server_widget,
                                                     self._node_monitor_widget,
@@ -339,76 +335,37 @@ class VtolWindow(QDialog):
         for item in AIRFRAME:
             self.blocks.append(NodeBlock(AIRFRAME[item], CONFIG_CONTROL_WIDGET))
 
-        #
-        # TODO: убрать затычку ввиде создания нод, также требуется переделка картинки и
-        #  отображения нод, больше не требуется отображения их на картинке
-        #
-        motor1 = self.blocks[0]
-        motor2 = self.blocks[1]
-        motor3 = self.blocks[2]
-        motor4 = self.blocks[3]
-        aileron1 = self.blocks[4]
-        aileron2 = self.blocks[5]
-        rudder1 = self.blocks[6]
-        rudder2 = self.blocks[7]
-        elevator = self.blocks[8]
-        gps = self.blocks[9]
-        airspeed = self.blocks[10]
-        pressure = self.blocks[11]
-        engine = self.blocks[12]
-
-        self.box_1 = make_vbox(rudder1.widget, aileron1.widget, stretch_index=[1, 1], s=3)
-        self.box_2 = make_vbox(elevator.widget, motor2.widget, stretch_index=[0, 1], s=6)
-        self.box_3 = make_vbox(rudder2.widget, engine.widget, stretch_index=[0, 1], s=10)
-        self.box_4 = make_vbox(motor3.widget, gps.widget, motor1.widget, stretch_index=[2, 2, 3],
-                               s=6)
-        self.box_5 = make_vbox(airspeed.widget, stretch_index=[1], s=1)
-        self.box_6 = make_vbox(aileron2.widget, pressure.widget, stretch_index=[1, 2, 1], s=3)
-        self.box_7 = make_vbox(motor4.widget, stretch_index=[1], s=2)
-
         layout = QHBoxLayout(self)
-        listStretch = [18, 6, 4, 1, 2, 0, 2]
-        listWidget = [self.box_1, self.box_2, self.box_3, self.box_4, self.box_5, self.box_6,
-                      self.box_7]
-        for i in range(len(listWidget)):
-            layout.addStretch(listStretch[i])
-            layout.addWidget(listWidget[i])
-        layout.addStretch(2)
 
-        self._control_widget = ControlWidget(self, node, CONFIG_CONTROL_WIDGET, self.save_file,
+        pixmap = QPixmap('widgets/GUI/res/icons/vtol.jpg')
+        lbl = QLabel(self)
+        lbl.setPixmap(pixmap)
+        layout.addWidget(lbl)
+
+        widget2 = QWidget()
+        layout2 = QVBoxLayout(self)
+        for i in self.blocks:
+            layout2.addWidget(i.widget)
+        widget2.setLayout(layout2)
+
+        scroll = QScrollArea()
+        scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        scroll.setWidget(widget2)
+
+        layout.addWidget(scroll)
+
+        self._control_widget = ControlWidget(self, node, AIRFRAME, CONFIG_CONTROL_WIDGET,
+                                             self.save_file,
                                              self._do_restart_all)
         self._control_widget.setAlignment(Qt.AlignRight)
         self._control_widget.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Preferred)
 
         layout.addWidget(self._control_widget)
 
-        self.setLayout(layout)
+        # self.setLayout(layout)
 
         self.show()
-        margin = layout.getContentsMargins()[0]
-
-        # ------------------создание картиночки-------------------------
-        jpeg = numpy.asarray(Image.open('widgets/GUI/res/icons/vtol.jpg'))
-        x = jpeg.shape[1]
-        y = jpeg.shape[0]
-        new = numpy.zeros((y, x + 4000, 3))
-        new[:y, :x, :3] = jpeg
-        new[:y, x:, :3] = float(255)
-        image = Image.fromarray(numpy.uint8(new))
-        # Image turn to QImage
-        image = ImageQt.ImageQt(image)
-        h1 = image.height()
-        image = image.scaledToHeight(self._control_widget.height() + margin * 2)
-        h2 = image.height()
-        palette = QPalette()
-        palette.setBrush(QPalette.Window, QBrush(image))
-        self.setPalette(palette)
-
-        self.resize(int(x * h2 / h1) + self._control_widget.width() + margin * 2, image.height())
-        # ---------------------------------------------------------------
-
-        self.setFixedWidth(self.width())
-        self.setFixedHeight(self.height())
 
         self._monitor = uavcan.app.node_monitor.NodeMonitor(node)
 
