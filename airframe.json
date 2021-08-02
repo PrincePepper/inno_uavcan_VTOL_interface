@@ -1,13 +1,13 @@
 {
   "motor_front_left": {
-    "id": 14,
+    "id": -1,
     "item": 1,
     "name": "FL_motor",
     "turnovers": "",
     "voltage": "uavcan.equipment.power.CircuitStatus voltage"
   },
   "motor_front_right": {
-    "id": 14,
+    "id": -1,
     "item": 2,
     "name": "FR_motor",
     "turnovers": "",
@@ -76,7 +76,8 @@
   "airspeed": {
     "id": -1,
     "item": 13,
-    "name": "airspeed"
+    "name": "airspeed",
+    "speed": "uavcan.equipment.air_data.TrueAirspeed true_airspeed"
   },
   "pressure": {
     "id": -1,
@@ -87,7 +88,8 @@
     "id": -1,
     "item": 15,
     "name": "engine",
-    "fuel level": ""
+    "fuel level": "",
+    "voltage": "uavcan.equipment.power.CircuitStatus voltage"
   },
   "_control_widget": {
     "motor_front_left": -1,

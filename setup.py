@@ -15,19 +15,28 @@ import sys
 import pkg_resources
 from setuptools import setup, find_packages
 from setuptools.archive_util import unpack_archive
-from version import __version__
 
-PACKAGE_NAME = 'GUI'
-HUMAN_FRIENDLY_NAME = 'UAVCAN Innopolis GUI Tool Interface'
+PACKAGE_NAME = 'uavcan_gui_tool'
+HUMAN_FRIENDLY_NAME = 'UAVCAN GUI Tool'
 
 SOURCE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 sys.path.append(os.path.join(SOURCE_DIR, PACKAGE_NAME))
+from version import __version__
 
 assert sys.version_info[0] == 3, 'Python 3 is required'
 
 ICON_HIRES = os.path.join(PACKAGE_NAME, 'icons', 'logo_256x256.png')
 ICON_ICO = os.path.join(PACKAGE_NAME, 'icons', 'logo.ico')
+
+#
+# Checking if git submodules are initialized
+#
+if not glob.glob(os.path.join(SOURCE_DIR, PACKAGE_NAME, 'thirdparty', '*', '*')):
+    print('Initializing git submodules...')
+    res = os.system('git submodule update --init --recursive')
+    if res != 0:
+        raise RuntimeError('Could not initialize git submodules [%d]' % res)
 
 #
 # Setup args common for all targets
@@ -42,7 +51,7 @@ args = dict(
     ],
     install_requires=[
         'setuptools>=18.5',
-        'uavcan>=1.0.0.dev29',
+        'pyuavcan_v0>=1.0.0.dev34',
         'pyserial~=3.0',
         'qtawesome~=0.3.1',
         'qtconsole~=4.2.0',
@@ -67,13 +76,18 @@ args = dict(
     # Meta fields, they have no technical meaning
     description='UAVCAN Bus Management and Diagnostics App',
     author='UAVCAN Development Team',
+    author_email='uavcan@googlegroups.com',
+    url='http://uavcan.org',
     license='MIT',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: End Users/Desktop',
         'Intended Audience :: Developers',
         'Topic :: Scientific/Engineering :: Human Machine Interfaces',
+        'Topic :: Scientific/Engineering :: Visualization',
+        'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 3',
+        'Environment :: X11 Applications',
         'Environment :: Win32 (MS Windows)',
         'Environment :: MacOS X',
     ]
@@ -110,6 +124,7 @@ if sys.platform.startswith('linux') or sys.platform.startswith('darwin'):
 
     # Manually invoking the freedesktop extension - this should work even if we're getting installed via PIP
     sys.argv.append('install_desktop')
+
 
 #
 # Windows-specific options and hacks
@@ -188,8 +203,6 @@ if ('bdist_msi' in sys.argv) or ('build_exe' in sys.argv):
                              shortcutName=HUMAN_FRIENDLY_NAME,
                              shortcutDir='ProgramMenuFolder'),
     ]
-
-
     # Dispatching to cx_Freeze only if MSI build was requested explicitly. Otherwise continue with regular setup.
     # This is done in order to be able to install dependencies with regular setuptools.
     def setup(*args, **kwargs):
