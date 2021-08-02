@@ -148,6 +148,7 @@ class MouseDragEvent(object):
         return self._modifiers
 
 
+
 class MouseClickEvent(object):
     """
     Instances of this class are delivered to items in a :class:`GraphicsScene <pyqtgraph.GraphicsScene>` via their mouseClickEvent() method when the item is clicked. 
@@ -238,6 +239,7 @@ class MouseClickEvent(object):
         return self._time
 
 
+
 class HoverEvent(object):
     """
     Instances of this class are delivered to items in a :class:`GraphicsScene <pyqtgraph.GraphicsScene>` via their hoverEvent() method when the mouse is hovering over the item.
@@ -259,7 +261,6 @@ class HoverEvent(object):
     event.isEnter() returns True if the mouse has just entered the item's shape;
     event.isExit() returns True if the mouse has just left.
     """
-
     def __init__(self, moveEvent, acceptable):
         self.enter = False
         self.acceptable = acceptable

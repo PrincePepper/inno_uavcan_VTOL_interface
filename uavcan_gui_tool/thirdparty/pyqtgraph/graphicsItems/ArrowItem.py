@@ -3,7 +3,6 @@ from ..Qt import QtGui
 
 __all__ = ['ArrowItem']
 
-
 class ArrowItem(QtGui.QGraphicsPathItem):
     """
     For displaying scale-invariant arrows.

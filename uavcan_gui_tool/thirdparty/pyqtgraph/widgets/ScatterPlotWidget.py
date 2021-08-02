@@ -12,7 +12,6 @@ from ..pgcollections import OrderedDict
 
 __all__ = ['ScatterPlotWidget']
 
-
 class ScatterPlotWidget(QtGui.QSplitter):
     """
     This is a high-level widget for exploring relationships in tabular data.
@@ -35,7 +34,6 @@ class ScatterPlotWidget(QtGui.QSplitter):
        specifying multiple criteria.
     4) A PlotWidget for displaying the data.
     """
-
     def __init__(self, parent=None):
         QtGui.QSplitter.__init__(self, QtCore.Qt.Horizontal)
         self.ctrlPanel = QtGui.QSplitter(QtCore.Qt.Vertical)
@@ -159,7 +157,7 @@ class ScatterPlotWidget(QtGui.QSplitter):
             ##d += np.random.normal(size=len(cells), scale=0.1)
 
             # xydata.append(d)
-            # x,y = xydata
+            #x,y = xydata
 
         ## convert enum-type fields to float, set axis labels
         enum = [False, False]

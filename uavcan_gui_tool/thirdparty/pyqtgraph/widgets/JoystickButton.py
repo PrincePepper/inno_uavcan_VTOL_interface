@@ -1,7 +1,7 @@
 from ..Qt import QtGui, QtCore
 
-__all__ = ['JoystickButton']
 
+__all__ = ['JoystickButton']
 
 class JoystickButton(QtGui.QPushButton):
     sigStateChanged = QtCore.Signal(object, object)  ## self, state
@@ -70,8 +70,9 @@ class JoystickButton(QtGui.QPushButton):
     def resizeEvent(self, ev):
         self.setState(*self.state)
         QtGui.QPushButton.resizeEvent(self, ev)
-
-
+        
+        
+        
 if __name__ == '__main__':
     app = QtGui.QApplication([])
     w = QtGui.QMainWindow()
@@ -89,6 +90,5 @@ if __name__ == '__main__':
 
     ## Start Qt event loop unless running in interactive mode.
     import sys
-
     if sys.flags.interactive != 1:
         app.exec_()

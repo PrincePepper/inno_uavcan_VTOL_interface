@@ -16,7 +16,6 @@ from .python2_3 import asUnicode
 
 __all__ = ['WidgetGroup']
 
-
 def splitterState(w):
     s = str(w.saveState().toPercentEncoding())
     return s
@@ -34,8 +33,7 @@ def restoreSplitter(w, s):
             if i > 0:
                 return
         w.setSizes([50] * w.count())
-
-
+        
 def comboState(w):
     ind = w.currentIndex()
     data = w.itemData(ind)
@@ -56,7 +54,7 @@ def comboState(w):
 
 def setComboState(w, v):
     if type(v) is int:
-        # ind = w.findData(QtCore.QVariant(v))
+        #ind = w.findData(QtCore.QVariant(v))
         ind = w.findData(v)
         if ind > -1:
             w.setCurrentIndex(ind)
@@ -194,7 +192,7 @@ class WidgetGroup(QtCore.QObject):
         ## Find all children of this object and add them if possible.
         accepted = self.acceptsType(obj)
         if accepted:
-            # print "%s  auto add %s" % (self.objectName(), obj.objectName())
+            #print "%s  auto add %s" % (self.objectName(), obj.objectName())
             self.addWidget(obj)
 
         if not accepted or self.checkForChildren(obj):

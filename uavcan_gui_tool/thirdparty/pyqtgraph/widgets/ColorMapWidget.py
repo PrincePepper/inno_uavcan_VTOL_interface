@@ -7,7 +7,6 @@ from ..pgcollections import OrderedDict
 
 __all__ = ['ColorMapWidget']
 
-
 class ColorMapWidget(ptree.ParameterTree):
     """
     This class provides a widget allowing the user to customize color mapping

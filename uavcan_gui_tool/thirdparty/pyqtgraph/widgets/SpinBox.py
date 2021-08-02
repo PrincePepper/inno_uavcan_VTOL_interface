@@ -8,8 +8,6 @@ from ..SignalProxy import SignalProxy
 from ..python2_3 import asUnicode
 
 __all__ = ['SpinBox']
-
-
 class SpinBox(QtGui.QAbstractSpinBox):
     """
     **Bases:** QtGui.QAbstractSpinBox
@@ -141,7 +139,7 @@ class SpinBox(QtGui.QAbstractSpinBox):
         allowed in :func:`__init__ <pyqtgraph.SpinBox.__init__>`.
         
         """
-        # print opts
+        #print opts
         for k in opts:
             if k == 'bounds':
                 # print opts[k]
@@ -151,7 +149,7 @@ class SpinBox(QtGui.QAbstractSpinBox):
                 # if opts[k][i] is None:
                 # self.opts[k][i] = None
                 # else:
-                # self.opts[k][i] = D(unicode(opts[k][i]))
+                #self.opts[k][i] = D(unicode(opts[k][i]))
             elif k in ['step', 'minStep']:
                 self.opts[k] = D(asUnicode(opts[k]))
             elif k == 'value':
@@ -190,6 +188,8 @@ class SpinBox(QtGui.QAbstractSpinBox):
 
         self.updateText()
 
+
+
     def setMaximum(self, m, update=True):
         """Set the maximum allowed value (or None for no limit)"""
         if m is not None:
@@ -197,7 +197,7 @@ class SpinBox(QtGui.QAbstractSpinBox):
         self.opts['bounds'][1] = m
         if update:
             self.setValue()
-
+    
     def setMinimum(self, m, update=True):
         """Set the minimum allowed value (or None for no limit)"""
         if m is not None:
@@ -226,10 +226,10 @@ class SpinBox(QtGui.QAbstractSpinBox):
 
     def setSingleStep(self, step):
         self.setOpts(step=step)
-
+        
     def setDecimals(self, decimals):
         self.setOpts(decimals=decimals)
-
+        
     def selectNumber(self):
         """
         Select the numerical portion of the text to allow quick editing by the user.
@@ -294,11 +294,12 @@ class SpinBox(QtGui.QAbstractSpinBox):
 
         return value
 
+    
     def emitChanged(self):
         self.lastValEmitted = self.val
         self.valueChanged.emit(float(self.val))
         self.sigValueChanged.emit(self)
-
+    
     def delayedChange(self):
         try:
             if self.val != self.lastValEmitted:
@@ -364,9 +365,10 @@ class SpinBox(QtGui.QAbstractSpinBox):
             if int(value) != value:
                 return False
         return True
+        
 
     def updateText(self, prev=None):
-        # print "Update text."
+        #print "Update text."
         self.skipValidate = True
         if self.opts['siPrefix']:
             if self.val == 0 and prev is not None:
@@ -379,7 +381,7 @@ class SpinBox(QtGui.QAbstractSpinBox):
         self.lineEdit().setText(txt)
         self.lastText = txt
         self.skipValidate = False
-
+        
     def validate(self, strn, pos):
         if self.skipValidate:
             # print "skip validate"
@@ -390,7 +392,7 @@ class SpinBox(QtGui.QAbstractSpinBox):
                 ## first make sure we didn't mess with the suffix
                 suff = self.opts.get('suffix', '')
                 if len(suff) > 0 and asUnicode(strn)[-len(suff):] != suff:
-                    # print '"%s" != "%s"' % (unicode(strn)[-len(suff):], suff)
+                    #print '"%s" != "%s"' % (unicode(strn)[-len(suff):], suff)
                     ret = QtGui.QValidator.Invalid
 
                 ## next see if we actually have an interpretable value
@@ -420,7 +422,7 @@ class SpinBox(QtGui.QAbstractSpinBox):
                 # self.textValid = False
                 # self.setStyleSheet('SpinBox {border: 2px solid #C55;}')
                 ret = QtGui.QValidator.Intermediate
-
+            
         ## draw / clear border
         if ret == QtGui.QValidator.Intermediate:
             self.textValid = False
@@ -429,16 +431,16 @@ class SpinBox(QtGui.QAbstractSpinBox):
         ## note: if text is invalid, we don't change the textValid flag 
         ## since the text will be forced to its previous state anyway
         self.update()
-
+        
         ## support 2 different pyqt APIs. Bleh.
         if hasattr(QtCore, 'QString'):
             return (ret, pos)
         else:
             return (ret, strn, pos)
-
+        
     def paintEvent(self, ev):
         QtGui.QAbstractSpinBox.paintEvent(self, ev)
-
+        
         ## draw red border if text is invalid
         if not self.textValid:
             p = QtGui.QPainter(self)
@@ -446,6 +448,7 @@ class SpinBox(QtGui.QAbstractSpinBox):
             p.setPen(fn.mkPen((200, 50, 50), width=2))
             p.drawRoundedRect(self.rect().adjusted(2, 2, -2, -2), 4, 4)
             p.end()
+
 
     def interpret(self):
         """Return value of text. Return False if text is invalid, raise exception if text is intermediate"""
@@ -506,4 +509,4 @@ class SpinBox(QtGui.QAbstractSpinBox):
 # return lambda *args, **kargs: None
 
 # def widgetGroupInterface(self):
-# return (self.valueChanged, SpinBox.value, SpinBox.setValue)
+#return (self.valueChanged, SpinBox.value, SpinBox.setValue)

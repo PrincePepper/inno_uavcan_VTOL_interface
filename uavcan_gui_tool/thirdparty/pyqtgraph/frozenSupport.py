@@ -23,7 +23,6 @@ def listdir(path):
             results.add(name)
     return list(results)
 
-
 def isdir(path):
     """Replacement for os.path.isdir that works in frozen environments."""
     if not hasattr(sys, 'frozen'):

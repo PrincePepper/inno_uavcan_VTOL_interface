@@ -93,4 +93,4 @@ class FlowchartViewBox(ViewBox):
 # def mouseClickEvent(self, ev):
 ##QtGui.QGraphicsScene.contextMenuEvent(self, ev)
 # if not ev.button() in [QtCore.Qt.RightButton]:
-# self.sigContextMenuEvent.emit(ev)
+#self.sigContextMenuEvent.emit(ev)

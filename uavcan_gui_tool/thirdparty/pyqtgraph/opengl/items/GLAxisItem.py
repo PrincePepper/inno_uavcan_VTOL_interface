@@ -5,7 +5,6 @@ from ... import QtGui
 
 __all__ = ['GLAxisItem']
 
-
 class GLAxisItem(GLGraphicsItem):
     """
     **Bases:** :class:`GLGraphicsItem <pyqtgraph.opengl.GLGraphicsItem>`

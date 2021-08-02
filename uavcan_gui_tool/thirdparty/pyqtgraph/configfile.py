@@ -23,7 +23,6 @@ from .Point import Point
 from .colormap import ColorMap
 import numpy
 
-
 class ParseError(Exception):
     def __init__(self, message, lineNum, line, fileName=None):
         self.lineNum = lineNum
@@ -60,7 +59,7 @@ def readConfigFile(fname):
     GLOBAL_PATH = os.path.dirname(os.path.abspath(fname))
 
     try:
-        # os.chdir(newDir)  ## bad.
+        #os.chdir(newDir)  ## bad.
         fd = open(fname)
         s = asUnicode(fd.read())
         fd.close()
@@ -76,7 +75,6 @@ def readConfigFile(fname):
     # finally:
     # os.chdir(cwd)
     return data
-
 
 def appendConfigFile(data, fname):
     s = genString(data)
@@ -101,8 +99,7 @@ def genString(data, indent=''):
         else:
             s += indent + sk + ': ' + repr(data[k]) + '\n'
     return s
-
-
+    
 def parseString(lines, start=0):
     data = OrderedDict()
     if isinstance(lines, basestring):
@@ -115,7 +112,7 @@ def parseString(lines, start=0):
     try:
         while True:
             ln += 1
-            # print ln
+            #print ln
             if ln >= len(lines):
                 break
 
@@ -188,8 +185,7 @@ def parseString(lines, start=0):
         raise ParseError("%s: %s" % (ex.__class__.__name__, str(ex)), ln + 1, l)
     # print "Returning shallower..", ln+1
     return (ln, data)
-
-
+    
 def measureIndent(s):
     n = 0
     while n < len(s) and s[n] == ' ':
@@ -199,7 +195,6 @@ def measureIndent(s):
 
 if __name__ == '__main__':
     import tempfile
-
     fn = tempfile.mktemp()
     tf = open(fn, 'w')
     cf = """

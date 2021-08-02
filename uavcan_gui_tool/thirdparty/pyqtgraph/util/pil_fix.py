@@ -12,8 +12,6 @@ if Image.VERSION == '1.1.7':
     Image._fromarray_typemap[((1, 1), "<u2")] = ("I", "I;16")
 if Image.VERSION == '1.1.6':
     Image._MODE_CONV["I;16"] = ('%su2' % Image._ENDIAN, None)
-
-
     ## just a copy of fromarray() from Image.py with I;16 added in
     def fromarray(obj, mode=None):
         arr = obj.__array_interface__

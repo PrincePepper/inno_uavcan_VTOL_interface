@@ -1,12 +1,10 @@
 from pyqtgraph.util.lru_cache import LRUCache
 
-
 def testLRU():
     lru = LRUCache(2, 1)
     # check twice
     checkLru(lru)
     checkLru(lru)
-
 
 def checkLru(lru):
     lru[1] = 1

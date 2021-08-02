@@ -11,8 +11,6 @@ from ..Qt import QtGui, QtCore
 from ..python2_3 import asUnicode
 
 __all__ = ['AxisItem']
-
-
 class AxisItem(GraphicsWidget):
     """
     GraphicsItem showing a single plot axis with ticks, values, and label.
@@ -225,7 +223,7 @@ class AxisItem(GraphicsWidget):
 
     def showLabel(self, show=True):
         """Show/hide the label text for this axis."""
-        # self.drawLabel = show
+        #self.drawLabel = show
         self.label.setVisible(show)
         if self.orientation in ['left', 'right']:
             self._updateWidth()
@@ -282,7 +280,7 @@ class AxisItem(GraphicsWidget):
             else:
                 units = asUnicode('(x%g)') % (1.0 / self.autoSIPrefixScale)
         else:
-            # print repr(self.labelUnitPrefix), repr(self.labelUnits)
+            #print repr(self.labelUnitPrefix), repr(self.labelUnits)
             units = asUnicode('(%s%s)') % (asUnicode(self.labelUnitPrefix), asUnicode(self.labelUnits))
 
         s = asUnicode('%s %s') % (asUnicode(self.labelText), asUnicode(units))
@@ -711,10 +709,10 @@ class AxisItem(GraphicsWidget):
         return ticks
 
     def logTickValues(self, minVal, maxVal, size, stdTicks):
-
+        
         ## start with the tick spacing given by tickValues().
         ## Any level whose spacing is < 1 needs to be converted to log scale
-
+        
         ticks = []
         for (spacing, t) in stdTicks:
             if spacing >= 1.0:
@@ -772,13 +770,13 @@ class AxisItem(GraphicsWidget):
 
         # bounds = self.boundingRect()
         bounds = self.mapRectFromParent(self.geometry())
-
+        
         linkedView = self.linkedView()
         if linkedView is None or self.grid is False:
             tickBounds = bounds
         else:
             tickBounds = linkedView.mapRectToItem(self, linkedView.boundingRect())
-
+        
         if self.orientation == 'left':
             span = (bounds.topRight(), bounds.bottomRight())
             tickStart = tickBounds.right()
@@ -829,7 +827,7 @@ class AxisItem(GraphicsWidget):
                 for val, strn in level:
                     values.append(val)
                     strings.append(strn)
-
+        
         ## determine mapping between tick values and local coordinates
         dif = self.range[1] - self.range[0]
         if dif == 0:
@@ -878,7 +876,7 @@ class AxisItem(GraphicsWidget):
                 p1[axis] = tickStart
                 p2[axis] = tickStop
                 if self.grid is False:
-                    p2[axis] += tickLength * tickDir
+                    p2[axis] += tickLength*tickDir
                 tickPen = self.pen()
                 color = tickPen.color()
                 color.setAlpha(lineAlpha)
@@ -886,6 +884,7 @@ class AxisItem(GraphicsWidget):
                 tickSpecs.append((tickPen, Point(p1), Point(p2)))
         profiler('compute ticks')
 
+        
         if self.style['stopAxisAtTick'][0] is True:
             stop = max(span[0].y(), min(map(min, tickPositions)))
             if axis == 0:
@@ -926,7 +925,7 @@ class AxisItem(GraphicsWidget):
 
             if len(strings) == 0:
                 continue
-
+            
             ## ignore strings belonging to ticks that were previously ignored
             for j in range(len(strings)):
                 if tickPositions[i][j] is None:
@@ -945,7 +944,7 @@ class AxisItem(GraphicsWidget):
 
                     rects.append(br)
                     textRects.append(rects[-1])
-
+            
             if len(textRects) > 0:
                 ## measure all text, make sure there's enough room
                 if axis == 0:
@@ -1003,12 +1002,12 @@ class AxisItem(GraphicsWidget):
                 # p.drawText(rect, textFlags, vstr)
                 textSpecs.append((rect, textFlags, vstr))
         profiler('compute text')
-
+            
         ## update max text size if needed.
         self._updateMaxTextSize(textSize2)
 
         return (axisSpec, tickSpecs, textSpecs)
-
+    
     def drawPicture(self, p, axisSpec, tickSpecs, textSpecs):
         profiler = debug.Profiler()
 
@@ -1033,7 +1032,7 @@ class AxisItem(GraphicsWidget):
         p.setPen(self.pen())
         for rect, flags, text in textSpecs:
             p.drawText(rect, flags, text)
-            # p.drawRect(rect)
+            #p.drawRect(rect)
         profiler('draw text')
 
     def show(self):
@@ -1042,7 +1041,7 @@ class AxisItem(GraphicsWidget):
             self._updateWidth()
         else:
             self._updateHeight()
-
+        
     def hide(self):
         GraphicsWidget.hide(self)
         if self.orientation in ['left', 'right']:
@@ -1068,6 +1067,6 @@ class AxisItem(GraphicsWidget):
             return self.linkedView().mouseDragEvent(event, axis=0)
 
     def mouseClickEvent(self, event):
-        if self.linkedView() is None:
+        if self.linkedView() is None: 
             return
         return self.linkedView().mouseClickEvent(event)

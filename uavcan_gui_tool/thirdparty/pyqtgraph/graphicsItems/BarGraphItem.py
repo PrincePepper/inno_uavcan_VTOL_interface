@@ -7,7 +7,6 @@ from ..Qt import QtGui, QtCore
 
 __all__ = ['BarGraphItem']
 
-
 class BarGraphItem(GraphicsObject):
     def __init__(self, **opts):
         """

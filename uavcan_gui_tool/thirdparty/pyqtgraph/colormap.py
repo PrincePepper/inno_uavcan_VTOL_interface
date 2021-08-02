@@ -174,7 +174,7 @@ class ColorMap(object):
             color = [QtGui.QColor(*x) for x in color]
 
         return color
-
+        
     def getStops(self, mode):
         ## Get fully-expanded set of RGBA stops in either float or byte mode.
         if mode not in self.stopsCache:
@@ -197,7 +197,7 @@ class ColorMap(object):
             # ns =
             self.stopsCache[mode] = (self.pos, color)
         return self.stopsCache[mode]
-
+        
     def getLookupTable(self, start=0.0, stop=1.0, nPts=512, alpha=None, mode='byte'):
         """
         Return an RGB(A) lookup table (ndarray). 
@@ -215,10 +215,10 @@ class ColorMap(object):
         """
         if isinstance(mode, basestring):
             mode = self.enumMap[mode.lower()]
-
+        
         if alpha is None:
             alpha = self.usesAlpha()
-
+            
         x = np.linspace(start, stop, nPts)
         table = self.map(x, mode)
 
@@ -241,9 +241,9 @@ class ColorMap(object):
         if self.pos[0] != 0.0 or self.pos[1] != 1.0:
             return False
         if self.color.dtype.kind == 'f':
-            return np.all(self.color == np.array([[0., 0., 0., 1.], [1., 1., 1., 1.]]))
+            return np.all(self.color == np.array([[0., 0.,0.,1.], [1.,1.,1.,1.]]))
         else:
-            return np.all(self.color == np.array([[0, 0, 0, 255], [255, 255, 255, 255]]))
+            return np.all(self.color == np.array([[0, 0, 0,255], [255,255,255,255]]))
 
     def __repr__(self):
         pos = repr(self.pos).replace('\n', '')

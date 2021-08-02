@@ -4,7 +4,6 @@ from ..Qt import QtGui, QtCore
 
 __all__ = ['ColorButton']
 
-
 class ColorButton(QtGui.QPushButton):
     """
     **Bases:** QtGui.QPushButton

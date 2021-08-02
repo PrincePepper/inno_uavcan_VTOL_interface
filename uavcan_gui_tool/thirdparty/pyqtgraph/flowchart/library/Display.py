@@ -152,7 +152,7 @@ class CanvasNode(Node):
                         items.add(vid)
             for vid in list(self.items.keys()):
                 if vid not in items:
-                    # print "remove", self.items[vid]
+                    #print "remove", self.items[vid]
                     self.canvas.removeItem(self.items[vid])
                     del self.items[vid]
 
@@ -173,7 +173,7 @@ class PlotCurve(CtrlNode):
         self.item = PlotDataItem()
 
     def process(self, x, y, display=True):
-        # print "scatterplot process"
+        #print "scatterplot process"
         if not display:
             return {'plot': None}
 
@@ -296,4 +296,4 @@ class ScatterPlot(CtrlNode):
 # data = file.read()
 # self.imageItem.updateImage(data)
 
-# pos = file.
+#pos = file.

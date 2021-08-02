@@ -13,7 +13,6 @@ getNodeType = LIBRARY.getNodeType
 
 # Add all nodes to the default library
 from . import Data, Display, Filters, Operators
-
 for mod in [Data, Display, Filters, Operators]:
     nodes = [getattr(mod, name) for name in dir(mod) if isNodeClass(getattr(mod, name))]
     for node in nodes:

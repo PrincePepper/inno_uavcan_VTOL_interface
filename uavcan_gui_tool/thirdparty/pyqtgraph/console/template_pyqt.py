@@ -17,14 +17,11 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
-
-
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
-
 
 class Ui_Form(object):
     def setupUi(self, Form):
@@ -126,6 +123,5 @@ class Ui_Form(object):
         self.runSelectedFrameCheck.setText(_translate("Form", "Run commands in selected stack frame", None))
         self.exceptionInfoLabel.setText(_translate("Form", "Exception Info", None))
         self.label.setText(_translate("Form", "Filter (regex):", None))
-
 
 from .CmdInput import CmdInput

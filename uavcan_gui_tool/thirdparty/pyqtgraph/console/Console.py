@@ -1,3 +1,4 @@
+
 import re
 import subprocess
 import sys
@@ -15,7 +16,6 @@ else:
 from .. import exceptionHandling as exceptionHandling
 import pickle
 from .. import getConfigOption
-
 
 class ConsoleWidget(QtGui.QWidget):
     """
@@ -175,7 +175,7 @@ class ConsoleWidget(QtGui.QWidget):
             self.displayException()
 
     def execMulti(self, nextLine):
-        # self.stdout.write(nextLine+"\n")
+        #self.stdout.write(nextLine+"\n")
         if nextLine.strip() != '':
             self.multiline += "\n" + nextLine
             return

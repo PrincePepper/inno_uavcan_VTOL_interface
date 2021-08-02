@@ -13,7 +13,6 @@ class ParameterSystem(GroupParameter):
     NOTE: This API is experimental and may change substantially across minor 
     version numbers. 
     """
-
     def __init__(self, *args, **kwds):
         GroupParameter.__init__(self, *args, **kwds)
         self._system = None
@@ -120,4 +119,4 @@ class ParameterSystem(GroupParameter):
         # item.setBackground(0, bg)
         # f = item.font(0)
         # f.setWeight(f.Bold if bold else f.Normal)
-        # item.setFont(0, f)
+        #item.setFont(0, f)

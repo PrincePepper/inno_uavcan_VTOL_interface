@@ -33,7 +33,6 @@ class IPCChannel:
     """
     This class is built as an abstraction over the underlying IPC communication channel.
     """
-
     def __init__(self):
         # Queue is slower than pipe, but it allows to implement non-blocking sending easier,
         # and the buffer can be arbitrarily large.
@@ -92,7 +91,6 @@ class CompactMessage:
     Transfer and message objects from Pyuavcan cannot be exchanged between processes,
     so we build this minimal representation that is just enough to mimic a Pyuavcan message object.
     """
-
     def __init__(self, uavcan_data_type_name):
         self._uavcan_data_type_name = uavcan_data_type_name
         self._fields = {}

@@ -10,9 +10,9 @@ if __name__ == '__main__':
         # name, port, authkey, ppid, targetStr, path, pyside = pickle.load(sys.stdin.buffer)
         opts = pickle.load(sys.stdin.buffer)
     else:
-        # name, port, authkey, ppid, targetStr, path, pyside = pickle.load(sys.stdin)
+        #name, port, authkey, ppid, targetStr, path, pyside = pickle.load(sys.stdin)
         opts = pickle.load(sys.stdin)
-    # print "key:",  ' '.join([str(ord(x)) for x in authkey])
+    #print "key:",  ' '.join([str(ord(x)) for x in authkey])
     path = opts.pop('path', None)
     if path is not None:
         ## rewrite sys.path without assigning a new object--no idea who already has a reference to the existing list.

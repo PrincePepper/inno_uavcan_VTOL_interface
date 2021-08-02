@@ -3,7 +3,6 @@ import pyqtgraph.parametertree as pt
 
 app = pg.mkQApp()
 
-
 def test_opts():
     paramSpec = [
         dict(name='bool', type='bool', readonly=True),

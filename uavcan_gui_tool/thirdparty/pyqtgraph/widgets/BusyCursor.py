@@ -2,7 +2,6 @@ from ..Qt import QtGui, QtCore
 
 __all__ = ['BusyCursor']
 
-
 class BusyCursor(object):
     """Class for displaying a busy mouse cursor during long operations.
     Usage::

@@ -1,12 +1,9 @@
 from ..Qt import QtGui, USE_PYSIDE
-
 if not USE_PYSIDE:
     import sip
 from .GraphicsItem import GraphicsItem
 
 __all__ = ['GraphicsObject']
-
-
 class GraphicsObject(GraphicsItem, QtGui.QGraphicsObject):
     """
     **Bases:** :class:`GraphicsItem <pyqtgraph.graphicsItems.GraphicsItem>`, :class:`QtGui.QGraphicsObject`
@@ -14,7 +11,6 @@ class GraphicsObject(GraphicsItem, QtGui.QGraphicsObject):
     Extension of QGraphicsObject with some useful methods (provided by :class:`GraphicsItem <pyqtgraph.graphicsItems.GraphicsItem>`)
     """
     _qtBaseClass = QtGui.QGraphicsObject
-
     def __init__(self, *args):
         self.__inform_view_on_changes = True
         QtGui.QGraphicsObject.__init__(self, *args)

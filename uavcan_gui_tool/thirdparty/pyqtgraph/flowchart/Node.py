@@ -8,7 +8,6 @@ from ..pgcollections import OrderedDict
 def strDict(d):
     return dict([(str(k), v) for k, v in d.items()])
 
-
 class Node(QtCore.QObject):
     """
     Node represents the basic processing unit of a flowchart. 
@@ -192,7 +191,7 @@ class Node(QtCore.QObject):
             return self.terminals[attr]
 
     def __getitem__(self, item):
-        # return getattr(self, item)
+        #return getattr(self, item)
         """Return the terminal with the given name"""
         if item not in self.terminals:
             raise KeyError(item)
@@ -295,7 +294,7 @@ class Node(QtCore.QObject):
                 out = self.processBypassed(vals)
             else:
                 out = self.process(**strDict(vals))
-            # print "  output:", out
+            #print "  output:", out
             if out is not None:
                 if signal:
                     self.setOutput(**out)
@@ -329,7 +328,7 @@ class Node(QtCore.QObject):
 
     def setOutput(self, **vals):
         self.setOutputNoSignal(**vals)
-        # self.emit(QtCore.SIGNAL('outputChanged'), self)  ## triggers flowchart to propagate new data
+        #self.emit(QtCore.SIGNAL('outputChanged'), self)  ## triggers flowchart to propagate new data
         self.sigOutputChanged.emit(self)  ## triggers flowchart to propagate new data
 
     def setOutputNoSignal(self, **vals):
@@ -376,7 +375,7 @@ class Node(QtCore.QObject):
     def restoreState(self, state):
         """Restore the state of this node from a structure previously generated
         by saveState(). """
-        pos = state.get('pos', (0, 0))
+        pos = state.get('pos', (0,0))
         self.graphicsItem().setPos(*pos)
         self.bypass(state.get('bypass', False))
         if 'terminals' in state:
@@ -421,7 +420,7 @@ class Node(QtCore.QObject):
         w = self.ctrlWidget()
         if w is not None:
             w.setParent(None)
-        # self.emit(QtCore.SIGNAL('closed'), self)
+        #self.emit(QtCore.SIGNAL('closed'), self)
         self.sigClosed.emit(self)
 
     def disconnectAll(self):
@@ -429,7 +428,7 @@ class Node(QtCore.QObject):
             t.disconnectAll()
 
 
-# class NodeGraphicsItem(QtGui.QGraphicsItem):
+#class NodeGraphicsItem(QtGui.QGraphicsItem):
 class NodeGraphicsItem(GraphicsObject):
     def __init__(self, node):
         # QtGui.QGraphicsItem.__init__(self)
@@ -488,29 +487,30 @@ class NodeGraphicsItem(GraphicsObject):
         newName = str(self.nameItem.toPlainText())
         if newName != self.node.name():
             self.node.rename(newName)
-
+            
         ### re-center the label
         bounds = self.boundingRect()
-        self.nameItem.setPos(bounds.width() / 2. - self.nameItem.boundingRect().width() / 2., 0)
+        self.nameItem.setPos(bounds.width() / 2. - self.nameItem.boundingRect().width()/2., 0)
 
     def setPen(self, *args, **kwargs):
         self.pen = fn.mkPen(*args, **kwargs)
         self.update()
-
+        
     def setBrush(self, brush):
         self.brush = brush
         self.update()
-
+        
+        
     def updateTerminals(self):
         bounds = self.bounds
         self.terminals = {}
         inp = self.node.inputs()
-        dy = bounds.height() / (len(inp) + 1)
+        dy = bounds.height() / (len(inp)+1)
         y = dy
         for i, t in inp.items():
             item = t.graphicsItem()
             item.setParentItem(self)
-            # item.setZValue(self.zValue()+1)
+            #item.setZValue(self.zValue()+1)
             br = self.bounds
             item.setAnchor(0, y)
             self.terminals[i] = (t, item)
@@ -548,11 +548,13 @@ class NodeGraphicsItem(GraphicsObject):
 
         p.drawRect(self.bounds)
 
+        
     def mousePressEvent(self, ev):
         ev.ignore()
 
+
     def mouseClickEvent(self, ev):
-        # print "Node.mouseClickEvent called."
+        #print "Node.mouseClickEvent called."
         if int(ev.button()) == int(QtCore.Qt.LeftButton):
             ev.accept()
             # print "    ev.button: left"
@@ -601,15 +603,16 @@ class NodeGraphicsItem(GraphicsObject):
             for k, t in self.terminals.items():
                 t[1].nodeMoved()
         return GraphicsObject.itemChange(self, change, val)
+            
 
     def getMenu(self):
         return self.menu
-
+    
     def raiseContextMenu(self, ev):
         menu = self.scene().addParentContextMenus(self, self.getMenu(), ev)
         pos = ev.screenPos()
         menu.popup(QtCore.QPoint(pos.x(), pos.y()))
-
+        
     def buildMenu(self):
         self.menu = QtGui.QMenu()
         self.menu.setTitle("Node")
@@ -622,9 +625,9 @@ class NodeGraphicsItem(GraphicsObject):
         a = self.menu.addAction("Remove node", self.node.close)
         if not self.node._allowRemove:
             a.setEnabled(False)
-
+        
     def addInputFromMenu(self):  ## called when add input is clicked in context menu
         self.node.addInput(renamable=True, removable=True, multiable=True)
-
+        
     def addOutputFromMenu(self):  ## called when add output is clicked in context menu
         self.node.addOutput(renamable=True, removable=True, multiable=False)

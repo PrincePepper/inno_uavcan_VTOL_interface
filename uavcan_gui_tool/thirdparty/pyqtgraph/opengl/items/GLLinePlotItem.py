@@ -6,7 +6,6 @@ from ... import QtGui
 
 __all__ = ['GLLinePlotItem']
 
-
 class GLLinePlotItem(GLGraphicsItem):
     """Draws line plots in 3D."""
 

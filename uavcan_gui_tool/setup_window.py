@@ -26,7 +26,9 @@ STANDARD_BAUD_RATES = 9600, 115200, 460800, 921600, 1000000, 3000000
 DEFAULT_BAUD_RATE = 1000000
 assert DEFAULT_BAUD_RATE in STANDARD_BAUD_RATES
 
+
 RUNNING_ON_LINUX = 'linux' in sys.platform.lower()
+
 
 logger = getLogger(__name__)
 

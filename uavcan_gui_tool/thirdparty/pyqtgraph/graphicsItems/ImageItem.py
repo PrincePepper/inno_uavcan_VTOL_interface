@@ -126,7 +126,7 @@ class ImageItem(GraphicsObject):
 
     def getLevels(self):
         return self.levels
-        # return self.whiteLevel, self.blackLevel
+        #return self.whiteLevel, self.blackLevel
 
     def setLookupTable(self, lut, update=True):
         """
@@ -246,7 +246,7 @@ class ImageItem(GraphicsObject):
             if mn == mx:
                 mn = 0
                 mx = 255
-            kargs['levels'] = [mn, mx]
+            kargs['levels'] = [mn,mx]
 
         profile()
 
@@ -261,6 +261,7 @@ class ImageItem(GraphicsObject):
 
         if gotNewData:
             self.sigImageChanged.emit()
+
 
     def updateImage(self, *args, **kargs):
         ## used for re-rendering qimage from self.image.
@@ -345,7 +346,7 @@ class ImageItem(GraphicsObject):
         This method is also used when automatically computing levels.
         """
         if self.image is None:
-            return None, None
+            return None,None
         if step == 'auto':
             step = (np.ceil(self.image.shape[0] / targetImageSize),
                     np.ceil(self.image.shape[1] / targetImageSize))
@@ -377,7 +378,7 @@ class ImageItem(GraphicsObject):
         (see GraphicsItem::ItemIgnoresTransformations in the Qt documentation)
         """
         self.setFlag(self.ItemIgnoresTransformations, b)
-
+    
     def setScaledMode(self):
         self.setPxMode(False)
 
@@ -450,7 +451,8 @@ class ImageItem(GraphicsObject):
             self.menu.addAction(remAct)
             self.menu.remAct = remAct
         return self.menu
-
+        
+        
     def hoverEvent(self, ev):
         if not ev.isExit() and self.drawKernel is not None and ev.acceptDrags(QtCore.Qt.LeftButton):
             ev.acceptClicks(
@@ -461,13 +463,15 @@ class ImageItem(GraphicsObject):
             ev.acceptClicks(QtCore.Qt.RightButton)  ## accept context menu clicks
         # else:
         # self.box.setBrush(self.brush)
-        # self.update()
+        #self.update()
 
+
+        
     def tabletEvent(self, ev):
         print(ev.device())
         print(ev.pointerType())
         print(ev.pressure())
-
+    
     def drawAt(self, pos, ev=None):
         pos = [int(pos.x()), int(pos.y())]
         dk = self.drawKernel

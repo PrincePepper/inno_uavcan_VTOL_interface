@@ -50,7 +50,7 @@ class ComboBox(QtGui.QComboBox):
         ind = self.findText(text)
         if ind == -1:
             raise ValueError(text)
-        # self.value = value
+        #self.value = value
         self.setCurrentIndex(ind)
 
     def value(self):
@@ -75,7 +75,6 @@ class ComboBox(QtGui.QComboBox):
             finally:
                 self._ignoreIndexChange = prev
             return ret
-
         return fn
 
     def blockIfUnchanged(func):
@@ -96,7 +95,6 @@ class ComboBox(QtGui.QComboBox):
                 self.currentIndexChanged.emit(self.currentIndex())
 
             return ret
-
         return fn
 
     @ignoreIndexChange

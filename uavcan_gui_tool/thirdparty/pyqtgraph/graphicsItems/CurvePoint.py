@@ -7,8 +7,6 @@ from .GraphicsObject import GraphicsObject
 from ..Qt import QtGui, QtCore
 
 __all__ = ['CurvePoint', 'CurveArrow']
-
-
 class CurvePoint(GraphicsObject):
     """A GraphicsItem that sets its location to a point on a PlotCurveItem.
     Also rotates to be tangent to the curve.

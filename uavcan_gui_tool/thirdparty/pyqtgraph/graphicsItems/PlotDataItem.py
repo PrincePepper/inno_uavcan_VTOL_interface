@@ -254,7 +254,7 @@ class PlotDataItem(GraphicsObject):
 
     def setBrush(self, *args, **kargs):
         return self.setFillBrush(*args, **kargs)
-
+    
     def setFillLevel(self, level):
         if self.opts['fillLevel'] == level:
             return
@@ -265,7 +265,7 @@ class PlotDataItem(GraphicsObject):
         if self.opts['symbol'] == symbol:
             return
         self.opts['symbol'] = symbol
-        # self.scatter.setSymbol(symbol)
+        #self.scatter.setSymbol(symbol)
         self.updateItems()
 
     def setSymbolPen(self, *args, **kargs):
@@ -273,7 +273,7 @@ class PlotDataItem(GraphicsObject):
         if self.opts['symbolPen'] == pen:
             return
         self.opts['symbolPen'] = pen
-        # self.scatter.setSymbolPen(pen)
+        #self.scatter.setSymbolPen(pen)
         self.updateItems()
 
     def setSymbolBrush(self, *args, **kargs):
@@ -281,14 +281,14 @@ class PlotDataItem(GraphicsObject):
         if self.opts['symbolBrush'] == brush:
             return
         self.opts['symbolBrush'] = brush
-        # self.scatter.setSymbolBrush(brush)
+        #self.scatter.setSymbolBrush(brush)
         self.updateItems()
 
     def setSymbolSize(self, size):
         if self.opts['symbolSize'] == size:
             return
         self.opts['symbolSize'] = size
-        # self.scatter.setSymbolSize(symbolSize)
+        #self.scatter.setSymbolSize(symbolSize)
         self.updateItems()
 
     def setDownsampling(self, ds=None, auto=None, method=None):
@@ -340,7 +340,7 @@ class PlotDataItem(GraphicsObject):
         Clear any data displayed by this item and display new data.
         See :func:`__init__() <pyqtgraph.PlotDataItem.__init__>` for details; it accepts the same arguments.
         """
-        # self.clear()
+        #self.clear()
         profiler = debug.Profiler()
         y = None
         x = None
@@ -381,7 +381,7 @@ class PlotDataItem(GraphicsObject):
                     'When passing two unnamed arguments, both must be a list or array of values. (got %s, %s)' % (
                     str(type(args[0])), str(type(args[1]))))
             if not isinstance(args[0], np.ndarray):
-                # x = np.array(args[0])
+                #x = np.array(args[0])
                 if dtyp[0] == 'MetaArray':
                     x = args[0].asarray()
                 else:
@@ -389,7 +389,7 @@ class PlotDataItem(GraphicsObject):
             else:
                 x = args[0].view(np.ndarray)
             if not isinstance(args[1], np.ndarray):
-                # y = np.array(args[1])
+                #y = np.array(args[1])
                 if dtyp[1] == 'MetaArray':
                     y = args[1].asarray()
                 else:
@@ -491,6 +491,7 @@ class PlotDataItem(GraphicsObject):
         else:
             self.scatter.hide()
 
+
     def getData(self):
         if self.xData is None:
             return (None, None)
@@ -545,7 +546,7 @@ class PlotDataItem(GraphicsObject):
                     if width != 0.0:
                         ds = int(max(1, int((x1 - x0) / (width * self.opts['autoDownsampleFactor']))))
                     ## downsampling is expensive; delay until after clipping.
-
+            
             if self.opts['clipToView']:
                 view = self.getViewBox()
                 if view is None or not view.autoRangeEnabled()[0]:
@@ -581,7 +582,7 @@ class PlotDataItem(GraphicsObject):
             self.xDisp = x
             self.yDisp = y
         # print self.yDisp.shape, self.yDisp.min(), self.yDisp.max()
-        # print self.xDisp.shape, self.xDisp.min(), self.xDisp.max()
+        #print self.xDisp.shape, self.xDisp.min(), self.xDisp.max()
         return self.xDisp, self.yDisp
 
     def dataBounds(self, ax, frac=1.0, orthoRange=None):
@@ -603,7 +604,7 @@ class PlotDataItem(GraphicsObject):
                         and max)
         =============== =============================================================
         """
-
+        
         range = [None, None]
         if self.curve.isVisible():
             range = self.curve.dataBounds(ax, frac, orthoRange)
@@ -612,9 +613,9 @@ class PlotDataItem(GraphicsObject):
             range = [
                 r2[0] if range[0] is None else (range[0] if r2[0] is None else min(r2[0], range[0])),
                 r2[1] if range[1] is None else (range[1] if r2[1] is None else min(r2[1], range[1]))
-            ]
+                ]
         return range
-
+    
     def pixelPadding(self):
         """
         Return the size in pixels that this item may draw beyond the values returned by dataBounds().
@@ -644,25 +645,25 @@ class PlotDataItem(GraphicsObject):
 
     def appendData(self, *args, **kargs):
         pass
-
+    
     def curveClicked(self):
         self.sigClicked.emit(self)
-
+        
     def scatterClicked(self, plt, points):
         self.sigClicked.emit(self)
         self.sigPointsClicked.emit(self, points)
-
+    
     def viewRangeChanged(self):
         # view range has changed; re-plot if needed
         if self.opts['clipToView'] or self.opts['autoDownsample']:
             self.xDisp = self.yDisp = None
             self.updateItems()
-
+            
     def _fourierTransform(self, x, y):
         ## Perform fourier transform. If x values are not sampled uniformly,
         ## then use np.interp to resample before taking fft.
         dx = np.diff(x)
-        uniform = not np.any(np.abs(dx - dx[0]) > (abs(dx[0]) / 1000.))
+        uniform = not np.any(np.abs(dx-dx[0]) > (abs(dx[0]) / 1000.))
         if not uniform:
             x2 = np.linspace(x[0], x[-1], len(x))
             y = np.interp(x2, x, y)
@@ -672,8 +673,7 @@ class PlotDataItem(GraphicsObject):
         dt = x[-1] - x[0]
         x = np.linspace(0, 0.5 * len(x) / dt, len(y))
         return x, y
-
-
+    
 def dataType(obj):
     if hasattr(obj, '__len__') and len(obj) == 0:
         return 'empty'
@@ -681,7 +681,7 @@ def dataType(obj):
         return 'dictOfLists'
     elif isSequence(obj):
         first = obj[0]
-
+        
         if (hasattr(obj, 'implements') and obj.implements('MetaArray')):
             return 'MetaArray'
         elif isinstance(obj, np.ndarray):
@@ -855,5 +855,5 @@ def isSequence(obj):
 # elif self.mode == 'dict':
 # return self.data.keys()
 
-# def keys(self):
-# return self.columnNames()
+#def keys(self):
+#return self.columnNames()

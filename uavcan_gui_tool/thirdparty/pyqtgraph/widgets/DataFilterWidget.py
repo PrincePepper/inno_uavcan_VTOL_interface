@@ -7,7 +7,6 @@ from ..pgcollections import OrderedDict
 
 __all__ = ['DataFilterWidget']
 
-
 class DataFilterWidget(ptree.ParameterTree):
     """
     This class allows the user to filter multi-column data sets by specifying
@@ -88,7 +87,6 @@ class DataFilterParameter(ptree.types.GroupParameter):
                 continue
             desc.append(fp.describe())
         return desc
-
 
 class RangeFilterItem(ptree.types.SimpleParameter):
     def __init__(self, name, opts):

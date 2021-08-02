@@ -9,7 +9,6 @@
 
 from PyQt5 import QtCore, QtWidgets
 
-
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
@@ -91,7 +90,6 @@ class Ui_Form(object):
         self.resetTransformsBtn.setText(_translate("Form", "Reset Transforms"))
         self.mirrorSelectionBtn.setText(_translate("Form", "Mirror Selection"))
         self.reflectSelectionBtn.setText(_translate("Form", "MirrorXY"))
-
 
 from ..widgets.GraphicsView import GraphicsView
 from ..widgets.TreeWidget import TreeWidget

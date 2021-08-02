@@ -36,7 +36,6 @@ import struct
 
 from . import debug
 
-
 def siScale(x, minVal=1e-25, allowUnicode=True):
     """
     Return the recommended scale factor and SI prefix string for x.
@@ -142,8 +141,8 @@ class Color(QtGui.QColor):
 
     def __getitem__(self, ind):
         return (self.red, self.green, self.blue, self.alpha)[ind]()
-
-
+        
+    
 def mkColor(*args):
     """
     Convenience function for constructing QColor from a variety of argument types. Accepted arguments are:
@@ -246,7 +245,6 @@ def mkBrush(*args, **kwds):
         color = args
     return QtGui.QBrush(mkColor(color))
 
-
 def mkPen(*args, **kargs):
     """
     Convenience function for constructing QPen. 
@@ -296,7 +294,6 @@ def mkPen(*args, **kargs):
         pen.setDashPattern(dash)
     return pen
 
-
 def hsvColor(hue, sat=1.0, val=1.0, alpha=1.0):
     """Generate a QColor from HSVa values. (all arguments are float 0.0-1.0)"""
     c = QtGui.QColor()
@@ -308,11 +305,9 @@ def colorTuple(c):
     """Return a tuple (R,G,B,A) from a QColor"""
     return (c.red(), c.green(), c.blue(), c.alpha())
 
-
 def colorStr(c):
     """Generate a hex string code from a QColor"""
     return ('%02x' * 4) % colorTuple(c)
-
 
 def intColor(index, hues=9, values=1, maxValue=255, minValue=150, maxHue=360, minHue=0, sat=255, alpha=255, **kargs):
     """
@@ -338,7 +333,6 @@ def intColor(index, hues=9, values=1, maxValue=255, minValue=150, maxHue=360, mi
     c.setAlpha(alpha)
     return c
 
-
 def glColor(*args, **kargs):
     """
     Convert a color to OpenGL color format (r,g,b,a) floats 0.0-1.0
@@ -347,6 +341,7 @@ def glColor(*args, **kargs):
     c = mkColor(*args, **kargs)
     return (c.red() / 255., c.green() / 255., c.blue() / 255., c.alpha() / 255.)
 
+    
 
 def makeArrowPath(headLen=20, tipAngle=20, tailLen=20, tailWidth=3, baseAngle=0):
     """
@@ -370,7 +365,7 @@ def makeArrowPath(headLen=20, tipAngle=20, tailLen=20, tailWidth=3, baseAngle=0)
         path.lineTo(headLen + tailLen, tailWidth)
         path.lineTo(innerY, tailWidth)
     path.lineTo(headLen, headWidth)
-    path.lineTo(0, 0)
+    path.lineTo(0,0)
     return path
 
 
@@ -483,7 +478,6 @@ def affineSlice(data, shape, origin, vectors, axes, order=1, returnCoords=False,
         return (output, x)
     else:
         return output
-
 
 def interpolateArray(data, x, default=0.0):
     """
@@ -621,12 +615,12 @@ def subArray(data, offset, shape, stride):
     the input in the example above to have shape (10, 7) would cause the
     output to have shape (2, 3, 7).
     """
-    # data = data.flatten()
+    #data = data.flatten()
     data = data[offset:]
     shape = tuple(shape)
     stride = tuple(stride)
     extraShape = data.shape[1:]
-    # print data.shape, offset, shape, stride
+    #print data.shape, offset, shape, stride
     for i in range(len(shape)):
         mask = (slice(None),) * i + (slice(None, shape[i] * stride[i]),)
         newShape = shape[:i + 1]
@@ -676,7 +670,6 @@ def transformToArray(tr):
         return np.array(tr.copyDataTo()).reshape(4, 4)
     else:
         raise Exception("Transform argument must be either QTransform or QMatrix4x4.")
-
 
 def transformCoordinates(tr, coords, transpose=False):
     """
@@ -732,8 +725,10 @@ def transformCoordinates(tr, coords, transpose=False):
         ## move first axis to end.
         mapped = mapped.transpose(tuple(range(1, mapped.ndim)) + (0,))
     return mapped
+    
+    
 
-
+    
 def solve3DTransform(points1, points2):
     """
     Find a 3D transformation matrix that maps points1 onto points2.
@@ -758,8 +753,7 @@ def solve3DTransform(points1, points2):
         matrix[i] = numpy.linalg.solve(pts[0], pts[1][:, i])
 
     return matrix
-
-
+    
 def solveBilinearTransform(points1, points2):
     """
     Find a bilinear transformation matrix (2x4) that maps points1 onto points2.
@@ -781,8 +775,7 @@ def solveBilinearTransform(points1, points2):
         matrix[i] = numpy.linalg.solve(A, B[:, i])  ## solve Ax = B; x is one row of the desired transformation matrix
 
     return matrix
-
-
+    
 def rescaleData(data, scale, offset, dtype=None):
     """Return data rescaled and optionally cast to a new dtype::
     
@@ -903,12 +896,12 @@ def makeARGB(data, lut=None, levels=None, scale=None, useRGBA=False):
     ============== ==================================================================================
     """
     profile = debug.Profiler()
-
+    
     if lut is not None and not isinstance(lut, np.ndarray):
         lut = np.array(lut)
     if levels is not None and not isinstance(levels, np.ndarray):
         levels = np.array(levels)
-
+    
     if levels is not None:
         if levels.ndim == 1:
             if len(levels) != 2:
@@ -1028,7 +1021,7 @@ def makeQImage(imgData, alpha=None, copy=True, transpose=True):
     """
     ## create QImage from buffer
     profile = debug.Profiler()
-
+    
     ## If we didn't explicitly specify alpha, check the array shape.
     if alpha is None:
         alpha = (imgData.shape[2] == 4)
@@ -1043,7 +1036,7 @@ def makeQImage(imgData, alpha=None, copy=True, transpose=True):
             copied = True
         else:
             raise Exception('Array has only 3 channels; cannot make QImage without copying.')
-
+    
     if alpha:
         imgFormat = QtGui.QImage.Format_ARGB32
     else:
@@ -1098,8 +1091,7 @@ def makeQImage(imgData, alpha=None, copy=True, transpose=True):
     # qimage = QtGui.QImage(buf, imgData.shape[1], imgData.shape[0], imgFormat)
     # profiler()
     # qimage.data = imgData
-    # return qimage
-
+    #return qimage
 
 def imageToArray(img, copy=False, transpose=True):
     """
@@ -1119,21 +1111,20 @@ def imageToArray(img, copy=False, transpose=True):
             # Required for Python 2.6, PyQt 4.10
             # If this works on all platforms, then there is no need to use np.asarray..
             arr = np.frombuffer(ptr, np.ubyte, img.byteCount())
-
+    
     if fmt == img.Format_RGB32:
         arr = arr.reshape(img.height(), img.width(), 3)
     elif fmt == img.Format_ARGB32 or fmt == img.Format_ARGB32_Premultiplied:
         arr = arr.reshape(img.height(), img.width(), 4)
-
+    
     if copy:
         arr = arr.copy()
 
     if transpose:
-        return arr.transpose((1, 0, 2))
+        return arr.transpose((1,0,2))
     else:
         return arr
-
-
+    
 def colorToAlpha(data, color):
     """
     Given an RGBA image in *data*, convert *color* to be transparent. 
@@ -1179,7 +1170,6 @@ def colorToAlpha(data, color):
     # raise Exception()
     return np.clip(output, 0, 255).astype(np.ubyte)
 
-
 def gaussianFilter(data, sigma):
     """
     Drop-in replacement for scipy.ndimage.gaussian_filter.
@@ -1189,7 +1179,7 @@ def gaussianFilter(data, sigma):
     """
     if np.isscalar(sigma):
         sigma = (sigma,) * data.ndim
-
+        
     baseline = data.mean()
     filtered = data - baseline
     for ax in range(data.ndim):
@@ -1217,8 +1207,8 @@ def gaussianFilter(data, sigma):
         sl[ax] = slice(filtered.shape[ax] - data.shape[ax], None, None)
         filtered = filtered[sl]
     return filtered + baseline
-
-
+    
+    
 def downsample(data, n, axis=0, xvals='subsample'):
     """Downsample by averaging points together across axis.
     If multiple axes are specified, runs once per axis.
@@ -1229,10 +1219,11 @@ def downsample(data, n, axis=0, xvals='subsample'):
     if (hasattr(data, 'implements') and data.implements('MetaArray')):
         ma = data
         data = data.view(np.ndarray)
-
+        
+    
     if hasattr(axis, '__len__'):
         if not hasattr(n, '__len__'):
-            n = [n] * len(axis)
+            n = [n]*len(axis)
         for i in range(len(axis)):
             data = downsample(data, n[i], axis[i])
         return data
@@ -1304,16 +1295,16 @@ def arrayToQPath(x, y, connect='all'):
 
     path = QtGui.QPainterPath()
 
-    # profiler = debug.Profiler()
+    #profiler = debug.Profiler()
     n = x.shape[0]
     # create empty array, pad with extra space on either end
     arr = np.empty(n + 2, dtype=[('x', '>f8'), ('y', '>f8'), ('c', '>i4')])
     # write first two integers
-    # profiler('allocate empty')
+    #profiler('allocate empty')
     byteview = arr.view(dtype=np.ubyte)
     byteview[:12] = 0
     byteview.data[12:20] = struct.pack('>ii', n, 0)
-    # profiler('pack header')
+    #profiler('pack header')
     # Fill array with vertex values
     arr[1:-1]['x'] = x
     arr[1:-1]['y'] = y
@@ -1324,7 +1315,7 @@ def arrayToQPath(x, y, connect='all'):
         if connect.size != n:
             raise Exception("x,y array lengths must be multiple of 2 to use connect='pairs'")
         connect[:, 0] = 1
-        connect[:, 1] = 0
+        connect[:,1] = 0
         connect = connect.flatten()
     if connect == 'finite':
         connect = np.isfinite(x) & np.isfinite(y)
@@ -1478,7 +1469,7 @@ def isocurve(data, level, connected=False, extendToEdge=False, path=False):
         d2[1:-1, 0] = data[:, 0]
         d2[1:-1, -1] = data[:, -1]
         d2[0, 0] = d2[0, 1]
-        d2[0, -1] = d2[1, -1]
+        d2[0,-1] = d2[1, -1]
         d2[-1, 0] = d2[-1, 1]
         d2[-1, -1] = d2[-1, -2]
         data = d2
@@ -1575,15 +1566,15 @@ def isocurve(data, level, connected=False, extendToEdge=False, path=False):
         points[a[1]].append([a, b])
         if b[1] not in points:
             points[b[1]] = []
-        points[b[1]].append([b, a])
+        points[b[1]].append([b,a])
 
     ## rearrange into chains
     for k in list(points.keys()):
         try:
             chains = points[k]
-        except KeyError:  ## already used this point elsewhere
+        except KeyError:   ## already used this point elsewhere
             continue
-        # print "===========", k
+        #print "===========", k
         for chain in chains:
             # print "  chain:", chain
             x = None
@@ -1600,7 +1591,7 @@ def isocurve(data, level, connected=False, extendToEdge=False, path=False):
                     if conn[1][1] != y:
                         # print "    ext:", conn
                         chain.extend(conn[1:])
-                # print "    del:", x
+                #print "    del:", x
                 del points[x]
             if chain[0][1] == chain[-1][1]:  # looped chain; no need to continue the other direction
                 chains.pop()
@@ -1623,10 +1614,10 @@ def isocurve(data, level, connected=False, extendToEdge=False, path=False):
         path.moveTo(*line[0])
         for p in line[1:]:
             path.lineTo(*p)
-
+    
     return path
-
-
+    
+    
 def traceImage(image, values, smooth=0.5):
     """
     Convert an image to a set of QPainterPath curves.
@@ -1661,14 +1652,13 @@ def traceImage(image, values, smooth=0.5):
             path.moveTo(*line[0])
             for p in line[1:]:
                 path.lineTo(*p)
-
+        
         paths.append(path)
     return paths
-
-
+    
+    
+    
 IsosurfaceDataCache = None
-
-
 def isosurface(data, level):
     """
     Generate isosurface from volumetric data using marching cubes algorithm.
@@ -1686,7 +1676,7 @@ def isosurface(data, level):
     ## Efficient implementation of Marching Cubes' cases with topological guarantees.
     ## Thomas Lewiner, Helio Lopes, Antonio Wilson Vieira and Geovan Tavares.
     ## Journal of Graphics Tools 8(2): pp. 1-15 (december 2003)
-
+    
     ## Precompute lookup tables on the first run
     global IsosurfaceDataCache
     if IsosurfaceDataCache is None:
@@ -2116,14 +2106,15 @@ def isosurface(data, level):
         vertInds = cutEdges[verts]
         # profiler()
         nv = vertInds.shape[0]
-        # profiler()
-        faces[ptr:ptr + nv] = vertInds  # .reshape((nv, 3))
-        # profiler()
+        #profiler()
+        faces[ptr:ptr+nv] = vertInds #.reshape((nv, 3))
+        #profiler()
         ptr += nv
-
+        
     return vertexes, faces
 
 
+    
 def invertQTransform(tr):
     """Return a QTransform that is the inverse of *tr*.
     Rasises an exception if tr is not invertible.
@@ -2136,14 +2127,14 @@ def invertQTransform(tr):
         import numpy.linalg
         arr = np.array([[tr.m11(), tr.m12(), tr.m13()], [tr.m21(), tr.m22(), tr.m23()], [tr.m31(), tr.m32(), tr.m33()]])
         inv = numpy.linalg.inv(arr)
-        return QtGui.QTransform(inv[0, 0], inv[0, 1], inv[0, 2], inv[1, 0], inv[1, 1], inv[1, 2], inv[2, 0], inv[2, 1])
+        return QtGui.QTransform(inv[0,0], inv[0,1], inv[0,2], inv[1,0], inv[1,1], inv[1,2], inv[2,0], inv[2,1])
     except ImportError:
         inv = tr.inverted()
         if inv[1] is False:
             raise Exception("Transform is not invertible.")
         return inv[0]
-
-
+    
+    
 def pseudoScatter(data, spacing=None, shuffle=True, bidir=False):
     """
     Used for examining the distribution of values in a set. Produces scattering as in beeswarm or column scatter plots.
@@ -2202,17 +2193,18 @@ def pseudoScatter(data, spacing=None, shuffle=True, bidir=False):
                         break
 
                     if direction > 0:
-                        y = limits2[:, mask].max()
+                        y = limits2[:,mask].max()
                     else:
-                        y = limits2[:, mask].min()
+                        y = limits2[:,mask].min()
                 yopts.append(y)
             if bidir:
                 y = yopts[0] if -yopts[0] < yopts[1] else yopts[1]
             else:
                 y = yopts[0]
         yvals[i] = y
-
+    
     return yvals[np.argsort(inds)]  ## un-shuffle values before returning
+
 
 
 def toposort(deps, nodes=None, seen=None, stack=None, depth=0):
@@ -2236,11 +2228,11 @@ def toposort(deps, nodes=None, seen=None, stack=None, depth=0):
     """
     # fill in empty dep lists
     deps = deps.copy()
-    for k, v in list(deps.items()):
+    for k,v in list(deps.items()):
         for k in v:
             if k not in deps:
                 deps[k] = []
-
+    
     if nodes is None:
         ## run through deps to find nodes that are not depended upon
         rem = set()
@@ -2257,6 +2249,6 @@ def toposort(deps, nodes=None, seen=None, stack=None, depth=0):
         if n in seen:
             continue
         seen.add(n)
-        sorted.extend(toposort(deps, deps[n], seen, stack + [n], depth=depth + 1))
+        sorted.extend( toposort(deps, deps[n], seen, stack+[n], depth=depth+1))
         sorted.append(n)
     return sorted

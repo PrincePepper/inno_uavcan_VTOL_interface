@@ -7,7 +7,6 @@ class SRTTransform3D(Transform3D):
     """4x4 Transform matrix that can always be represented as a combination of 3 matrices: scale * rotate * translate
     This transform has no shear; angles are always preserved.
     """
-
     def __init__(self, init=None):
         Transform3D.__init__(self)
         self.reset()
@@ -217,7 +216,7 @@ class SRTTransform3D(Transform3D):
             m = np.array(self.copyDataTo()).reshape(4, 4)
             m[2] = m[3]
             m[:, 2] = m[:, 3]
-            return m[:3, :3]
+            return m[:3,:3]
         else:
             raise Exception("Argument 'nd' must be 2 or 3")
 
@@ -226,12 +225,11 @@ if __name__ == '__main__':
     import widgets
     import GraphicsView
     from functions import *
-
     app = QtGui.QApplication([])
     win = QtGui.QMainWindow()
     win.show()
     cw = GraphicsView.GraphicsView()
-    # cw.enableMouse()
+    #cw.enableMouse()  
     win.setCentralWidget(cw)
     s = QtGui.QGraphicsScene()
     cw.setScene(s)

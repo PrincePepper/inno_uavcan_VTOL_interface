@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 from ..Qt import QtCore, QtGui
-
 if not hasattr(QtCore, 'Signal'):
     QtCore.Signal = QtCore.pyqtSignal
 import weakref
-
 
 class CanvasManager(QtCore.QObject):
     SINGLETON = None
@@ -75,3 +73,4 @@ class CanvasCombo(QtGui.QComboBox):
     def setHostName(self, name):
         self.hostName = name
         self.updateCanvasList()
+

@@ -7,7 +7,6 @@ from ..parametertree import Parameter
 
 try:
     import h5py
-
     HAVE_HDF5 = True
 except ImportError:
     HAVE_HDF5 = False
@@ -55,7 +54,6 @@ class HDF5Exporter(Exporter):
         fdata = numpy.array(data).astype('double')
         dset = fd.create_dataset(dsname, data=fdata)
         fd.close()
-
 
 if HAVE_HDF5:
     HDF5Exporter.register()

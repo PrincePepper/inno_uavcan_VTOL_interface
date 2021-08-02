@@ -7,7 +7,6 @@ from ..parametertree import Parameter
 
 __all__ = ['ImageExporter']
 
-
 class ImageExporter(Exporter):
     Name = "Image File (PNG, TIF, JPG, ...)"
     allowCopy = True

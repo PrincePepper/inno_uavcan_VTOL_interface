@@ -4,7 +4,6 @@ from ..GLGraphicsItem import GLGraphicsItem
 
 __all__ = ['GLImageItem']
 
-
 class GLImageItem(GLGraphicsItem):
     """
     **Bases:** :class:`GLGraphicsItem <pyqtgraph.opengl.GLGraphicsItem>`

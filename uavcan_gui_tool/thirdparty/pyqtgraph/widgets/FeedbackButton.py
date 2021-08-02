@@ -3,7 +3,6 @@ from ..Qt import QtCore, QtGui
 
 __all__ = ['FeedbackButton']
 
-
 class FeedbackButton(QtGui.QPushButton):
     """
     QPushButton which flashes success/failure indication for slow or asynchronous procedures.
@@ -45,7 +44,7 @@ class FeedbackButton(QtGui.QPushButton):
         isGuiThread = QtCore.QThread.currentThread() == QtCore.QCoreApplication.instance().thread()
         if isGuiThread:
             self.setEnabled(True)
-            # print "success"
+            #print "success"
             self.startBlink("#0F0", message, tip, limitedTime=limitedTime)
         else:
             self.sigCallSuccess.emit(message, tip, limitedTime)
@@ -55,7 +54,7 @@ class FeedbackButton(QtGui.QPushButton):
         isGuiThread = QtCore.QThread.currentThread() == QtCore.QCoreApplication.instance().thread()
         if isGuiThread:
             self.setEnabled(True)
-            # print "fail"
+            #print "fail"
             self.startBlink("#F00", message, tip, limitedTime=limitedTime)
         else:
             self.sigCallFailure.emit(message, tip, limitedTime)
@@ -117,7 +116,7 @@ class FeedbackButton(QtGui.QPushButton):
     def setText(self, text=None, temporary=False):
         if text is None:
             text = self.origText
-        # print text
+        #print text
         QtGui.QPushButton.setText(self, text)
         if not temporary:
             self.origText = text
@@ -139,13 +138,10 @@ class FeedbackButton(QtGui.QPushButton):
 
 if __name__ == '__main__':
     import time
-
     app = QtGui.QApplication([])
     win = QtGui.QMainWindow()
     btn = FeedbackButton("Button")
     fail = True
-
-
     def click():
         btn.processing("Hold on..")
         time.sleep(2.0)
@@ -156,8 +152,6 @@ if __name__ == '__main__':
             btn.failure(message="FAIL.", tip="There was a failure. Get over it.")
         else:
             btn.success(message="Bueno!")
-
-
     btn.clicked.connect(click)
     win.setCentralWidget(btn)
     win.show()

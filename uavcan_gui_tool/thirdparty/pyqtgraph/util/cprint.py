@@ -14,7 +14,6 @@ if windll is not None:
 else:
     _WIN = False
 
-
 def winset(reset=False, fore=None, back=None, style=None, stderr=False):
     if reset:
         winterm.reset_all()
@@ -24,7 +23,6 @@ def winset(reset=False, fore=None, back=None, style=None, stderr=False):
         winterm.back(back, stderr)
     if style is not None:
         winterm.style(style, stderr)
-
 
 ANSI = {}
 WIN = {}
@@ -92,11 +90,9 @@ def cprint(stream, *args, **kwds):
             if isinstance(arg, basestring):
                 stream.write(arg)
 
-
 def cout(*args):
     """Shorthand for cprint('stdout', ...)"""
     cprint('stdout', *args)
-
 
 def cerr(*args):
     """Shorthand for cprint('stderr', ...)"""

@@ -4,7 +4,6 @@ import sys
 
 _IS_PY3 = sys.version_info[0] == 3
 
-
 class LRUCache(object):
     '''
     This LRU cache should be reasonable for short collections (until around 100 items), as it does a

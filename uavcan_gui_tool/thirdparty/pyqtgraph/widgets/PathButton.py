@@ -6,7 +6,6 @@ __all__ = ['PathButton']
 
 class PathButton(QtGui.QPushButton):
     """Simple PushButton extension which paints a QPainterPath on its face"""
-
     def __init__(self, parent=None, path=None, pen='default', brush=None, size=(30, 30)):
         QtGui.QPushButton.__init__(self, parent)
         self.path = None

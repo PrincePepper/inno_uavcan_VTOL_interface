@@ -6,7 +6,6 @@ from ...Qt import QtGui
 
 __all__ = ['GLVolumeItem']
 
-
 class GLVolumeItem(GLGraphicsItem):
     """
     **Bases:** :class:`GLGraphicsItem <pyqtgraph.opengl.GLGraphicsItem>`
@@ -214,4 +213,4 @@ class GLVolumeItem(GLGraphicsItem):
         # glDisable(GL_TEXTURE_3D)
 
         # glMatrixMode(GL_PROJECTION)
-        # glPopMatrix()
+        #glPopMatrix()

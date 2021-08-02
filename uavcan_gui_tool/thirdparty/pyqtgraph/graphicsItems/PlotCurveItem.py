@@ -1,8 +1,6 @@
 from ..Qt import QtGui, QtCore
-
 try:
     from ..Qt import QtOpenGL
-
     HAVE_OPENGL = True
 except:
     HAVE_OPENGL = False
@@ -14,8 +12,6 @@ from .. import getConfigOption
 from .. import debug
 
 __all__ = ['PlotCurveItem']
-
-
 class PlotCurveItem(GraphicsObject):
     """
     Class representing a single plot curve. Instances of this class are created
@@ -235,7 +231,7 @@ class PlotCurveItem(GraphicsObject):
         self.opts['pen'] = fn.mkPen(*args, **kargs)
         self.invalidateBounds()
         self.update()
-
+        
     def setShadowPen(self, *args, **kargs):
         """Set the shadow pen used to draw behind tyhe primary pen.
         This pen must have a larger width than the primary 
@@ -250,7 +246,7 @@ class PlotCurveItem(GraphicsObject):
         self.opts['brush'] = fn.mkBrush(*args, **kargs)
         self.invalidateBounds()
         self.update()
-
+        
     def setFillLevel(self, level):
         """Set the level filled to when filling under the curve"""
         self.opts['fillLevel'] = level
@@ -293,7 +289,7 @@ class PlotCurveItem(GraphicsObject):
         
         """
         self.updateData(*args, **kargs)
-
+        
     def updateData(self, *args, **kargs):
         profiler = debug.Profiler()
 
@@ -302,7 +298,7 @@ class PlotCurveItem(GraphicsObject):
         elif len(args) == 2:
             kargs['x'] = args[0]
             kargs['y'] = args[1]
-
+        
         if 'y' not in kargs or kargs['y'] is None:
             kargs['y'] = np.array([])
         if 'x' not in kargs or kargs['x'] is None:
@@ -361,13 +357,14 @@ class PlotCurveItem(GraphicsObject):
             self.setBrush(kargs['brush'])
         if 'antialias' in kargs:
             self.opts['antialias'] = kargs['antialias']
-
+        
+        
         profiler('set')
         self.update()
         profiler('update')
         self.sigPlotChanged.emit(self)
         profiler('emit')
-
+        
     def generatePath(self, x, y):
         if self.opts['stepMode']:
             ## each value in the x/y arrays generates 2 points.
@@ -386,21 +383,22 @@ class PlotCurveItem(GraphicsObject):
                 y = y2.reshape(y2.size)[1:-1]
                 y[0] = self.opts['fillLevel']
                 y[-1] = self.opts['fillLevel']
-
+        
         path = fn.arrayToQPath(x, y, connect=self.opts['connect'])
-
+        
         return path
+
 
     def getPath(self):
         if self.path is None:
-            x, y = self.getData()
+            x,y = self.getData()
             if x is None or len(x) == 0 or y is None or len(y) == 0:
                 self.path = QtGui.QPainterPath()
             else:
                 self.path = self.generatePath(*self.getData())
             self.fillPath = None
             self._mouseShape = None
-
+            
         return self.path
 
     @debug.warnOnException  ## raising an exception here causes crash
@@ -408,28 +406,29 @@ class PlotCurveItem(GraphicsObject):
         profiler = debug.Profiler()
         if self.xData is None or len(self.xData) == 0:
             return
-
+        
         if HAVE_OPENGL and getConfigOption('enableExperimental') and isinstance(widget, QtOpenGL.QGLWidget):
             self.paintGL(p, opt, widget)
             return
-
+        
         x = None
         y = None
         path = self.getPath()
 
         profiler('generate path')
-
+        
         if self._exportOpts is not False:
             aa = self._exportOpts.get('antialias', True)
         else:
             aa = self.opts['antialias']
-
+        
         p.setRenderHint(p.Antialiasing, aa)
-
+        
+            
         if self.opts['brush'] is not None and self.opts['fillLevel'] is not None:
             if self.fillPath is None:
                 if x is None:
-                    x, y = self.getData()
+                    x,y = self.getData()
                 p2 = QtGui.QPainterPath(self.path)
                 p2.lineTo(x[-1], self.opts['fillLevel'])
                 p2.lineTo(x[0], self.opts['fillLevel'])
@@ -525,7 +524,7 @@ class PlotCurveItem(GraphicsObject):
                 gl.glDisableClientState(gl.GL_VERTEX_ARRAY)
         finally:
             p.endNativePainting()
-
+        
     def clear(self):
         self.xData = None  ## raw values
         self.yData = None
@@ -536,7 +535,7 @@ class PlotCurveItem(GraphicsObject):
         self._mouseShape = None
         self._mouseBounds = None
         self._boundsCache = [None, None]
-        # del self.xData, self.yData, self.xDisp, self.yDisp, self.path
+        #del self.xData, self.yData, self.xDisp, self.yDisp, self.path
 
     def mouseShape(self):
         """
@@ -554,7 +553,7 @@ class PlotCurveItem(GraphicsObject):
             mousePath = stroker.createStroke(path)
             self._mouseShape = self.mapFromItem(view, mousePath)
         return self._mouseShape
-
+        
     def mouseClickEvent(self, ev):
         if not self.clickable or ev.button() != QtCore.Qt.LeftButton:
             return
@@ -588,3 +587,4 @@ class ROIPlotItem(PlotCurveItem):
     def roiChangedEvent(self):
         d = self.getRoiData()
         self.updateData(d, self.xVals)
+

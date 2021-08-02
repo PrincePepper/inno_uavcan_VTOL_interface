@@ -5,15 +5,14 @@ from ..python2_3 import sortList
 if hasattr(QtCore, 'PYQT_VERSION'):
     try:
         import sip
-
         HAVE_SIP = True
     except ImportError:
         HAVE_SIP = False
 else:
     HAVE_SIP = False
 
-__all__ = ['GraphicsScene']
 
+__all__ = ['GraphicsScene']
 
 class GraphicsScene(QtGui.QGraphicsScene):
     """
@@ -183,17 +182,17 @@ class GraphicsScene(QtGui.QGraphicsScene):
             self.sendHoverEvents(ev, exitOnly=True)
 
     def mouseReleaseEvent(self, ev):
-        # print 'sceneRelease'
+        #print 'sceneRelease'
         if self.mouseGrabberItem() is None:
             if ev.button() in self.dragButtons:
                 if self.sendDragEvent(ev, final=True):
-                    # print "sent drag event"
+                    #print "sent drag event"
                     ev.accept()
                 self.dragButtons.remove(ev.button())
             else:
                 cev = [e for e in self.clickEvents if int(e.button()) == int(ev.button())]
                 if self.sendClickEvent(cev[0]):
-                    # print "sent click event"
+                    #print "sent click event"
                     ev.accept()
                 self.clickEvents.remove(cev[0])
 
@@ -245,7 +244,7 @@ class GraphicsScene(QtGui.QGraphicsScene):
 
         event.enter = False
         event.exit = True
-        # print "hover exit items:", prevItems
+        #print "hover exit items:", prevItems
         for item in prevItems:
             event.currentItem = item
             try:
@@ -267,7 +266,7 @@ class GraphicsScene(QtGui.QGraphicsScene):
         ## Send a MouseDragEvent to the current dragItem or to 
         ## items near the beginning of the drag
         event = MouseDragEvent(ev, self.clickEvents[0], self.lastDrag, start=init, finish=final)
-        # print "dragEvent: init=", init, 'final=', final, 'self.dragItem=', self.dragItem
+        #print "dragEvent: init=", init, 'final=', final, 'self.dragItem=', self.dragItem
         if init and self.dragItem is None:
             if self.lastHoverEvent is not None:
                 acceptedItem = self.lastHoverEvent.dragItems().get(event.button(), None)
@@ -275,7 +274,7 @@ class GraphicsScene(QtGui.QGraphicsScene):
                 acceptedItem = None
 
             if acceptedItem is not None:
-                # print "Drag -> pre-selected item:", acceptedItem
+                #print "Drag -> pre-selected item:", acceptedItem
                 self.dragItem = acceptedItem
                 event.currentItem = self.dragItem
                 try:
@@ -284,9 +283,9 @@ class GraphicsScene(QtGui.QGraphicsScene):
                     debug.printExc("Error sending drag event:")
 
             else:
-                # print "drag -> new item"
+                #print "drag -> new item"
                 for item in self.itemsNearEvent(event):
-                    # print "check item:", item
+                    #print "check item:", item
                     if not item.isVisible() or not item.isEnabled():
                         continue
                     if hasattr(item, 'mouseDragEvent'):
@@ -296,7 +295,7 @@ class GraphicsScene(QtGui.QGraphicsScene):
                         except:
                             debug.printExc("Error sending drag event:")
                         if event.isAccepted():
-                            # print "   --> accepted"
+                            #print "   --> accepted"
                             self.dragItem = item
                             if int(item.flags() & item.ItemIsFocusable) > 0:
                                 item.setFocus(QtCore.Qt.MouseFocusReason)
@@ -518,7 +517,7 @@ class GraphicsScene(QtGui.QGraphicsScene):
                 menu.addAction(m)
             else:
                 raise Exception("Cannot add object %s (type=%s) to QMenu." % (str(m), str(type(m))))
-
+            
         return menu
 
     def getContextMenus(self, event):

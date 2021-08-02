@@ -4,7 +4,6 @@ from ..Qt import QtGui, QtCore
 
 __all__ = ['CheckTable']
 
-
 class CheckTable(QtGui.QWidget):
     sigStateChanged = QtCore.Signal(object, object, object)  # (row, col, state)
 
@@ -60,7 +59,7 @@ class CheckTable(QtGui.QWidget):
         self.rowNames.pop(row)
         for w in self.rowWidgets[row]:
             w.setParent(None)
-            # QtCore.QObject.disconnect(w, QtCore.SIGNAL('stateChanged(int)'), self.checkChanged)
+            #QtCore.QObject.disconnect(w, QtCore.SIGNAL('stateChanged(int)'), self.checkChanged)
             if isinstance(w, QtGui.QCheckBox):
                 w.stateChanged.disconnect(self.checkChanged)
         self.rowWidgets.pop(row)
@@ -72,7 +71,7 @@ class CheckTable(QtGui.QWidget):
 
     def checkChanged(self, state):
         check = QtCore.QObject.sender(self)
-        # self.emit(QtCore.SIGNAL('stateChanged'), check.row, check.col, state)
+        #self.emit(QtCore.SIGNAL('stateChanged'), check.row, check.col, state)
         self.sigStateChanged.emit(check.row, check.col, state)
 
     def saveState(self):

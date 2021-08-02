@@ -138,7 +138,7 @@ class DockArea(Container, QtGui.QWidget, DockDrop):
 
         container = self.getContainer(obj)
         container.insert(new, 'before', obj)
-        # print "Add container:", new, " -> ", container
+        #print "Add container:", new, " -> ", container
         if obj is not None:
             new.insert(obj)
         self.raiseOverlay()
@@ -174,7 +174,7 @@ class DockArea(Container, QtGui.QWidget, DockDrop):
             win.show()
         else:
             area = self.home.addTempArea()
-        # print "added temp area", area, area.window()
+        #print "added temp area", area, area.window()
         return area
 
     def floatDock(self, dock):
@@ -185,7 +185,7 @@ class DockArea(Container, QtGui.QWidget, DockDrop):
 
     def removeTempArea(self, area):
         self.tempAreas.remove(area)
-        # print "close window", area.window()
+        #print "close window", area.window()
         area.window().close()
 
     def saveState(self):
@@ -249,6 +249,7 @@ class DockArea(Container, QtGui.QWidget, DockDrop):
         for a in oldTemps:
             a.apoptose()
 
+
     def buildFromState(self, state, docks, root, depth=0):
         typ, contents, state = state
         pfx = "  " * depth
@@ -295,12 +296,12 @@ class DockArea(Container, QtGui.QWidget, DockDrop):
         return (c, d)
 
     def apoptose(self):
-        # print "apoptose area:", self.temporary, self.topContainer, self.topContainer.count()
+        #print "apoptose area:", self.temporary, self.topContainer, self.topContainer.count()
         if self.topContainer.count() == 0:
             self.topContainer = None
             if self.temporary:
                 self.home.removeTempArea(self)
-                # self.close()
+                #self.close()
 
     def clear(self):
         docks = self.findAll()[1]

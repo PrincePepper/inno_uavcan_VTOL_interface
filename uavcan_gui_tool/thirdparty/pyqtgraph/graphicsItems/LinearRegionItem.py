@@ -6,7 +6,6 @@ from ..Qt import QtGui, QtCore
 
 __all__ = ['LinearRegionItem']
 
-
 class LinearRegionItem(UIGraphicsItem):
     """
     **Bases:** :class:`UIGraphicsItem <pyqtgraph.UIGraphicsItem>`
@@ -100,7 +99,7 @@ class LinearRegionItem(UIGraphicsItem):
         self.lines[0].setValue(rgn[0])
         self.blockLineSignal = False
         self.lines[1].setValue(rgn[1])
-        # self.blockLineSignal = False
+        #self.blockLineSignal = False
         self.lineMoved()
         self.lineMoveFinished()
 
@@ -231,7 +230,7 @@ class LinearRegionItem(UIGraphicsItem):
             self.sigRegionChangeFinished.emit(self)
         else:
             self.sigRegionChanged.emit(self)
-
+            
     def mouseClickEvent(self, ev):
         if self.moving and ev.button() == QtCore.Qt.RightButton:
             ev.accept()
@@ -241,12 +240,13 @@ class LinearRegionItem(UIGraphicsItem):
             self.sigRegionChanged.emit(self)
             self.sigRegionChangeFinished.emit(self)
 
+
     def hoverEvent(self, ev):
         if self.movable and (not ev.isExit()) and ev.acceptDrags(QtCore.Qt.LeftButton):
             self.setMouseHover(True)
         else:
             self.setMouseHover(False)
-
+            
     def setMouseHover(self, hover):
         ## Inform the item that the mouse is(not) hovering over it
         if self.mouseHovering == hover:
@@ -283,5 +283,5 @@ class LinearRegionItem(UIGraphicsItem):
     # if hover:
     # self.currentBrush = fn.mkBrush(255, 0,0,100)
     # else:
-    # self.currentBrush = self.brush
-    # self.update()
+    #self.currentBrush = self.brush
+    #self.update()

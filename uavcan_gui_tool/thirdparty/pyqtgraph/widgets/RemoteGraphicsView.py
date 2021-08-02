@@ -1,5 +1,4 @@
 from ..Qt import QtGui, QtCore, USE_PYSIDE
-
 if not USE_PYSIDE:
     import sip
 from .. import multiprocess as mp
@@ -9,7 +8,6 @@ import mmap, tempfile, ctypes, atexit, sys, random
 
 __all__ = ['RemoteGraphicsView']
 
-
 class RemoteGraphicsView(QtGui.QWidget):
     """
     Replacement for GraphicsView that does all scene management and rendering on a remote process,
@@ -18,7 +16,6 @@ class RemoteGraphicsView(QtGui.QWidget):
     GraphicsItems must be created by proxy to the remote process.
     
     """
-
     def __init__(self, parent=None, *args, **kwds):
         """
         The keyword arguments 'useOpenGL' and 'backgound', if specified, are passed to the remote
@@ -73,7 +70,7 @@ class RemoteGraphicsView(QtGui.QWidget):
 
     def remoteSceneChanged(self, data):
         w, h, size, newfile = data
-        # self._sizeHint = (whint, hhint)
+        #self._sizeHint = (whint, hhint)
         if self.shm is None or self.shm.size != size:
             if self.shm is not None:
                 self.shm.close()
@@ -149,7 +146,7 @@ class Renderer(GraphicsView):
 
     def __init__(self, *args, **kwds):
         ## Create shared memory for rendered image
-        # pg.dbg(namespace={'r': self})
+        #pg.dbg(namespace={'r': self})
         if sys.platform.startswith('win'):
             self.shmtag = "pyqtgraph_shmem_" + ''.join([chr((random.getrandbits(20) % 25) + 97) for i in range(20)])
             self.shm = mmap.mmap(-1, mmap.PAGESIZE, self.shmtag)  # use anonymous mmap on windows
@@ -208,7 +205,7 @@ class Renderer(GraphicsView):
             ## render the scene directly to shared memory
             if USE_PYSIDE:
                 ch = ctypes.c_char.from_buffer(self.shm, 0)
-                # ch = ctypes.c_char_p(address)
+                #ch = ctypes.c_char_p(address)
                 self.img = QtGui.QImage(ch, self.width(), self.height(), QtGui.QImage.Format_ARGB32)
             else:
                 address = ctypes.addressof(ctypes.c_char.from_buffer(self.shm, 0))
@@ -270,3 +267,4 @@ class Renderer(GraphicsView):
     def leaveEvent(self, typ):
         ev = QtCore.QEvent(QtCore.QEvent.Type(typ))
         return GraphicsView.leaveEvent(self, ev)
+

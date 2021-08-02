@@ -14,7 +14,6 @@ try:
 except AttributeError:
     _fromUtf8 = lambda s: s
 
-
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName(_fromUtf8("Form"))
@@ -94,7 +93,6 @@ class Ui_Form(object):
             QtGui.QApplication.translate("Form", "Mirror Selection", None, QtGui.QApplication.UnicodeUTF8))
         self.reflectSelectionBtn.setText(
             QtGui.QApplication.translate("Form", "MirrorXY", None, QtGui.QApplication.UnicodeUTF8))
-
 
 from ..widgets.TreeWidget import TreeWidget
 from CanvasManager import CanvasCombo

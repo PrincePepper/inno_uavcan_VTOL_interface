@@ -20,6 +20,7 @@ __all__ = 'PANEL_NAME', 'spawn', 'get_icon'
 
 PANEL_NAME = 'ESC Panel'
 
+
 logger = getLogger(__name__)
 
 _singleton = None

@@ -9,7 +9,6 @@
 
 from PySide import QtCore, QtGui
 
-
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
@@ -153,7 +152,6 @@ class Ui_Form(object):
         self.normTimeRangeCheck.setText(
             QtGui.QApplication.translate("Form", "Time range", None, QtGui.QApplication.UnicodeUTF8))
         self.normFrameCheck.setText(QtGui.QApplication.translate("Form", "Frame", None, QtGui.QApplication.UnicodeUTF8))
-
 
 from ..widgets.HistogramLUTWidget import HistogramLUTWidget
 from ..widgets.GraphicsView import GraphicsView

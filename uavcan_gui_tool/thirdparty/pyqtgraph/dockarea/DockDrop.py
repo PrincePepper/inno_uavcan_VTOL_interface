@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 from ..Qt import QtCore, QtGui
 
-
 class DockDrop(object):
     """Provides dock-dropping methods"""
-
     def __init__(self, allowedAreas=None):
         object.__init__(self)
         if allowedAreas is None:
@@ -27,11 +25,11 @@ class DockDrop(object):
             # print "drag enter accept"
             ev.accept()
         else:
-            # print "drag enter ignore"
+            #print "drag enter ignore"
             ev.ignore()
 
     def dragMoveEvent(self, ev):
-        # print "drag move"
+        #print "drag move"
         ld = ev.pos().x()
         rd = self.width() - ld
         td = ev.pos().y()
@@ -55,15 +53,15 @@ class DockDrop(object):
             self.dropArea = "bottom"
 
         if ev.source() is self and self.dropArea == 'center':
-            # print "  no self-center"
+            #print "  no self-center"
             self.dropArea = None
             ev.ignore()
         elif self.dropArea not in self.allowedAreas:
-            # print "  not allowed"
+            #print "  not allowed"
             self.dropArea = None
             ev.ignore()
         else:
-            # print "  ok"
+            #print "  ok"
             ev.accept()
         self.overlay.setDropArea(self.dropArea)
 

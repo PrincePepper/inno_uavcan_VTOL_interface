@@ -9,11 +9,9 @@ import pyqtgraph as pg
 
 app = pg.mkQApp()
 
-
 def assert_alldead(refs):
     for ref in refs:
         assert ref() is None
-
 
 def qObjectTree(root):
     """Return root and its entire tree of qobject children"""
@@ -21,7 +19,6 @@ def qObjectTree(root):
     for ch in pg.QtCore.QObject.children(root):
         childs += qObjectTree(ch)
     return childs
-
 
 def mkrefs(*objs):
     """Return a list of weakrefs to each object in *objs.
@@ -37,7 +34,6 @@ def mkrefs(*objs):
             allObjs[id(o)] = o
 
     return map(weakref.ref, allObjs.values())
-
 
 def test_PlotWidget():
     def mkobjs(*args, **kwds):
@@ -67,7 +63,6 @@ def test_ImageView():
 
     for i in range(5):
         assert_alldead(mkobjs())
-
 
 def test_GraphicsWindow():
     def mkobjs():

@@ -17,14 +17,11 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
-
-
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
-
 
 class Ui_Form(object):
     def setupUi(self, Form):
@@ -165,7 +162,6 @@ class Ui_Form(object):
         self.normOffRadio.setText(_translate("Form", "Off", None))
         self.normTimeRangeCheck.setText(_translate("Form", "Time range", None))
         self.normFrameCheck.setText(_translate("Form", "Frame", None))
-
 
 from ..widgets.HistogramLUTWidget import HistogramLUTWidget
 from ..widgets.GraphicsView import GraphicsView

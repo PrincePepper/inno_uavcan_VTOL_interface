@@ -6,10 +6,10 @@ from ..python2_3 import asUnicode
 
 try:
     import metaarray
-
     HAVE_METAARRAY = True
 except ImportError:
     HAVE_METAARRAY = False
+
 
 __all__ = ['TableWidget']
 

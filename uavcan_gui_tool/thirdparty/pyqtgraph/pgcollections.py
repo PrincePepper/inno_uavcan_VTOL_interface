@@ -31,7 +31,6 @@ class ReverseDict(dict):
        d[[2]]
          'y'
     """
-
     def __init__(self, data=None):
         if data is None:
             data = {}
@@ -57,7 +56,6 @@ class ReverseDict(dict):
 class BiDict(dict):
     """extends dict so that reverse lookups are possible by adding each reverse combination to the dict.
     This only works if all values and keys are unique."""
-
     def __init__(self, data=None):
         if data is None:
             data = {}
@@ -71,7 +69,6 @@ class BiDict(dict):
 
     def __deepcopy__(self, memo):
         raise Exception("deepcopy not implemented")
-
 
 class ThreadsafeDict(dict):
     """Extends dict so that getitem, setitem, and contains are all thread-safe.
@@ -205,13 +202,11 @@ class Locker(object):
     def __init__(self, lock):
         self.lock = lock
         self.lock.acquire()
-
     def __del__(self):
         try:
             self.lock.release()
         except:
             pass
-
 
 class CaselessDict(OrderedDict):
     """Case-insensitive dict. Values can be set and retrieved using keys of any case.
@@ -268,6 +263,7 @@ class CaselessDict(OrderedDict):
     def clear(self):
         OrderedDict.clear(self)
         self.keyMap.clear()
+
 
 
 class ProtectedDict(dict):

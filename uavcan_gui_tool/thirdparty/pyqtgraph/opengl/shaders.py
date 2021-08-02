@@ -210,11 +210,9 @@ def initShaders():
 
 
 CompiledShaderPrograms = {}
-
-
+    
 def getShaderProgram(name):
     return ShaderProgram.names[name]
-
 
 class Shader(object):
     def __init__(self, shaderType, code):
@@ -252,7 +250,7 @@ class Shader(object):
                             line = int(m.groups()[1])
                             errNums[line - 1] = errNums[line - 1] + (str(i + 1),)
                             # code[line-1] = '%d\t%s' % (i+1, code[line-1])
-                        err = err + "%d %s\n" % (i + 1, msg)
+                        err = err + "%d %s\n" % (i +1, msg)
                     errNums = [','.join(n) for n in errNums]
                     maxlen = max(map(len, errNums))
                     code = [errNums[i] + " " * (maxlen - len(errNums[i])) + line for i, line in enumerate(code)]
@@ -261,7 +259,6 @@ class Shader(object):
                 else:
                     raise
         return self.compiled
-
 
 class VertexShader(Shader):
     def __init__(self, code):
@@ -355,7 +352,7 @@ class ShaderProgram(object):
                 ### also possible to use glBufferSubData to fill parts of the buffer
 
                 ### bind buffer to the same binding point
-                # glBindBufferBase(GL_UNIFORM_BUFFER, bindPoint, buf)
+                #glBindBufferBase(GL_UNIFORM_BUFFER, bindPoint, buf)
             except:
                 glUseProgram(0)
                 raise
@@ -387,21 +384,20 @@ class HeightColorShader(ShaderProgram):
 
         ## pick any-old binding point. (there are a limited number of these per-program
         bindPoint = 1
-
+        
         ## get the block index for a uniform variable in the shader
         blockIndex = glGetUniformBlockIndex(self.program(), "blockName")
-
+        
         ## give the shader block a binding point
         glUniformBlockBinding(self.program(), blockIndex, bindPoint)
-
+        
         ## create a buffer
         buf = glGenBuffers(1)
         glBindBuffer(GL_UNIFORM_BUFFER, buf)
         glBufferData(GL_UNIFORM_BUFFER, size, data, GL_DYNAMIC_DRAW)
         ## also possible to use glBufferSubData to fill parts of the buffer
-
+        
         ## bind buffer to the same binding point
         glBindBufferBase(GL_UNIFORM_BUFFER, bindPoint, buf)
-
-
+        
 initShaders()

@@ -1,3 +1,5 @@
+
+
 class PlotData(object):
     """
     Class used for managing plot data
@@ -15,7 +17,6 @@ class PlotData(object):
       - cached downsampling
       - cached min / max / hasnan / isuniform
     """
-
     def __init__(self):
         self.fields = {}
 

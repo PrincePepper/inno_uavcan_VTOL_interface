@@ -3,9 +3,7 @@ SVG export test
 """
 import pyqtgraph as pg
 import pyqtgraph.exporters
-
 app = pg.mkQApp()
-
 
 def test_plotscene():
     pg.setConfigOption('foreground', (0, 0, 0))

@@ -1,7 +1,5 @@
 import pyqtgraph as pg
-
 pg.mkQApp()
-
 
 def test_combobox():
     cb = pg.ComboBox()
@@ -41,10 +39,6 @@ if __name__ == '__main__':
     cb = pg.ComboBox()
     cb.show()
     cb.setItems({'': None, 'a': 1, 'b': 2, 'c': 3})
-
-
     def fn(ind):
         print("New value: %s" % cb.value())
-
-
     cb.currentIndexChanged.connect(fn)

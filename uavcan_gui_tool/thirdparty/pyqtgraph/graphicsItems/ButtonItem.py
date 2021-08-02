@@ -2,8 +2,6 @@ from .GraphicsObject import GraphicsObject
 from ..Qt import QtGui, QtCore
 
 __all__ = ['ButtonItem']
-
-
 class ButtonItem(GraphicsObject):
     """Button graphicsItem displaying an image."""
 

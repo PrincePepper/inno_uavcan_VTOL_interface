@@ -9,7 +9,6 @@
 
 from PySide import QtCore, QtGui
 
-
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
@@ -64,7 +63,6 @@ class Ui_Form(object):
             QtGui.QApplication.translate("Form", "Reload Libs", None, QtGui.QApplication.UnicodeUTF8))
         self.showChartBtn.setText(
             QtGui.QApplication.translate("Form", "Flowchart", None, QtGui.QApplication.UnicodeUTF8))
-
 
 from ..widgets.TreeWidget import TreeWidget
 from ..widgets.FeedbackButton import FeedbackButton

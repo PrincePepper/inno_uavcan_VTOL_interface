@@ -8,13 +8,10 @@ Distributed under MIT/X11 license. See license.txt for more infomation.
 from . import GraphicsLayout
 
 __all__ = ['MultiPlotItem']
-
-
 class MultiPlotItem(GraphicsLayout.GraphicsLayout):
     """
     Automatically generates a grid of plots from a multi-dimensional array
     """
-
     def __init__(self, *args, **kwds):
         GraphicsLayout.GraphicsLayout.__init__(self, *args, **kwds)
         self.plots = []
@@ -31,14 +28,14 @@ class MultiPlotItem(GraphicsLayout.GraphicsLayout):
                 if 'cols' in ic[i]:
                     ax = i
                     break
-            # print "Plotting using axis %d as columns (%d plots)" % (ax, data.shape[ax])
+            #print "Plotting using axis %d as columns (%d plots)" % (ax, data.shape[ax])
             for i in range(data.shape[ax]):
                 pi = self.addPlot()
                 self.nextRow()
                 sl = [slice(None)] * 2
                 sl[ax] = i
                 pi.plot(data[tuple(sl)])
-                # self.layout.addItem(pi, i, 0)
+                #self.layout.addItem(pi, i, 0)
                 self.plots.append((pi, i, 0))
                 info = ic[ax]['cols'][i]
                 title = info.get('title', info.get('name', None))

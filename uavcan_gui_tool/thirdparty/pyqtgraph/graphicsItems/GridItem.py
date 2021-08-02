@@ -6,8 +6,6 @@ from ..Point import Point
 from ..Qt import QtGui, QtCore
 
 __all__ = ['GridItem']
-
-
 class GridItem(UIGraphicsItem):
     """
     **Bases:** :class:`UIGraphicsItem <pyqtgraph.UIGraphicsItem>`
@@ -113,7 +111,7 @@ class GridItem(UIGraphicsItem):
                             y = p1[1] + unit[1]
                         texts.append((QtCore.QPointF(x, y), "%g" % p1[ax]))
         tr = self.deviceTransform()
-        # tr.scale(1.5, 1.5)
+        #tr.scale(1.5, 1.5)
         p.setWorldTransform(fn.invertQTransform(tr))
         for t in texts:
             x = tr.map(t[0]) + Point(0.5, 0.5)

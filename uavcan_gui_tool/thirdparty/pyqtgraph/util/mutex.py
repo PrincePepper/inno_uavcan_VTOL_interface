@@ -60,14 +60,14 @@ class Mutex(QtCore.QMutex):
                         print("Mutex is currently locked from [???]")
                 finally:
                     self.l.unlock()
-        # print 'lock', self, len(self.tb)
+        #print 'lock', self, len(self.tb)
 
     def unlock(self):
         QtCore.QMutex.unlock(self)
         if self.debug:
             self.l.lock()
             try:
-                # print 'unlock', self, len(self.tb)
+                #print 'unlock', self, len(self.tb)
                 if len(self.tb) > 0:
                     self.tb.pop()
                 else:

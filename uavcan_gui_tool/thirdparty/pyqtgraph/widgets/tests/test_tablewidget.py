@@ -113,7 +113,6 @@ def test_TableWidget():
             return "%d %f" % (item.index, item.value)
         else:
             return pg.asUnicode(item.value)
-
     w.setFormat(fmt)
     assert isinstance(item.value, float)
     assert isinstance(item.index, int)
@@ -125,3 +124,4 @@ if __name__ == '__main__':
     w.setData(listOfTuples)
     w.resize(600, 600)
     w.show()
+

@@ -8,7 +8,6 @@ class TextItem(UIGraphicsItem):
     """
     GraphicsItem displaying unscaled text (the text will always appear normal even inside a scaled ViewBox). 
     """
-
     def __init__(self, text='', color=(200, 200, 200), html=None, anchor=(0, 0), border=None, fill=None, angle=0):
         """
         ==============  =================================================================================
@@ -142,7 +141,7 @@ class TextItem(UIGraphicsItem):
             if tr != self.lastTransform:
                 self.viewRangeChanged()
         self.lastTransform = tr
-
+        
         if self.border.style() != QtCore.Qt.NoPen or self.fill.style() != QtCore.Qt.NoBrush:
             p.setPen(self.border)
             p.setBrush(self.fill)

@@ -11,7 +11,6 @@ from ...widgets.SpinBox import SpinBox
 
 try:
     import metaarray
-
     HAVE_METAARRAY = True
 except:
     HAVE_METAARRAY = False
@@ -183,5 +182,5 @@ def metaArrayWrapper(fn):
             return metaarray.MetaArray(d1, info=info)
         else:
             return fn(self, data, *args, **kargs)
-
     return newFn
+

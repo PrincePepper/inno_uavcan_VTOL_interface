@@ -10,7 +10,6 @@ from ..Qt import QtCore, QtGui, QtOpenGL, USE_PYQT5
 
 ShareWidget = None
 
-
 class GLViewWidget(QtOpenGL.QGLWidget):
     """
     Basic widget for displaying 3D data
@@ -89,7 +88,7 @@ class GLViewWidget(QtOpenGL.QGLWidget):
     def resizeGL(self, w, h):
         pass
         # glViewport(*self.getViewport())
-        # self.update()
+        #self.update()
 
     def setProjection(self, region=None):
         m = self.projectionMatrix(region)
@@ -217,7 +216,7 @@ class GLViewWidget(QtOpenGL.QGLWidget):
                 glPushMatrix()
                 try:
                     tr = i.transform()
-                    a = np.array(tr.copyDataTo()).reshape((4, 4))
+                    a = np.array(tr.copyDataTo()).reshape((4,4))
                     glMultMatrixf(a.transpose())
                     self.drawItemTree(i, useItemNames=useItemNames)
                 finally:
@@ -251,7 +250,7 @@ class GLViewWidget(QtOpenGL.QGLWidget):
     def orbit(self, azim, elev):
         """Orbits the camera around the center position. *azim* and *elev* are given in degrees."""
         self.opts['azimuth'] += azim
-        # self.opts['elevation'] += elev
+        #self.opts['elevation'] += elev
         self.opts['elevation'] = np.clip(self.opts['elevation'] + elev, -90, 90)
         self.update()
 
@@ -289,7 +288,7 @@ class GLViewWidget(QtOpenGL.QGLWidget):
         cam = self.cameraPosition()
         if isinstance(pos, np.ndarray):
             cam = np.array(cam).reshape((1,) * (pos.ndim - 1) + (3,))
-            dist = ((pos - cam) ** 2).sum(axis=-1) ** 0.5
+            dist = ((pos - cam) ** 2).sum(axis=-1) **0.5
         else:
             dist = (pos - cam).length()
         xDist = dist * 2. * np.tan(0.5 * self.opts['fov'] * np.pi / 180.)
@@ -304,7 +303,7 @@ class GLViewWidget(QtOpenGL.QGLWidget):
 
         if ev.buttons() == QtCore.Qt.LeftButton:
             self.orbit(-diff.x(), diff.y())
-            # print self.opts['azimuth'], self.opts['elevation']
+            #print self.opts['azimuth'], self.opts['elevation']
         elif ev.buttons() == QtCore.Qt.MidButton:
             if (ev.modifiers() & QtCore.Qt.ControlModifier):
                 self.pan(diff.x(), 0, diff.y(), relative=True)

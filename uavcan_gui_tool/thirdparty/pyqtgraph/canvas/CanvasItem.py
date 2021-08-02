@@ -10,7 +10,6 @@ else:
 
 from .. import debug
 
-
 class SelectBox(ROI):
     def __init__(self, scalable=False, rotatable=True):
         # QtGui.QGraphicsRectItem.__init__(self, 0, 0, size[0], size[1])
@@ -23,7 +22,6 @@ class SelectBox(ROI):
         if rotatable:
             self.addRotateHandle([0, 1], center)
             self.addRotateHandle([1, 0], center)
-
 
 class CanvasItem(QtCore.QObject):
     sigResetUserTransform = QtCore.Signal(object)
@@ -38,7 +36,7 @@ class CanvasItem(QtCore.QObject):
 
     def __init__(self, item, **opts):
         defOpts = {'name': None, 'z': None, 'movable': True, 'scalable': False, 'rotatable': True, 'visible': True,
-                   'parent': None}  # 'pos': [0,0], 'scale': [1,1], 'angle':0,
+                   'parent': None}  #'pos': [0,0], 'scale': [1,1], 'angle':0,
         defOpts.update(opts)
         self.opts = defOpts
         self.selectedAlone = False  ## whether this item is the only one selected
@@ -88,12 +86,13 @@ class CanvasItem(QtCore.QObject):
         self.alphaSlider.valueChanged.connect(self.alphaChanged)
         self.alphaSlider.sliderPressed.connect(self.alphaPressed)
         self.alphaSlider.sliderReleased.connect(self.alphaReleased)
-        # self.canvas.sigSelectionChanged.connect(self.selectionChanged)
+        #self.canvas.sigSelectionChanged.connect(self.selectionChanged)
         self.resetTransformBtn.clicked.connect(self.resetTransformClicked)
         self.copyBtn.clicked.connect(self.copyClicked)
         self.pasteBtn.clicked.connect(self.pasteClicked)
 
         self.setMovable(self.opts['movable'])  ## update gui to reflect this option
+
 
         if 'transform' in self.opts:
             self.baseTransform = self.opts['transform']
@@ -114,7 +113,7 @@ class CanvasItem(QtCore.QObject):
         ## every CanvasItem implements its own individual selection box 
         ## so that subclasses are free to make their own.
         self.selectBox = SelectBox(scalable=self.opts['scalable'], rotatable=self.opts['rotatable'])
-        # self.canvas.scene().addItem(self.selectBox)
+        #self.canvas.scene().addItem(self.selectBox)
         self.selectBox.hide()
         self.selectBox.setZValue(1e6)
         self.selectBox.sigRegionChanged.connect(self.selectBoxChanged)  ## calls selectBoxMoved
@@ -226,7 +225,7 @@ class CanvasItem(QtCore.QObject):
         # self.userTransform.setRotate(-tr['angle'])
         # self.updateTransform()
         # self.selectBoxFromUser()
-        # return
+        #return
 
     def mirrorXY(self):
         if not self.isMovable():
@@ -238,21 +237,23 @@ class CanvasItem(QtCore.QObject):
         # s=self.updateTransform()
         # self.setTranslate(-2*s['pos'][0], -2*s['pos'][1])
         # self.selectBoxFromUser()
-
+        
+ 
     def hasUserTransform(self):
-        # print self.userRotate, self.userTranslate
+        #print self.userRotate, self.userTranslate
         return not self.userTransform.isIdentity()
 
     def ctrlWidget(self):
         return self.ctrl
-
+        
     def alphaChanged(self, val):
         alpha = val / 1023.
         self._graphicsItem.setOpacity(alpha)
-
+        
     def isMovable(self):
         return self.opts['movable']
-
+        
+        
     def selectBoxMoved(self):
         """The selection box has moved; get its transformation information and pass to the graphics item"""
         self.userTransform = self.selectBox.getGlobalTransform(relativeTo=self.selectBoxBase)
@@ -262,36 +263,37 @@ class CanvasItem(QtCore.QObject):
         self.userTransform.scale(x, y)
         self.selectBoxFromUser()
         self.updateTransform()
-
+        
     def rotate(self, ang):
         self.userTransform.rotate(ang)
         self.selectBoxFromUser()
         self.updateTransform()
-
+        
     def translate(self, x, y):
         self.userTransform.translate(x, y)
         self.selectBoxFromUser()
         self.updateTransform()
-
+        
     def setTranslate(self, x, y):
         self.userTransform.setTranslate(x, y)
         self.selectBoxFromUser()
         self.updateTransform()
-
+        
     def setRotate(self, angle):
         self.userTransform.setRotate(angle)
         self.selectBoxFromUser()
         self.updateTransform()
-
+        
     def setScale(self, x, y):
         self.userTransform.setScale(x, y)
         self.selectBoxFromUser()
         self.updateTransform()
+        
 
     def setTemporaryTransform(self, transform):
         self.tempTransform = transform
         self.updateTransform()
-
+    
     def applyTemporaryTransform(self):
         """Collapses tempTransform into UserTransform, resets tempTransform"""
         self.userTransform = self.userTransform * self.tempTransform  ## order is important!
@@ -354,7 +356,7 @@ class CanvasItem(QtCore.QObject):
         self.selectBox.blockSignals(False)
         self.sigTransformChanged.emit(self)
         self.sigTransformChangeFinished.emit(self)
-
+       
     def resetTransformClicked(self):
         self.resetUserTransform()
         self.sigResetUserTransform.emit(self)
@@ -397,6 +399,7 @@ class CanvasItem(QtCore.QObject):
         # self.selectBox.setAngle(self.userRotate)
         # self.selectBox.setPos([x2, y2])
         self.selectBox.blockSignals(False)
+        
 
     def selectBoxToItem(self):
         """Move/scale the selection box so it fits the item's bounding rect. (assumes item is not rotated)"""
@@ -437,10 +440,10 @@ class CanvasItem(QtCore.QObject):
             self.ctrlWidget().show()
         else:
             self.ctrlWidget().hide()
-
+        
     def showSelectBox(self):
         """Display the selection box around this item if it is selected and movable"""
-        if self.selectedAlone and self.isMovable() and self.isVisible():  # and len(self.canvas.itemList.selectedItems())==1:
+        if self.selectedAlone and self.isMovable() and self.isVisible():  #and len(self.canvas.itemList.selectedItems())==1:
             self.selectBox.show()
         else:
             self.selectBox.hide()
@@ -455,7 +458,7 @@ class CanvasItem(QtCore.QObject):
         self.sigTransformChanged.emit(self)
 
     def selectBoxChangeFinished(self):
-        # self.emit(QtCore.SIGNAL('transformChangeFinished'), self)
+        #self.emit(QtCore.SIGNAL('transformChangeFinished'), self)
         self.sigTransformChangeFinished.emit(self)
 
     def alphaPressed(self):
@@ -464,7 +467,7 @@ class CanvasItem(QtCore.QObject):
 
     def alphaReleased(self):
         self.showSelectBox()
-
+        
     def show(self):
         if self.opts['visible']:
             return
@@ -472,7 +475,7 @@ class CanvasItem(QtCore.QObject):
         self._graphicsItem.show()
         self.showSelectBox()
         self.sigVisibilityChanged.emit(self)
-
+        
     def hide(self):
         if not self.opts['visible']:
             return
@@ -495,7 +498,7 @@ class GroupCanvasItem(CanvasItem):
     """
     Canvas item used for grouping others
     """
-
+    
     def __init__(self, **opts):
         defOpts = {'movable': False, 'scalable': False}
         defOpts.update(opts)

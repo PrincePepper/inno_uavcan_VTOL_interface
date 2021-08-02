@@ -2,8 +2,6 @@
 from ..Qt import QtGui, QtCore
 
 __all__ = ['TreeWidget', 'TreeWidgetItem']
-
-
 class TreeWidget(QtGui.QTreeWidget):
     """Extends QTreeWidget to allow internal drag/drop with widgets in the tree.
     Also maintains the expanded state of subtrees as they are moved.
@@ -46,13 +44,13 @@ class TreeWidget(QtGui.QTreeWidget):
     def dropMimeData(self, parent, index, data, action):
         item = self.currentItem()
         p = parent
-        # print "drop", item, "->", parent, index
+        #print "drop", item, "->", parent, index
         while True:
             if p is None:
                 break
             if p is item:
                 return False
-                # raise Exception("Can not move item into itself.")
+                #raise Exception("Can not move item into itself.")
             p = p.parent()
 
         if not self.itemMoving(item, parent, index):
@@ -70,12 +68,12 @@ class TreeWidget(QtGui.QTreeWidget):
         self.prepareMove(item)
 
         currentParent.removeChild(item)
-        # print "  insert child to index", index
+        #print "  insert child to index", index
         parent.insertChild(index, item)  ## index will not be correct
         self.setCurrentItem(item)
 
         self.recoverMove(item)
-        # self.emit(QtCore.SIGNAL('itemMoved'), item, parent, index)
+        #self.emit(QtCore.SIGNAL('itemMoved'), item, parent, index)
         self.sigItemMoved.emit(item, parent, index)
         return True
 

@@ -6,14 +6,12 @@ from ..MeshData import MeshData
 
 __all__ = ['GLSurfacePlotItem']
 
-
 class GLSurfacePlotItem(GLMeshItem):
     """
     **Bases:** :class:`GLMeshItem <pyqtgraph.opengl.GLMeshItem>`
     
     Displays a surface plot on a regular x,y grid
     """
-
     def __init__(self, x=None, y=None, z=None, colors=None, **kwds):
         """
         The x, y, z, and colors arguments are passed to setData().

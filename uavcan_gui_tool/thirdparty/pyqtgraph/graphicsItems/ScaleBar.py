@@ -8,12 +8,10 @@ from ..Qt import QtGui, QtCore
 
 __all__ = ['ScaleBar']
 
-
 class ScaleBar(GraphicsObject, GraphicsWidgetAnchor):
     """
     Displays a rectangular bar to indicate the relative scale of objects on the view.
     """
-
     def __init__(self, size, width=5, brush=None, pen=None, suffix='m', offset=None):
         GraphicsObject.__init__(self)
         GraphicsWidgetAnchor.__init__(self)

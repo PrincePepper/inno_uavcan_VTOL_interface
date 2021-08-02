@@ -13,7 +13,6 @@ class WinColor(object):
     YELLOW = 6
     GREY = 7
 
-
 # from wincon.h
 class WinStyle(object):
     NORMAL = 0x00  # dim text, dim background

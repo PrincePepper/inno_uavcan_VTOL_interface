@@ -5,8 +5,6 @@ if not USE_PYSIDE:
     import sip
 
 __all__ = ['UIGraphicsItem']
-
-
 class UIGraphicsItem(GraphicsObject):
     """
     Base class for graphics items with boundaries relative to a GraphicsView or ViewBox.
@@ -43,7 +41,7 @@ class UIGraphicsItem(GraphicsObject):
 
     def paint(self, *args):
         ## check for a new view object every time we paint.
-        # self.updateView()
+        #self.updateView()
         pass
 
     def itemChange(self, change, value):
@@ -102,16 +100,17 @@ class UIGraphicsItem(GraphicsObject):
         """Called when the view widget/viewbox is resized/rescaled"""
         self.setNewBounds()
         self.update()
-
+        
     def setNewBounds(self):
         """Update the item's bounding rect to match the viewport"""
         self._boundingRect = None  ## invalidate bounding rect, regenerate later if needed.
         self.prepareGeometryChange()
 
+
     def setPos(self, *args):
         GraphicsObject.setPos(self, *args)
         self.setNewBounds()
-
+        
     def mouseShape(self):
         """Return the shape of this item after expanding by 2 pixels"""
         shape = self.shape()

@@ -180,7 +180,7 @@ class ImageView(QtGui.QWidget):
         self.timeLine.sigPositionChanged.connect(self.timeLineChanged)
         self.ui.roiBtn.clicked.connect(self.roiClicked)
         self.roi.sigRegionChanged.connect(self.roiChanged)
-        # self.ui.normBtn.toggled.connect(self.normToggled)
+        #self.ui.normBtn.toggled.connect(self.normToggled)
         self.ui.menuBtn.clicked.connect(self.menuClicked)
         self.ui.normDivideRadio.clicked.connect(self.normRadioChanged)
         self.ui.normSubtractRadio.clicked.connect(self.normRadioChanged)
@@ -295,10 +295,10 @@ class ImageView(QtGui.QWidget):
         profiler()
 
         if self.axes['t'] is not None:
-            # self.ui.roiPlot.show()
+            #self.ui.roiPlot.show()
             self.ui.roiPlot.setXRange(self.tVals.min(), self.tVals.max())
             self.timeLine.setValue(0)
-            # self.ui.roiPlot.setMouseEnabled(False, False)
+            #self.ui.roiPlot.setMouseEnabled(False, False)
             if len(self.tVals) > 1:
                 start = self.tVals.min()
                 stop = self.tVals.max() + abs(self.tVals[-1] - self.tVals[0]) * 0.02
@@ -337,7 +337,7 @@ class ImageView(QtGui.QWidget):
     def play(self, rate):
         """Begin automatically stepping frames forward at the given rate (in fps).
         This can also be accessed by pressing the spacebar."""
-        # print "play:", rate
+        #print "play:", rate
         self.playRate = rate
         if rate == 0:
             self.playTimer.stop()
@@ -381,12 +381,12 @@ class ImageView(QtGui.QWidget):
         self.setParent(None)
 
     def keyPressEvent(self, ev):
-        # print ev.key()
+        #print ev.key()
         if ev.key() == QtCore.Qt.Key_Space:
             if self.playRate == 0:
                 fps = (self.getProcessedImage().shape[0] - 1) / (self.tVals[-1] - self.tVals[0])
                 self.play(fps)
-                # print fps
+                #print fps
             else:
                 self.play(0)
             ev.accept()
@@ -508,7 +508,7 @@ class ImageView(QtGui.QWidget):
         if self.ui.roiBtn.isChecked():
             showRoiPlot = True
             self.roi.show()
-            # self.ui.roiPlot.show()
+            #self.ui.roiPlot.show()
             self.ui.roiPlot.setMouseEnabled(True, True)
             self.ui.splitter.setSizes([self.height() * 0.6, self.height() * 0.4])
             self.roiCurve.show()
@@ -665,7 +665,7 @@ class ImageView(QtGui.QWidget):
             inds = np.argwhere(xv < t)
             if len(inds) < 1:
                 return (0, t)
-            ind = inds[-1, 0]
+            ind = inds[-1,0]
         return ind, t
 
     def getView(self):
@@ -679,7 +679,7 @@ class ImageView(QtGui.QWidget):
     def getRoiPlot(self):
         """Return the ROI PlotWidget for this ImageView"""
         return self.ui.roiPlot
-
+       
     def getHistogramWidget(self):
         """Return the HistogramLUTWidget for this ImageView"""
         return self.ui.histogram
@@ -694,7 +694,7 @@ class ImageView(QtGui.QWidget):
         img = self.getProcessedImage()
         if self.hasTimeAxis():
             base, ext = os.path.splitext(fileName)
-            fmt = "%%s%%0%dd%%s" % int(np.log10(img.shape[0]) + 1)
+            fmt = "%%s%%0%dd%%s" % int(np.log10(img.shape[0])+1)
             for i in range(img.shape[0]):
                 self.imageItem.setImage(img[i], autoLevels=False)
                 self.imageItem.save(fmt % (base, i, ext))

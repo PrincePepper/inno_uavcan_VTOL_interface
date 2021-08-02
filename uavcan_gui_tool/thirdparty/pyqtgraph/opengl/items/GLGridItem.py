@@ -6,7 +6,6 @@ from ... import QtGui
 
 __all__ = ['GLGridItem']
 
-
 class GLGridItem(GLGraphicsItem):
     """
     **Bases:** :class:`GLGraphicsItem <pyqtgraph.opengl.GLGraphicsItem>`

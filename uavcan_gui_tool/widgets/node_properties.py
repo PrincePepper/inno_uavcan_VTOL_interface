@@ -22,6 +22,7 @@ from .node_monitor import node_health_to_color, node_mode_to_color
 
 logger = getLogger(__name__)
 
+
 REQUEST_PRIORITY = 30
 
 
@@ -230,13 +231,13 @@ class Controls(QGroupBox):
                 win.setWindowTitle('Transport stats of node %r' % e.transfer.source_node_id)
                 win.setLayout(layout)
                 win.show()
-
         try:
             self._node.request(pyuavcan_v0.protocol.GetTransportStats.Request(),
                                self._target_node_id, callback, priority=REQUEST_PRIORITY)
             self.window().show_message('Transport stats requested')
         except Exception as ex:
             show_error('Node error', 'Could not send stats request', ex, self)
+
 
     def _do_firmware_update(self):
         # Making sure the node is not anonymous

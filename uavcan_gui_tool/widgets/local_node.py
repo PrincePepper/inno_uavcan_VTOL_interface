@@ -16,6 +16,7 @@ from . import make_icon_button, flash
 
 logger = getLogger(__name__)
 
+
 NODE_ID_MIN = 1
 NODE_ID_MAX = 127
 

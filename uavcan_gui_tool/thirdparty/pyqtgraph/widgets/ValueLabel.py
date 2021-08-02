@@ -6,7 +6,6 @@ from ..ptime import time
 
 __all__ = ['ValueLabel']
 
-
 class ValueLabel(QtGui.QLabel):
     """
     QLabel specifically for displaying numerical values.

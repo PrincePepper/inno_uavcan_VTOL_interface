@@ -109,7 +109,7 @@ class ButterworthNotch(CtrlNode):
         high = functions.butterworthFilter(data, bidir=s['bidir'], btype='high', wPass=s['high_wPass'],
                                            wStop=s['high_wStop'], gPass=s['high_gPass'], gStop=s['high_gStop'])
         return low + high
-
+    
 
 class Mean(CtrlNode):
     """Filters data by taking the mean of a sliding window"""
@@ -138,7 +138,6 @@ class Median(CtrlNode):
         except ImportError:
             raise Exception("MedianFilter node requires the package scipy.ndimage.")
         return scipy.ndimage.median_filter(data, self.ctrls['n'].value())
-
 
 class Mode(CtrlNode):
     """Filters data by taking the mode (histogram-based) of a sliding window"""
@@ -218,7 +217,6 @@ class Detrend(CtrlNode):
             raise Exception("DetrendFilter node requires the package scipy.signal.")
         return detrend(data)
 
-
 class RemoveBaseline(PlottingCtrlNode):
     """Remove an arbitrary, graphically defined baseline from the data."""
     nodeName = 'RemoveBaseline'
@@ -285,6 +283,7 @@ class RemoveBaseline(PlottingCtrlNode):
         return points, timeIndices
 
 
+
 class AdaptiveDetrend(CtrlNode):
     """Removes baseline from data, ignoring anomalous events"""
     nodeName = 'AdaptiveDetrend'
@@ -294,7 +293,6 @@ class AdaptiveDetrend(CtrlNode):
 
     def processData(self, data):
         return functions.adaptiveDetrend(data, threshold=self.ctrls['threshold'].value())
-
 
 class HistogramDetrend(CtrlNode):
     """Removes baseline from data by computing mode (from histogram) of beginning and end of data."""
@@ -313,6 +311,7 @@ class HistogramDetrend(CtrlNode):
         return functions.histogramDetrend(data, window=s['windowSize'], bins=s['numBins'], offsetOnly=s['offsetOnly'])
 
 
+    
 class RemovePeriodic(CtrlNode):
     nodeName = 'RemovePeriodic'
     uiTemplate = [

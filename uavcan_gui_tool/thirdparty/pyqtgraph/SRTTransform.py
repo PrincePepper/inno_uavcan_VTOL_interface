@@ -7,7 +7,6 @@ class SRTTransform(QtGui.QTransform):
     """Transform that can always be represented as a combination of 3 matrices: scale * rotate * translate
     This transform has no shear; angles are always preserved.
     """
-
     def __init__(self, init=None):
         QtGui.QTransform.__init__(self)
         self.reset()

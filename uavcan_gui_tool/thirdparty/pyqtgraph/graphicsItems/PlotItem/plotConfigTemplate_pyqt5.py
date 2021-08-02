@@ -9,7 +9,6 @@
 
 from PyQt5 import QtCore, QtWidgets
 
-
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
@@ -175,3 +174,4 @@ class Ui_Form(object):
         self.label.setText(_translate("Form", "Opacity"))
         self.alphaGroup.setTitle(_translate("Form", "Alpha"))
         self.autoAlphaCheck.setText(_translate("Form", "Auto"))
+

@@ -17,7 +17,6 @@ def clip(x, mn, mx):
         return mn
     return x
 
-
 class Point(QtCore.QPointF):
     """Extension of QPointF which adds a few missing methods."""
 

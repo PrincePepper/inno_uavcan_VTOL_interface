@@ -4,8 +4,6 @@ from ..Point import Point
 from ..Qt import QtCore
 
 __all__ = ['InfiniteLine']
-
-
 class InfiniteLine(GraphicsObject):
     """
     **Bases:** :class:`GraphicsObject <pyqtgraph.GraphicsObject>`

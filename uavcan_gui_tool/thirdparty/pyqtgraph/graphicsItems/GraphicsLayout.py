@@ -7,13 +7,12 @@ from .. import functions as fn
 from ..Qt import QtGui
 
 __all__ = ['GraphicsLayout']
-
-
 class GraphicsLayout(GraphicsWidget):
     """
     Used for laying out GraphicsWidgets in a grid.
     This is usually created automatically as part of a :class:`GraphicsWindow <pyqtgraph.GraphicsWindow>` or :class:`GraphicsLayoutWidget <pyqtgraph.GraphicsLayoutWidget>`.
     """
+
 
     def __init__(self, parent=None, border=None):
         GraphicsWidget.__init__(self, parent)

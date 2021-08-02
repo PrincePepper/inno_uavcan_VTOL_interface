@@ -9,7 +9,6 @@
 
 from PySide import QtCore, QtGui
 
-
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
@@ -99,7 +98,6 @@ class Ui_Form(object):
             QtGui.QApplication.translate("Form", "Mirror Selection", None, QtGui.QApplication.UnicodeUTF8))
         self.reflectSelectionBtn.setText(
             QtGui.QApplication.translate("Form", "MirrorXY", None, QtGui.QApplication.UnicodeUTF8))
-
 
 from ..widgets.TreeWidget import TreeWidget
 from CanvasManager import CanvasCombo

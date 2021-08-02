@@ -8,7 +8,6 @@ from ...widgets.TreeWidget import TreeWidget
 class ColumnSelectNode(Node):
     """Select named columns from a record array or MetaArray."""
     nodeName = "ColumnSelect"
-
     def __init__(self, name):
         Node.__init__(self, name, terminals={'In': {'io': 'in'}})
         self.columns = set()
@@ -88,6 +87,7 @@ class ColumnSelectNode(Node):
         self.columns = set(state.get('columns', []))
         for c in self.columns:
             self.addOutput(c)
+
 
 
 class RegionSelectNode(CtrlNode):
@@ -231,25 +231,24 @@ class EvalNode(Node):
             print("Error processing node: %s" % self.name())
             raise
         return output
-
+        
     def saveState(self):
         state = Node.saveState(self)
         state['text'] = str(self.text.toPlainText())
-        # state['terminals'] = self.saveTerminals()
+        #state['terminals'] = self.saveTerminals()
         return state
-
+        
     def restoreState(self, state):
         Node.restoreState(self, state)
         self.text.clear()
         self.text.insertPlainText(state['text'])
         self.restoreTerminals(state['terminals'])
         self.update()
-
-
+        
 class ColumnJoinNode(Node):
     """Concatenates record arrays and/or adds new columns"""
     nodeName = 'ColumnJoin'
-
+    
     def __init__(self, name):
         Node.__init__(self, name, terminals={
             'output': {'io': 'out'},
@@ -272,18 +271,18 @@ class ColumnJoinNode(Node):
         self.addInBtn.clicked.connect(self.addInput)
         self.remInBtn.clicked.connect(self.remInput)
         self.tree.sigItemMoved.connect(self.update)
-
+        
     def ctrlWidget(self):
         return self.ui
-
+        
     def addInput(self):
-        # print "ColumnJoinNode.addInput called."
+        #print "ColumnJoinNode.addInput called."
         term = Node.addInput(self, 'input', renamable=True, removable=True, multiable=True)
-        # print "Node.addInput returned. term:", term
+        #print "Node.addInput returned. term:", term
         item = QtGui.QTreeWidgetItem([term.name()])
         item.term = term
         term.joinItem = item
-        # self.items.append((term, item))
+        #self.items.append((term, item))
         self.tree.addTopLevelItem(item)
 
     def remInput(self):
@@ -315,7 +314,7 @@ class ColumnJoinNode(Node):
         state = Node.saveState(self)
         state['order'] = self.order()
         return state
-
+        
     def restoreState(self, state):
         Node.restoreState(self, state)
         inputs = self.inputs()
@@ -331,14 +330,14 @@ class ColumnJoinNode(Node):
         for name in inputs:
             if name not in order:
                 order.append(name)
-
+        
         self.tree.clear()
         for name in order:
             term = self[name]
             item = QtGui.QTreeWidgetItem([name])
             item.term = term
             term.joinItem = item
-            # self.items.append((term, item))
+            #self.items.append((term, item))
             self.tree.addTopLevelItem(item)
 
     def terminalRenamed(self, term, oldName):

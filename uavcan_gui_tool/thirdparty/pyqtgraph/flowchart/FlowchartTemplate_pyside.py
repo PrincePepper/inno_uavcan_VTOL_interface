@@ -9,7 +9,6 @@
 
 from PySide import QtCore, QtGui
 
-
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
@@ -50,7 +49,6 @@ class Ui_Form(object):
 
     def retranslateUi(self, Form):
         Form.setWindowTitle(QtGui.QApplication.translate("Form", "Form", None, QtGui.QApplication.UnicodeUTF8))
-
 
 from ..flowchart.FlowchartGraphicsView import FlowchartGraphicsView
 from ..widgets.DataTreeWidget import DataTreeWidget

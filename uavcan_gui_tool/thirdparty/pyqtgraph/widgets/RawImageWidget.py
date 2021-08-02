@@ -1,9 +1,7 @@
 from ..Qt import QtCore, QtGui
-
 try:
     from ..Qt import QtOpenGL
     from OpenGL.GL import *
-
     HAVE_OPENGL = True
 except ImportError:
     HAVE_OPENGL = False
@@ -17,7 +15,6 @@ class RawImageWidget(QtGui.QWidget):
     Generally using an ImageItem inside GraphicsView is fast enough.
     On some systems this may provide faster video. See the VideoSpeedTest example for benchmarking.
     """
-
     def __init__(self, parent=None, scaled=False):
         """
         Setting scaled=True will cause the entire image to be displayed within the boundaries of the widget. This also greatly reduces the speed at which it will draw frames.
@@ -59,9 +56,8 @@ class RawImageWidget(QtGui.QWidget):
             p.drawImage(rect, self.image)
         else:
             p.drawImage(QtCore.QPointF(), self.image)
-        # p.drawPixmap(self.rect(), self.pixmap)
+        #p.drawPixmap(self.rect(), self.pixmap)
         p.end()
-
 
 if HAVE_OPENGL:
     class RawImageGLWidget(QtOpenGL.QGLWidget):
@@ -69,7 +65,6 @@ if HAVE_OPENGL:
         Similar to RawImageWidget, but uses a GL widget to do all drawing.
         Perfomance varies between platforms; see examples/VideoSpeedTest for benchmarking.
         """
-
         def __init__(self, parent=None, scaled=False):
             QtOpenGL.QGLWidget.__init__(self, parent=None)
             self.scaled = scaled

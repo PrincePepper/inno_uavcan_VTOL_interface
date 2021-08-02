@@ -3,10 +3,8 @@ from ..Qt import QtGui
 
 __all__ = ['GraphicsWidget']
 
-
 class GraphicsWidget(GraphicsItem, QtGui.QGraphicsWidget):
     _qtBaseClass = QtGui.QGraphicsWidget
-
     def __init__(self, *args, **kargs):
         """
         **Bases:** :class:`GraphicsItem <pyqtgraph.GraphicsItem>`, :class:`QtGui.QGraphicsWidget`
@@ -47,11 +45,11 @@ class GraphicsWidget(GraphicsItem, QtGui.QGraphicsWidget):
 
     def boundingRect(self):
         br = self.mapRectFromParent(self.geometry()).normalized()
-        # print "bounds:", br
+        #print "bounds:", br
         return br
 
     def shape(self):  ## No idea why this is necessary, but rotated items do not receive clicks otherwise.
         p = QtGui.QPainterPath()
         p.addRect(self.boundingRect())
-        # print "shape:", p.boundingRect()
+        #print "shape:", p.boundingRect()
         return p

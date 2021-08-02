@@ -1,8 +1,6 @@
 from ..Qt import QtGui
 
 __all__ = ['LayoutWidget']
-
-
 class LayoutWidget(QtGui.QWidget):
     """
     Convenience class used for laying out QWidgets in a grid.

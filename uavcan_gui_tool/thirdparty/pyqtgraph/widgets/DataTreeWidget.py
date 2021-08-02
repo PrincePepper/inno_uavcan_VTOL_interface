@@ -8,13 +8,11 @@ from ..Qt import QtGui
 
 try:
     import metaarray
-
     HAVE_METAARRAY = True
 except:
     HAVE_METAARRAY = False
 
 __all__ = ['DataTreeWidget']
-
 
 class DataTreeWidget(QtGui.QTreeWidget):
     """
@@ -81,4 +79,4 @@ class DataTreeWidget(QtGui.QTreeWidget):
     # else:
     ##print "\nadd value", k, str(v)
     # node = QtGui.QTreeWidgetItem([unicode(name), unicode(v)])
-    # return node
+    #return node

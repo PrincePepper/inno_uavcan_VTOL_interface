@@ -93,7 +93,6 @@ def systemInfo():
     import pprint
     pprint.pprint(CONFIG_OPTIONS)
 
-
 ## Rename orphaned .pyc files. This is *probably* safe :)
 ## We only do this if __version__ is None, indicating the code was probably pulled
 ## from the repository. 
@@ -266,6 +265,7 @@ from .colormap import *
 from .ptime import time
 from .Qt import isQObjectAlive
 
+
 ##############################################################
 ## PyQt and PySide both are prone to crashing on exit. 
 ## There are two general approaches to dealing with this:
@@ -276,20 +276,17 @@ from .Qt import isQObjectAlive
 
 ## Attempts to work around exit crashes:
 import atexit
-
 _cleanupCalled = False
-
-
 def cleanup():
     global _cleanupCalled
     if _cleanupCalled:
         return
-
+    
     if not getConfigOption('exitCleanup'):
         return
-
+    
     ViewBox.quit()  ## tell ViewBox that it doesn't need to deregister views anymore.
-
+    
     ## Workaround for Qt exit crash:
     ## ALL QGraphicsItems must have a scene before they are deleted.
     ## This is potentially very expensive, but preferred over crashing.
@@ -311,7 +308,6 @@ def cleanup():
             continue
     _cleanupCalled = True
 
-
 atexit.register(cleanup)
 
 # Call cleanup when QApplication quits. This is necessary because sometimes
@@ -319,8 +315,6 @@ atexit.register(cleanup)
 # Note: cannot connect this function until QApplication has been created, so
 # instead we have GraphicsView.__init__ call this for us.
 _cleanupConnected = False
-
-
 def _connectCleanup():
     global _cleanupConnected
     if _cleanupConnected:
@@ -348,13 +342,13 @@ def exit():
     to properly terminate log files, disconnect from devices, etc). Situations
     like this are probably quite rare, but use at your own risk.
     """
-
+    
     ## first disable our own cleanup function; won't be needing it.
     setConfigOptions(exitCleanup=False)
-
+    
     ## invoke atexit callbacks
     atexit._run_exitfuncs()
-
+    
     ## close file handles
     if sys.platform == 'darwin':
         for fd in xrange(3, 4096):
@@ -364,6 +358,7 @@ def exit():
         os.closerange(3, 4096)  ## just guessing on the maximum descriptor count..
 
     os._exit(0)
+    
 
 
 ## Convenience functions for command-line use
@@ -397,15 +392,14 @@ def plot(*args, **kargs):
             pwArgs[k] = kargs[k]
         else:
             dataArgs[k] = kargs[k]
-
+        
     w = PlotWindow(**pwArgs)
     if len(args) > 0 or len(dataArgs) > 0:
         w.plot(*args, **dataArgs)
     plots.append(w)
     w.show()
     return w
-
-
+    
 def image(*args, **kargs):
     """
     Create and return an :class:`ImageWindow <pyqtgraph.ImageWindow>` 
@@ -419,10 +413,7 @@ def image(*args, **kargs):
     images.append(w)
     w.show()
     return w
-
-
 show = image  ## for backward compatibility
-
 
 def dbg(*args, **kwds):
     """
@@ -441,8 +432,8 @@ def dbg(*args, **kwds):
     except NameError:
         consoles = [c]
     return c
-
-
+    
+    
 def mkQApp():
     global QAPP
     inst = QtGui.QApplication.instance()

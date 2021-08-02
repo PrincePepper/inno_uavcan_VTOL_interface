@@ -33,7 +33,6 @@ class WidgetParameterItem(ParameterItem):
     
     This class can be subclassed by overriding makeWidget() to provide a custom widget.
     """
-
     def __init__(self, param, depth):
         ParameterItem.__init__(self, param, depth)
 
@@ -339,7 +338,6 @@ class GroupParameterItem(ParameterItem):
     of child parameters. It also provides a simple mechanism for displaying a button or combo
     that can be used to add new parameters to the group.
     """
-
     def __init__(self, param, depth):
         ParameterItem.__init__(self, param, depth)
         self.updateDepth(depth)
@@ -361,7 +359,7 @@ class GroupParameterItem(ParameterItem):
             w.setLayout(l)
             l.addWidget(self.addWidget)
             l.addStretch()
-            # l.addItem(QtGui.QSpacerItem(200, 10, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum))
+            #l.addItem(QtGui.QSpacerItem(200, 10, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum))
             self.addWidgetBox = w
             self.addItem = QtGui.QTreeWidgetItem([])
             self.addItem.setFlags(QtCore.Qt.ItemIsEnabled)
@@ -465,7 +463,6 @@ class ListParameterItem(WidgetParameterItem):
     WidgetParameterItem subclass providing comboBox that lets the user select from a list of options.
     
     """
-
     def __init__(self, param, depth):
         self.targetValue = None
         WidgetParameterItem.__init__(self, param, depth)
@@ -574,8 +571,8 @@ class ListParameter(Parameter):
                 reverse[1].append(n)
         return forward, reverse
 
-
 registerParameterType('list', ListParameter, override=True)
+
 
 
 class ActionParameterItem(ParameterItem):
@@ -585,40 +582,39 @@ class ActionParameterItem(ParameterItem):
         self.layout = QtGui.QHBoxLayout()
         self.layoutWidget.setLayout(self.layout)
         self.button = QtGui.QPushButton(param.name())
-        # self.layout.addSpacing(100)
+        #self.layout.addSpacing(100)
         self.layout.addWidget(self.button)
         self.layout.addStretch()
         self.button.clicked.connect(self.buttonClicked)
         param.sigNameChanged.connect(self.paramRenamed)
         self.setText(0, '')
-
+        
     def treeWidgetChanged(self):
         ParameterItem.treeWidgetChanged(self)
         tree = self.treeWidget()
         if tree is None:
             return
-
+        
         tree.setFirstItemColumnSpanned(self, True)
         tree.setItemWidget(self, 0, self.layoutWidget)
-
+        
     def paramRenamed(self, param, name):
         self.button.setText(name)
-
+        
     def buttonClicked(self):
         self.param.activate()
-
-
+        
 class ActionParameter(Parameter):
     """Used for displaying a button within the tree."""
     itemClass = ActionParameterItem
     sigActivated = QtCore.Signal(object)
-
+    
     def activate(self):
         self.sigActivated.emit(self)
         self.emitStateChanged('activated', None)
-
-
+        
 registerParameterType('action', ActionParameter, override=True)
+
 
 
 class TextParameterItem(WidgetParameterItem):
@@ -631,14 +627,14 @@ class TextParameterItem(WidgetParameterItem):
     def treeWidgetChanged(self):
         ## TODO: fix so that superclass method can be called
         ## (WidgetParameter should just natively support this style)
-        # WidgetParameterItem.treeWidgetChanged(self)
+        #WidgetParameterItem.treeWidgetChanged(self)
         self.treeWidget().setFirstItemColumnSpanned(self.subItem, True)
         self.treeWidget().setItemWidget(self.subItem, 0, self.textBox)
-
+        
         # for now, these are copied from ParameterItem.treeWidgetChanged
         self.setHidden(not self.param.opts.get('visible', True))
         self.setExpanded(self.param.opts.get('expanded', True))
-
+        
     def makeWidget(self):
         self.textBox = QtGui.QTextEdit()
         self.textBox.setMaximumHeight(100)
@@ -647,11 +643,11 @@ class TextParameterItem(WidgetParameterItem):
         self.textBox.setValue = self.textBox.setPlainText
         self.textBox.sigChanged = self.textBox.textChanged
         return self.textBox
-
-
+        
 class TextParameter(Parameter):
     """Editable string; displayed as large text box in the tree."""
     itemClass = TextParameterItem
 
-
+    
+    
 registerParameterType('text', TextParameter, override=True)

@@ -5,7 +5,6 @@ from numpy.testing import assert_array_almost_equal
 
 np.random.seed(12345)
 
-
 def testSolve3D():
     p1 = np.array([[0, 0, 0, 1],
                    [1, 0, 0, 1],
@@ -92,8 +91,8 @@ def test_interpolateArray():
     assert np.all(r1[0] == data[1, 1])
     assert np.all(r1[1] == 0.5 * (data[0, 0] + data[0, 1]))
     assert np.all(r1[2] == 0)
-
-
+    
+    
 def test_subArray():
     a = np.array([0, 0, 111, 112, 113, 0, 121, 122, 123, 0, 0, 0, 211, 212, 213, 0, 221, 222, 223, 0, 0, 0, 0])
     b = pg.subArray(a, offset=2, shape=(2, 2, 3), stride=(10, 4, 1))
@@ -107,7 +106,8 @@ def test_subArray():
     cc[..., 1] = c / 100.
     bb = pg.subArray(aa, offset=2, shape=(2, 2, 3), stride=(10, 4, 1))
     assert np.all(bb == cc)
-
-
+    
+    
+    
 if __name__ == '__main__':
     test_interpolateArray()

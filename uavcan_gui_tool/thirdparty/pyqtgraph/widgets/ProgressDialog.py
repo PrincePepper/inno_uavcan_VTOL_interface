@@ -2,8 +2,6 @@
 from ..Qt import QtGui, QtCore
 
 __all__ = ['ProgressDialog']
-
-
 class ProgressDialog(QtGui.QProgressDialog):
     """
     Extends QProgressDialog for use in 'with' statements.
@@ -16,7 +14,6 @@ class ProgressDialog(QtGui.QProgressDialog):
             if dlg.wasCanceled():
                 raise Exception("Processing canceled by user")
     """
-
     def __init__(self, labelText, minimum=0, maximum=100, cancelText='Cancel', parent=None, wait=250, busyCursor=False,
                  disable=False):
         """
@@ -74,6 +71,7 @@ class ProgressDialog(QtGui.QProgressDialog):
             return self
         self.setValue(self.value() + val)
         return self
+
 
     ## wrap all other functions to make sure they aren't being called from non-gui threads
 

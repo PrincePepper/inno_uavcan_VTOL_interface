@@ -12,7 +12,6 @@ class CanceledError(Exception):
     """Raised when the progress dialog is canceled during a processing operation."""
     pass
 
-
 class Parallelize(object):
     """
     Class for ultra-simple inline parallelization on multi-core CPUs
@@ -158,11 +157,11 @@ class Parallelize(object):
                         if n > 0:
                             waitingChildren += 1
                     except ClosedError:
-                        # print ch.childPid, 'process finished'
+                        #print ch.childPid, 'process finished'
                         rem.append(ch)
                         if self.showProgress:
                             self.progressDlg += 1
-                # print "remove:", [ch.childPid for ch in rem]
+                #print "remove:", [ch.childPid for ch in rem]
                 for ch in rem:
                     activeChilds.remove(ch)
                     while True:
@@ -229,7 +228,7 @@ class Parallelize(object):
 
     def _taskStarted(self, pid, i, **kwds):
         ## called remotely by tasker to indicate it has started working on task i
-        # print pid, 'reported starting task', i
+        #print pid, 'reported starting task', i
         if self.showProgress:
             if len(self.progress[pid]) > 0:
                 self.progressDlg += 1
@@ -251,11 +250,11 @@ class Tasker(object):
         ## we could fix this up such that tasks are retrieved from the parent process one at a time..
         for i, task in enumerate(self.tasks):
             self.index = i
-            # print os.getpid(), 'starting task', i
+            #print os.getpid(), 'starting task', i
             self._taskStarted(os.getpid(), i, _callSync='off')
             yield task
         if self.proc is not None:
-            # print os.getpid(), 'no more tasks'
+            #print os.getpid(), 'no more tasks'
             self.proc.close()
 
     def process(self):
@@ -331,4 +330,4 @@ class Tasker(object):
 # if self.childs is not None:
 # self.par.replies.extend([conn.recv() for conn in self.childs])
 # else:
-# self.par.finish(None)
+#self.par.finish(None)

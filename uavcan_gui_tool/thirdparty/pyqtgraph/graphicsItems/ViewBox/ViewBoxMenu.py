@@ -175,7 +175,7 @@ class ViewBoxMenu(QtGui.QMenu):
 
     def xAutoSpinChanged(self, val):
         self.ctrl[0].autoRadio.setChecked(True)
-        self.view().enableAutoRange(ViewBox.XAxis, val * 0.01)
+        self.view().enableAutoRange(ViewBox.XAxis, val *0.01)
 
     def xLinkComboChanged(self, ind):
         self.view().setXLink(str(self.ctrl[0].linkCombo.currentText()))
@@ -185,6 +185,7 @@ class ViewBoxMenu(QtGui.QMenu):
 
     def xVisibleOnlyToggled(self, b):
         self.view().setAutoVisible(x=b)
+
 
     def yMouseToggled(self, b):
         self.view().setMouseEnabled(y=b)
@@ -206,7 +207,7 @@ class ViewBoxMenu(QtGui.QMenu):
 
     def yAutoSpinChanged(self, val):
         self.ctrl[1].autoRadio.setChecked(True)
-        self.view().enableAutoRange(ViewBox.YAxis, val * 0.01)
+        self.view().enableAutoRange(ViewBox.YAxis, val *0.01)
 
     def yLinkComboChanged(self, ind):
         self.view().setYLink(str(self.ctrl[1].linkCombo.currentText()))

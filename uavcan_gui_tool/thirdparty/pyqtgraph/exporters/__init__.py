@@ -9,3 +9,4 @@ from .SVGExporter import *
 
 def listExporters():
     return Exporter.Exporters[:]
+

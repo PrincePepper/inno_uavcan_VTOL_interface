@@ -125,7 +125,6 @@ class TimestampRenderer:
         def s2delta(string):
             h, m, s = [float(x) for x in string.split(':')]
             return datetime.timedelta(hours=h, minutes=m, seconds=s)
-
         return (s2delta(later) - s2delta(earlier)).total_seconds()
 
 

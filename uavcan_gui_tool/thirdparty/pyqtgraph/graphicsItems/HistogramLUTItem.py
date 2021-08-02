@@ -2,6 +2,7 @@
 GraphicsWidget displaying an image histogram along with gradient editor. Can be used to adjust the appearance of images.
 """
 
+
 import weakref
 
 import numpy as np
@@ -179,7 +180,7 @@ class HistogramLUTItem(GraphicsWidget):
         # if self.imageItem is not None:
         # self.imageItem.setLevels(self.region.getRegion())
         self.sigLevelChangeFinished.emit(self)
-        # self.update()
+        #self.update()
 
     def regionChanging(self):
         if self.imageItem() is not None:
@@ -200,12 +201,12 @@ class HistogramLUTItem(GraphicsWidget):
             mx = h[0][-1]
             self.region.setRegion([mn, mx])
             profiler('set region')
-
+            
     def getLevels(self):
         """Return the min and max levels.
         """
         return self.region.getRegion()
-
+        
     def setLevels(self, mn, mx):
         """Set the min and max levels.
         """

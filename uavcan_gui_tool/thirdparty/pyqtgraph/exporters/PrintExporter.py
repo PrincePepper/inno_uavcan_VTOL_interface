@@ -67,4 +67,4 @@ class PrintExporter(Exporter):
             self.setExportMode(False)
         painter.end()
 
-# PrintExporter.register()
+#PrintExporter.register()

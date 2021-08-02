@@ -5,8 +5,6 @@ try:
     ## (numpy trac issue #2084)
     if not hasattr(np, 'concatenate_orig'):
         np.concatenate_orig = np.concatenate
-
-
     def concatenate(vals, *args, **kwds):
         """Wrapper around numpy.concatenate (see pyqtgraph/numpy_fix.py)"""
         dtypes = [getattr(v, 'dtype', None) for v in vals]
@@ -22,3 +20,4 @@ try:
 
 except ImportError:
     pass
+

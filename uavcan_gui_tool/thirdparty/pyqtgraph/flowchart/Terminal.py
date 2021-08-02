@@ -111,12 +111,12 @@ class Terminal(object):
         if self.isMultiValue() and term in self._value:
             del self._value[term]
             self.node().update()
-            # self.recolor()
+            #self.recolor()
         else:
             if self.isInput():
                 self.setValue(None)
         self.node().disconnected(self, term)
-        # self.node().update()
+        #self.node().update()
 
     def inputChanged(self, term, process=True):
         """Called whenever there is a change to the input value to this terminal.
@@ -218,7 +218,7 @@ class Terminal(object):
 
             # if term in self.node().terminals.values():
             # if self.isOutput() or term.isOutput():
-            # raise Exception('Can not connect an output back to the same node.')
+            #raise Exception('Can not connect an output back to the same node.')
         except:
             if connectionItem is not None:
                 connectionItem.close()
@@ -242,7 +242,7 @@ class Terminal(object):
         term.connected(self)
 
         return connectionItem
-
+        
     def disconnectFrom(self, term):
         if not self.connectedTo(term):
             return
@@ -282,7 +282,7 @@ class Terminal(object):
             else:  ## terminal has bad input
                 color = QtGui.QColor(200, 0, 0)
         self.graphicsItem().setBrush(QtGui.QBrush(color))
-
+        
         if recurse:
             for t in self.connections():
                 t.recolor(color, recurse=False)
@@ -321,18 +321,18 @@ class Terminal(object):
                 'removable': self._removable, 'multiable': self._multiable}
 
 
-# class TerminalGraphicsItem(QtGui.QGraphicsItem):
+#class TerminalGraphicsItem(QtGui.QGraphicsItem):
 class TerminalGraphicsItem(GraphicsObject):
-
+    
     def __init__(self, term, parent=None):
         self.term = term
-        # QtGui.QGraphicsItem.__init__(self, parent)
+        #QtGui.QGraphicsItem.__init__(self, parent)
         GraphicsObject.__init__(self, parent)
         self.brush = fn.mkBrush(0, 0, 0)
         self.box = QtGui.QGraphicsRectItem(0, 0, 10, 10, self)
         self.label = QtGui.QGraphicsTextItem(self.term.name(), self)
         self.label.scale(0.7, 0.7)
-        # self.setAcceptHoverEvents(True)
+        #self.setAcceptHoverEvents(True)
         self.newConnection = None
         self.setFiltersChildEvents(True)  ## to pick up mouse events on the rectitem
         if self.term.isRenamable():
@@ -341,17 +341,18 @@ class TerminalGraphicsItem(GraphicsObject):
             self.label.keyPressEvent = self.labelKeyPress
         self.setZValue(1)
         self.menu = None
+            
 
     def labelFocusOut(self, ev):
         QtGui.QGraphicsTextItem.focusOutEvent(self.label, ev)
         self.labelChanged()
-
+        
     def labelKeyPress(self, ev):
         if ev.key() == QtCore.Qt.Key_Enter or ev.key() == QtCore.Qt.Key_Return:
             self.labelChanged()
         else:
             QtGui.QGraphicsTextItem.keyPressEvent(self.label, ev)
-
+        
     def labelChanged(self):
         newName = str(self.label.toPlainText())
         if newName != self.term.name():
@@ -374,7 +375,7 @@ class TerminalGraphicsItem(GraphicsObject):
 
     def paint(self, p, *args):
         pass
-
+        
     def setAnchor(self, x, y):
         pos = QtCore.QPointF(x, y)
         self.anchorPos = pos
@@ -388,7 +389,7 @@ class TerminalGraphicsItem(GraphicsObject):
             self.box.setPos(pos.x() - br.width(), pos.y() - br.height() / 2.)
             self.label.setPos(pos.x() - br.width() - lr.width(), pos.y() - lr.height() / 2.)
         self.updateConnections()
-
+        
     def updateConnections(self):
         for t, c in self.term.connections().items():
             c.updateLine()
@@ -404,14 +405,14 @@ class TerminalGraphicsItem(GraphicsObject):
         elif ev.button() == QtCore.Qt.RightButton:
             ev.accept()
             self.raiseContextMenu(ev)
-
+            
     def raiseContextMenu(self, ev):
         ## only raise menu if this terminal is removable
         menu = self.getMenu()
         menu = self.scene().addParentContextMenus(self, menu, ev)
         pos = ev.screenPos()
         menu.popup(QtCore.QPoint(pos.x(), pos.y()))
-
+        
     def getMenu(self):
         if self.menu is None:
             self.menu = QtGui.QMenu()
@@ -426,7 +427,7 @@ class TerminalGraphicsItem(GraphicsObject):
             multiAct.setCheckable(True)
             multiAct.setChecked(self.term.isMultiValue())
             multiAct.setEnabled(self.term.isMultiable())
-
+            
             multiAct.triggered.connect(self.toggleMulti)
             self.menu.addAction(multiAct)
             self.menu.multiAct = multiAct
@@ -437,22 +438,22 @@ class TerminalGraphicsItem(GraphicsObject):
     def toggleMulti(self):
         multi = self.menu.multiAct.isChecked()
         self.term.setMultiValue(multi)
-
+    
     def removeSelf(self):
         self.term.node().removeTerminal(self.term)
-
+        
     def mouseDragEvent(self, ev):
         if ev.button() != QtCore.Qt.LeftButton:
             ev.ignore()
             return
-
+        
         ev.accept()
         if ev.isStart():
             if self.newConnection is None:
                 self.newConnection = ConnectionItem(self)
-                # self.scene().addItem(self.newConnection)
+                #self.scene().addItem(self.newConnection)
                 self.getViewBox().addItem(self.newConnection)
-                # self.newConnection.setParentItem(self.parent().parent())
+                #self.newConnection.setParentItem(self.parent().parent())
 
             self.newConnection.setTarget(self.mapToView(ev.pos()))
         elif ev.isFinish():
@@ -505,14 +506,14 @@ class TerminalGraphicsItem(GraphicsObject):
             item.updateLine()
 
 
-# class ConnectionItem(QtGui.QGraphicsItem):
+#class ConnectionItem(QtGui.QGraphicsItem):
 class ConnectionItem(GraphicsObject):
-
+    
     def __init__(self, source, target=None):
-        # QtGui.QGraphicsItem.__init__(self)
+        #QtGui.QGraphicsItem.__init__(self)
         GraphicsObject.__init__(self)
         self.setFlags(
-            self.ItemIsSelectable |
+            self.ItemIsSelectable | 
             self.ItemIsFocusable
         )
         self.source = source
@@ -534,23 +535,23 @@ class ConnectionItem(GraphicsObject):
         self.source.getViewBox().addItem(self)
         self.updateLine()
         self.setZValue(0)
-
+        
     def close(self):
         if self.scene() is not None:
-            # self.scene().removeItem(self.line)
+            #self.scene().removeItem(self.line)
             self.scene().removeItem(self)
-
+        
     def setTarget(self, target):
         self.target = target
         self.updateLine()
-
+    
     def setStyle(self, **kwds):
         self.style.update(kwds)
         if 'shape' in kwds:
             self.updateLine()
         else:
             self.update()
-
+    
     def updateLine(self):
         start = Point(self.source.connectPoint())
         if isinstance(self.target, TerminalGraphicsItem):
@@ -560,11 +561,11 @@ class ConnectionItem(GraphicsObject):
         else:
             return
         self.prepareGeometryChange()
-
+        
         self.path = self.generatePath(start, stop)
         self.shapePath = None
         self.update()
-
+        
     def generatePath(self, start, stop):
         path = QtGui.QPainterPath()
         path.moveTo(start)
@@ -578,15 +579,15 @@ class ConnectionItem(GraphicsObject):
 
     def keyPressEvent(self, ev):
         if ev.key() == QtCore.Qt.Key_Delete or ev.key() == QtCore.Qt.Key_Backspace:
-            # if isinstance(self.target, TerminalGraphicsItem):
+            #if isinstance(self.target, TerminalGraphicsItem):
             self.source.disconnect(self.target)
             ev.accept()
         else:
             ev.ignore()
-
+    
     def mousePressEvent(self, ev):
         ev.ignore()
-
+        
     def mouseClickEvent(self, ev):
         if ev.button() == QtCore.Qt.LeftButton:
             ev.accept()
@@ -594,7 +595,7 @@ class ConnectionItem(GraphicsObject):
             self.setSelected(True)
             if not sel and self.isSelected():
                 self.update()
-
+                
     def hoverEvent(self, ev):
         if (not ev.isExit()) and ev.acceptClicks(QtCore.Qt.LeftButton):
             self.hovered = True
@@ -606,19 +607,18 @@ class ConnectionItem(GraphicsObject):
         return self.shape().boundingRect()
         ##return self.line.boundingRect()
         # px = self.pixelWidth()
-        # return QtCore.QRectF(-5*px, 0, 10*px, self.length)
-
+        #return QtCore.QRectF(-5*px, 0, 10*px, self.length)
     def viewRangeChanged(self):
         self.shapePath = None
         self.prepareGeometryChange()
-
+        
     def shape(self):
         if self.shapePath is None:
             if self.path is None:
                 return QtGui.QPainterPath()
             stroker = QtGui.QPainterPathStroker()
             px = self.pixelWidth()
-            stroker.setWidth(px * 8)
+            stroker.setWidth(px*8)
             self.shapePath = stroker.createStroke(self.path)
         return self.shapePath
 
@@ -631,6 +631,6 @@ class ConnectionItem(GraphicsObject):
             else:
                 p.setPen(fn.mkPen(self.style['color'], width=self.style['width']))
 
-        # p.drawLine(0, 0, 0, self.length)
-
+        #p.drawLine(0, 0, 0, self.length)
+        
         p.drawPath(self.path)

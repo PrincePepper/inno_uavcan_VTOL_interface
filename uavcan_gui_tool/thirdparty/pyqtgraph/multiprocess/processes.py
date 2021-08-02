@@ -15,8 +15,8 @@ from .remoteproxy import RemoteEventHandler, ClosedError, NoResultError, LocalOb
 from ..Qt import USE_PYSIDE
 from ..util import cprint  # color printing for debugging
 
-__all__ = ['Process', 'QtProcess', 'ForkedProcess', 'ClosedError', 'NoResultError']
 
+__all__ = ['Process', 'QtProcess', 'ForkedProcess', 'ClosedError', 'NoResultError']
 
 class Process(RemoteEventHandler):
     """
@@ -181,7 +181,7 @@ def startEventLoop(name, port, authkey, ppid, debug=False):
     if debug:
         cprint.cout(debug, '[%d] connected; starting remote proxy.\n' % os.getpid(), -1)
     global HANDLER
-    # ppid = 0 if not hasattr(os, 'getppid') else os.getppid()
+    #ppid = 0 if not hasattr(os, 'getppid') else os.getppid()
     HANDLER = RemoteEventHandler(conn, name, ppid, debug=debug)
     while True:
         try:
@@ -360,8 +360,7 @@ class RemoteQtEventHandler(RemoteEventHandler):
             from ..Qt import QtGui, QtCore
             QtGui.QApplication.instance().quit()
             self.timer.stop()
-            # raise SystemExit
-
+            #raise SystemExit
 
 class QtProcess(Process):
     """
@@ -420,8 +419,7 @@ class QtProcess(Process):
             Process.processRequests(self)
         except ClosedError:
             self.timer.stop()
-
-
+    
 def startQtEventLoop(name, port, authkey, ppid, debug=False):
     if debug:
         import os
@@ -443,10 +441,7 @@ def startQtEventLoop(name, port, authkey, ppid, debug=False):
     HANDLER.startEventTimer()
     app.exec_()
 
-
 import threading
-
-
 class FileForwarder(threading.Thread):
     """
     Background thread that forwards data from one pipe to another. 
@@ -460,7 +455,6 @@ class FileForwarder(threading.Thread):
     which ensures that the correct behavior is achieved even if 
     sys.stdout/stderr are replaced at runtime.
     """
-
     def __init__(self, input, output, color):
         threading.Thread.__init__(self)
         self.input = input

@@ -4,7 +4,6 @@ from ..Qt import QtGui, QtCore
 
 __all__ = ['GradientLegend']
 
-
 class GradientLegend(UIGraphicsItem):
     """
     Draws a color gradient rectangle along with text labels denoting the value at specific 

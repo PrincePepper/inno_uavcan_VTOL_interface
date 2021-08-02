@@ -50,10 +50,8 @@ if QT_LIB == PYSIDE:
     except ImportError:
         pass
     import PySide
-
     try:
         from PySide import shiboken
-
         isQObjectAlive = shiboken.isValid
     except ImportError:
         def isQObjectAlive(obj):
@@ -79,7 +77,6 @@ if QT_LIB == PYSIDE:
 
     class StringIO(object):
         """Alternative to built-in StringIO needed to circumvent unicode/ascii issues"""
-
         def __init__(self):
             self.data = []
 
@@ -119,7 +116,6 @@ if QT_LIB == PYSIDE:
 elif QT_LIB == PYQT4:
 
     from PyQt4 import QtGui, QtCore, uic
-
     try:
         from PyQt4 import QtSvg
     except ImportError:
@@ -140,7 +136,6 @@ elif QT_LIB == PYQT5:
     # We're using PyQt5 which has a different structure so we're going to use a shim to
     # recreate the Qt4 structure for Qt5
     from PyQt5 import QtGui, QtCore, QtWidgets, uic
-
     try:
         from PyQt5 import QtSvg
     except ImportError:
@@ -150,46 +145,31 @@ elif QT_LIB == PYQT5:
     except ImportError:
         pass
 
-
     # Re-implement deprecated APIs
     def scale(self, sx, sy):
         tr = self.transform()
         tr.scale(sx, sy)
         self.setTransform(tr)
-
-
     QtWidgets.QGraphicsItem.scale = scale
-
 
     def rotate(self, angle):
         tr = self.transform()
         tr.rotate(angle)
         self.setTransform(tr)
-
-
     QtWidgets.QGraphicsItem.rotate = rotate
-
 
     def translate(self, dx, dy):
         tr = self.transform()
         tr.translate(dx, dy)
         self.setTransform(tr)
-
-
     QtWidgets.QGraphicsItem.translate = translate
-
 
     def setMargin(self, i):
         self.setContentsMargins(i, i, i, i)
-
-
     QtWidgets.QGridLayout.setMargin = setMargin
-
 
     def setResizeMode(self, mode):
         self.setSectionResizeMode(mode)
-
-
     QtWidgets.QHeaderView.setResizeMode = setResizeMode
 
     QtGui.QApplication = QtWidgets.QApplication
@@ -209,12 +189,8 @@ elif QT_LIB == PYQT5:
 # Common to PyQt4 and 5
 if QT_LIB.startswith('PyQt'):
     import sip
-
-
     def isQObjectAlive(obj):
         return not sip.isdeleted(obj)
-
-
     loadUiType = uic.loadUiType
 
     QtCore.Signal = QtCore.pyqtSignal

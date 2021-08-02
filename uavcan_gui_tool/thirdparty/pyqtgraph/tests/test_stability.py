@@ -76,9 +76,9 @@ def crashtest():
         gc.enable()
 
 
+
 class WorkThread(pg.QtCore.QThread):
     '''Intended to give the gc an opportunity to run from a non-gui thread.'''
-
     def run(self):
         i = 0
         while True:
@@ -90,11 +90,9 @@ class WorkThread(pg.QtCore.QThread):
 def randItem(items):
     return items[randint(0, len(items) - 1)]
 
-
 def p(msg):
     print(msg)
     sys.stdout.flush()
-
 
 def createWidget():
     p('create widget')
@@ -108,7 +106,6 @@ def createWidget():
     p("    %s" % widget)
     return widget
 
-
 def setParent():
     p('set parent')
     global widgets
@@ -121,7 +118,6 @@ def setParent():
     p("    %s parent of %s" % (parent, child))
     child.setParent(parent)
 
-
 def forgetWidget():
     p('forget widget')
     global widgets
@@ -130,7 +126,6 @@ def forgetWidget():
     widget = randItem(widgets)
     p('    %s' % widget)
     widgets.remove(widget)
-
 
 def showWidget():
     p('show widget')
@@ -141,20 +136,16 @@ def showWidget():
     p('    %s' % widget)
     widget.show()
 
-
 def processEvents():
     p('process events')
     QTest.qWait(25)
 
-
 class TstException(Exception):
     pass
-
 
 def raiseException():
     p('raise exception')
     raise TstException("A test exception")
-
 
 def addReference():
     p('add reference')

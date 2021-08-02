@@ -51,6 +51,8 @@ except:
     HAVE_METAARRAY = False
 
 
+
+
 class PlotItem(GraphicsWidget):
     """
     **Bases:** :class:`GraphicsWidget <pyqtgraph.GraphicsWidget>`
@@ -399,6 +401,7 @@ class PlotItem(GraphicsWidget):
         wr.adjust(pos.x(), pos.y(), pos.x(), pos.y())
         return wr
 
+
     def avgToggled(self, b):
         if b:
             self.recomputeAverages()
@@ -543,12 +546,12 @@ class PlotItem(GraphicsWidget):
     def addDataItem(self, item, *args):
         print("PlotItem.addDataItem is deprecated. Use addItem instead.")
         self.addItem(item, *args)
-
+        
     def listDataItems(self):
         """Return a list of all data items (PlotDataItem, PlotCurveItem, ScatterPlotItem, etc)
         contained in this PlotItem."""
         return self.dataItems[:]
-
+        
     def addCurve(self, c, params=None):
         print("PlotItem.addCurve is deprecated. Use addItem instead.")
         self.addItem(c, params)
@@ -588,7 +591,7 @@ class PlotItem(GraphicsWidget):
             self.updateDecimation()
             self.updateParamList()
             # item.connect(item, QtCore.SIGNAL('plotChanged'), self.plotChanged)
-            # item.sigPlotChanged.connect(self.plotChanged)
+            #item.sigPlotChanged.connect(self.plotChanged)
 
     def clear(self):
         """
@@ -597,12 +600,13 @@ class PlotItem(GraphicsWidget):
         for i in self.items[:]:
             self.removeItem(i)
         self.avgCurves = {}
-
+    
     def clearPlots(self):
         for i in self.curves[:]:
             self.removeItem(i)
         self.avgCurves = {}
-
+        
+    
     def plot(self, *args, **kargs):
         """
         Add and return a new plot.
@@ -624,7 +628,7 @@ class PlotItem(GraphicsWidget):
         if params is None:
             params = {}
         self.addItem(item, params=params)
-
+        
         return item
 
     def addLegend(self, size=None, offset=(30, 30)):
@@ -636,7 +640,7 @@ class PlotItem(GraphicsWidget):
         self.legend = LegendItem(size, offset)
         self.legend.setParentItem(self.vb)
         return self.legend
-
+        
     def scatterPlot(self, *args, **kargs):
         if 'pen' in kargs:
             kargs['symbolPen'] = kargs['pen']
@@ -743,7 +747,7 @@ class PlotItem(GraphicsWidget):
                     fh.write('L%f,%f ' % (x[i], y[i]))
 
                 fh.write('"/>')
-                # fh.write("</g>")
+                #fh.write("</g>")
         for item in self.dataItems:
             if isinstance(item, ScatterPlotItem):
 
@@ -777,11 +781,11 @@ class PlotItem(GraphicsWidget):
             fileName = QtGui.QFileDialog.getSaveFileName()
         fileName = str(fileName)
         PlotItem.lastFileDir = os.path.dirname(fileName)
-
+        
         from ...exporters import SVGExporter
         ex = SVGExporter(self)
         ex.export(fileName)
-
+        
     def writeImage(self, fileName=None):
         if fileName is None:
             self.fileDialog = FileDialog()
@@ -804,7 +808,7 @@ class PlotItem(GraphicsWidget):
         self.scene().render(painter, QtCore.QRectF(), self.mapRectToScene(self.boundingRect()))
         painter.end()
         self.png.save(fileName)
-
+        
     def writeCsv(self, fileName=None):
         if fileName is None:
             self.fileDialog = FileDialog()
@@ -827,7 +831,7 @@ class PlotItem(GraphicsWidget):
             done = True
             for d in data:
                 if i < len(d[0]):
-                    fd.write('%g,%g,' % (d[0][i], d[1][i]))
+                    fd.write('%g,%g,'%(d[0][i], d[1][i]))
                     done = False
                 else:
                     fd.write(' , ,')
@@ -837,31 +841,32 @@ class PlotItem(GraphicsWidget):
             i += 1
         fd.close()
 
+
     def saveState(self):
         state = self.stateGroup.state()
         state['paramList'] = self.paramList.copy()
         state['view'] = self.vb.getState()
         return state
-
+        
     def restoreState(self, state):
         if 'paramList' in state:
             self.paramList = state['paramList'].copy()
-
+            
         self.stateGroup.setState(state)
         self.updateSpectrumMode()
         self.updateDownsampling()
         self.updateAlpha()
         self.updateDecimation()
-
+        
         if 'powerSpectrumGroup' in state:
             state['fftCheck'] = state['powerSpectrumGroup']
         if 'gridGroup' in state:
             state['xGridCheck'] = state['gridGroup']
             state['yGridCheck'] = state['gridGroup']
-
+            
         self.stateGroup.setState(state)
         self.updateParamList()
-
+        
         if 'view' not in state:
             r = [[float(state['xMinText']), float(state['xMaxText'])],
                  [float(state['yMinText']), float(state['yMaxText'])]]
@@ -872,10 +877,11 @@ class PlotItem(GraphicsWidget):
                 'viewRange': r,
             }
         self.vb.setState(state['view'])
+        
 
     def widgetGroupInterface(self):
         return (None, PlotItem.saveState, PlotItem.restoreState)
-
+      
     def updateSpectrumMode(self, b=None):
         if b is None:
             b = self.ctrl.fftCheck.isChecked()
@@ -883,20 +889,20 @@ class PlotItem(GraphicsWidget):
             c.setFftMode(b)
         self.enableAutoRange()
         self.recomputeAverages()
-
+            
     def updateLogMode(self):
         x = self.ctrl.logXCheck.isChecked()
         y = self.ctrl.logYCheck.isChecked()
         for i in self.items:
             if hasattr(i, 'setLogMode'):
-                i.setLogMode(x, y)
+                i.setLogMode(x,y)
         self.getAxis('bottom').setLogMode(x)
         self.getAxis('top').setLogMode(x)
         self.getAxis('left').setLogMode(y)
         self.getAxis('right').setLogMode(y)
         self.enableAutoRange()
         self.recomputeAverages()
-
+        
     def setDownsampling(self, ds=None, auto=None, mode=None):
         """Change the default downsampling mode for all PlotDataItems managed by this plot.
         
@@ -921,12 +927,12 @@ class PlotItem(GraphicsWidget):
             else:
                 self.ctrl.downsampleCheck.setChecked(True)
                 self.ctrl.downsampleSpin.setValue(ds)
-
+                
         if auto is not None:
             if auto and ds is not False:
                 self.ctrl.downsampleCheck.setChecked(True)
             self.ctrl.autoDownsampleCheck.setChecked(auto)
-
+            
         if mode is not None:
             if mode == 'subsample':
                 self.ctrl.subsampleRadio.setChecked(True)
@@ -936,7 +942,7 @@ class PlotItem(GraphicsWidget):
                 self.ctrl.peakRadio.setChecked(True)
             else:
                 raise ValueError("mode argument must be 'subsample', 'mean', or 'peak'.")
-
+            
     def updateDownsampling(self):
         ds, auto, method = self.downsampleMode()
         clip = self.ctrl.clipToViewCheck.isChecked()
@@ -944,13 +950,13 @@ class PlotItem(GraphicsWidget):
             c.setDownsampling(ds, auto, method)
             c.setClipToView(clip)
         self.recomputeAverages()
-
+        
     def downsampleMode(self):
         if self.ctrl.downsampleCheck.isChecked():
             ds = self.ctrl.downsampleSpin.value()
         else:
             ds = 1
-
+            
         auto = self.ctrl.downsampleCheck.isChecked() and self.ctrl.autoDownsampleCheck.isChecked()
 
         if self.ctrl.subsampleRadio.isChecked():
@@ -961,13 +967,13 @@ class PlotItem(GraphicsWidget):
             method = 'peak'
 
         return ds, auto, method
-
+        
     def setClipToView(self, clip):
         """Set the default clip-to-view mode for all PlotDataItems managed by this plot.
         If *clip* is True, then PlotDataItems will attempt to draw only points within the visible
         range of the ViewBox."""
         self.ctrl.clipToViewCheck.setChecked(clip)
-
+        
     def clipToViewMode(self):
         return self.ctrl.clipToViewCheck.isChecked()
 
@@ -976,7 +982,7 @@ class PlotItem(GraphicsWidget):
             numCurves = self.ctrl.maxTracesSpin.value()
         else:
             numCurves = -1
-
+            
         curves = self.curves[:]
         split = len(curves) - numCurves
         for i in range(len(curves)):
@@ -1014,6 +1020,7 @@ class PlotItem(GraphicsWidget):
         else:
             mode = False
         return mode
+        
 
     def resizeEvent(self, ev):
         if self.autoBtn is None:  ## already closed down
@@ -1021,17 +1028,18 @@ class PlotItem(GraphicsWidget):
         btnRect = self.mapRectFromItem(self.autoBtn, self.autoBtn.boundingRect())
         y = self.size().height() - btnRect.height()
         self.autoBtn.setPos(0, y)
-
+    
+    
     def getMenu(self):
         return self.ctrlMenu
-
+    
     def getContextMenus(self, event):
         ## called when another item is displaying its context menu; we get to add extras to the end of the menu.
         if self.menuEnabled():
             return self.ctrlMenu
         else:
             return None
-
+    
     def setMenuEnabled(self, enableMenu=True, enableViewBoxMenu='same'):
         """
         Enable or disable the context menu for this PlotItem.
@@ -1044,10 +1052,10 @@ class PlotItem(GraphicsWidget):
         if enableViewBoxMenu == 'same':
             enableViewBoxMenu = enableMenu
         self.vb.setMenuEnabled(enableViewBoxMenu)
-
+    
     def menuEnabled(self):
         return self._menuEnabled
-
+    
     def hoverEvent(self, ev):
         if ev.enter:
             self.mouseHovering = True
@@ -1055,23 +1063,24 @@ class PlotItem(GraphicsWidget):
             self.mouseHovering = False
 
         self.updateButtons()
+    
 
     def getLabel(self, key):
         pass
-
+        
     def _checkScaleKey(self, key):
         if key not in self.axes:
             raise Exception("Scale '%s' not found. Scales are: %s" % (key, str(list(self.axes.keys()))))
-
+        
     def getScale(self, key):
         return self.getAxis(key)
-
+        
     def getAxis(self, name):
         """Return the specified AxisItem. 
         *name* should be 'left', 'bottom', 'top', or 'right'."""
         self._checkScaleKey(name)
         return self.axes[name]['item']
-
+        
     def setLabel(self, axis, text=None, units=None, unitPrefix=None, **args):
         """
         Set the label for an axis. Basic HTML formatting is allowed.
@@ -1088,7 +1097,7 @@ class PlotItem(GraphicsWidget):
         """
         self.getAxis(axis).setLabel(text=text, units=units, **args)
         self.showAxis(axis)
-
+        
     def setLabels(self, **kwds):
         """
         Convenience function allowing multiple labels and/or title to be set in one call.
@@ -1102,7 +1111,8 @@ class PlotItem(GraphicsWidget):
                 if isinstance(v, basestring):
                     v = (v,)
                 self.setLabel(k, *v)
-
+        
+        
     def showLabel(self, axis, show=True):
         """
         Show or hide one of the plot's axis labels (the axis itself will be unaffected).
@@ -1136,27 +1146,27 @@ class PlotItem(GraphicsWidget):
             s.show()
         else:
             s.hide()
-
+            
     def hideAxis(self, axis):
         """Hide one of the PlotItem's axes. ('left', 'bottom', 'right', or 'top')"""
         self.showAxis(axis, False)
-
+            
     def showScale(self, *args, **kargs):
         print("Deprecated. use showAxis() instead")
         return self.showAxis(*args, **kargs)
-
+            
     def hideButtons(self):
         """Causes auto-scale button ('A' in lower-left corner) to be hidden for this PlotItem"""
-        # self.ctrlBtn.hide()
+        #self.ctrlBtn.hide()
         self.buttonsHidden = True
         self.updateButtons()
-
+        
     def showButtons(self):
         """Causes auto-scale button ('A' in lower-left corner) to be visible for this PlotItem"""
-        # self.ctrlBtn.hide()
+        #self.ctrlBtn.hide()
         self.buttonsHidden = False
         self.updateButtons()
-
+        
     def updateButtons(self):
         try:
             if self._exportOpts is False and self.mouseHovering and not self.buttonsHidden and not all(
@@ -1166,7 +1176,7 @@ class PlotItem(GraphicsWidget):
                 self.autoBtn.hide()
         except RuntimeError:
             pass  # this can happen if the plot has been deleted.
-
+            
     def _plotArray(self, arr, x=None, **kargs):
         if arr.ndim != 1:
             raise Exception("Array must be 1D to plot (shape is %s)" % arr.shape)
@@ -1191,7 +1201,7 @@ class PlotItem(GraphicsWidget):
                 xv = x
         c = PlotCurveItem(**kargs)
         c.setData(x=xv, y=arr.view(np.ndarray))
-
+        
         if autoLabel:
             name = arr._info[0].get('name', None)
             units = arr._info[0].get('units', None)
@@ -1209,4 +1219,4 @@ class PlotItem(GraphicsWidget):
         # if export:
         # self.autoBtn.hide()
         # else:
-        # self.autoBtn.show()
+        #self.autoBtn.show()

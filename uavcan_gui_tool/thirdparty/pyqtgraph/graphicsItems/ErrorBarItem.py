@@ -5,7 +5,6 @@ from ..Qt import QtGui
 
 __all__ = ['ErrorBarItem']
 
-
 class ErrorBarItem(GraphicsObject):
     def __init__(self, **opts):
         """

@@ -23,6 +23,7 @@ from .version import __version__
 
 logger = getLogger(__name__)
 
+
 try:
     # noinspection PyUnresolvedReferences
     sys.getwindowsversion()

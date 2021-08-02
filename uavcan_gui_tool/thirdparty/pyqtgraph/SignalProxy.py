@@ -7,7 +7,6 @@ from .ptime import time
 
 __all__ = ['SignalProxy']
 
-
 class SignalProxy(QtCore.QObject):
     """Object which collects rapid-fire signals and condenses them
     into a single signal or a rate-limited stream of signals. 
@@ -111,12 +110,10 @@ if __name__ == '__main__':
 
     def fn(*args):
         print("Raw signal:", args)
-
-
     def fn2(*args):
         print("Delayed signal:", args)
 
 
     spin.valueChanged.connect(fn)
-    # proxy = proxyConnect(spin, QtCore.SIGNAL('valueChanged(int)'), fn)
+    #proxy = proxyConnect(spin, QtCore.SIGNAL('valueChanged(int)'), fn)
     proxy = SignalProxy(spin.valueChanged, delay=0.5, slot=fn2)

@@ -36,7 +36,7 @@ class Dock(QtGui.QWidget, DockDrop):
         self.widgetArea.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         self.widgets = []
         self.currentRow = 0
-        # self.titlePos = 'top'
+        #self.titlePos = 'top'
         self.raiseOverlay()
         self.hStyle = """
         Dock > QWidget {
@@ -148,7 +148,7 @@ class Dock(QtGui.QWidget, DockDrop):
         By default ('auto'), the orientation is determined
         based on the aspect ratio of the Dock.
         """
-        # print self.name(), "setOrientation", o, force
+        #print self.name(), "setOrientation", o, force
         if o == 'auto' and self.autoOrient:
             if self.container().type() == 'tab':
                 o = 'horizontal'
@@ -163,19 +163,19 @@ class Dock(QtGui.QWidget, DockDrop):
 
     def updateStyle(self):
         ## updates orientation and appearance of title bar
-        # print self.name(), "update style:", self.orientation, self.moveLabel, self.label.isVisible()
+        #print self.name(), "update style:", self.orientation, self.moveLabel, self.label.isVisible()
         if self.labelHidden:
             self.widgetArea.setStyleSheet(self.nStyle)
         elif self.orientation == 'vertical':
             self.label.setOrientation('vertical')
             if self.moveLabel:
-                # print self.name(), "reclaim label"
+                #print self.name(), "reclaim label"
                 self.topLayout.addWidget(self.label, 1, 0)
             self.widgetArea.setStyleSheet(self.vStyle)
         else:
             self.label.setOrientation('horizontal')
             if self.moveLabel:
-                # print self.name(), "reclaim label"
+                #print self.name(), "reclaim label"
                 self.topLayout.addWidget(self.label, 0, 1)
             self.widgetArea.setStyleSheet(self.hStyle)
 
@@ -204,7 +204,7 @@ class Dock(QtGui.QWidget, DockDrop):
     def startDrag(self):
         self.drag = QtGui.QDrag(self)
         mime = QtCore.QMimeData()
-        # mime.setPlainText("asd")
+        #mime.setPlainText("asd")
         self.drag.setMimeData(mime)
         self.widgetArea.setStyleSheet(self.dragStyle)
         self.update()
@@ -215,7 +215,7 @@ class Dock(QtGui.QWidget, DockDrop):
         self.area.floatDock(self)
 
     def containerChanged(self, c):
-        # print self.name(), "container changed"
+        #print self.name(), "container changed"
         self._container = c
         if c.type() != 'tab':
             self.moveLabel = True
@@ -256,9 +256,10 @@ class Dock(QtGui.QWidget, DockDrop):
 
 
 class DockLabel(VerticalLabel):
+    
     sigClicked = QtCore.Signal(object, object)
     sigCloseClicked = QtCore.Signal()
-
+    
     def __init__(self, text, dock, showCloseButton):
         self.dim = False
         self.fixedWidth = False
@@ -319,7 +320,7 @@ class DockLabel(VerticalLabel):
         if self.dim != d:
             self.dim = d
             self.updateStyle()
-
+    
     def setOrientation(self, o):
         VerticalLabel.setOrientation(self, o)
         self.updateStyle()

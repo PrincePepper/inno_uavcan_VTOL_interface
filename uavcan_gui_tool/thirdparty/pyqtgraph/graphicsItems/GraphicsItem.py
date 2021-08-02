@@ -264,13 +264,14 @@ class GraphicsItem(object):
         if ortho:
             return orthoV.length()
         return normV.length()
+        
 
     def pixelSize(self):
         ## deprecated
         v = self.pixelVectors()
         if v == (None, None):
             return None, None
-        return (v[0].x() ** 2 + v[0].y() ** 2) ** 0.5, (v[1].x() ** 2 + v[1].y() ** 2) ** 0.5
+        return (v[0].x() ** 2 + v[0].y() ** 2) ** 0.5, (v[1].x()**2+v[1].y()**2)**0.5
 
     def pixelWidth(self):
         ## deprecated
@@ -298,7 +299,7 @@ class GraphicsItem(object):
         if vt is None:
             return None
         return vt.map(obj)
-
+        
     def mapFromDevice(self, obj):
         """
         Return *obj* mapped from device coordinates (pixels) to local coordinates.
@@ -332,19 +333,19 @@ class GraphicsItem(object):
             return None
         vt = fn.invertQTransform(vt)
         return vt.mapRect(rect)
-
+    
     def mapToView(self, obj):
         vt = self.viewTransform()
         if vt is None:
             return None
         return vt.map(obj)
-
+        
     def mapRectToView(self, obj):
         vt = self.viewTransform()
         if vt is None:
             return None
         return vt.mapRect(obj)
-
+        
     def mapFromView(self, obj):
         vt = self.viewTransform()
         if vt is None:
@@ -361,14 +362,14 @@ class GraphicsItem(object):
 
     def pos(self):
         return Point(self._qtBaseClass.pos(self))
-
+    
     def viewPos(self):
         return self.mapToView(self.mapFromParent(self.pos()))
-
+    
     def parentItem(self):
         ## PyQt bug -- some items are returned incorrectly.
         return GraphicsScene.translateGraphicsItem(self._qtBaseClass.parentItem(self))
-
+        
     def setParentItem(self, parent):
         ## Workaround for Qt bug: https://bugreports.qt-project.org/browse/QTBUG-18616
         if parent is not None:
@@ -376,19 +377,21 @@ class GraphicsItem(object):
             if pscene is not None and self.scene() is not pscene:
                 pscene.addItem(self)
         return self._qtBaseClass.setParentItem(self, parent)
-
+    
     def childItems(self):
         ## PyQt bug -- some child items are returned incorrectly.
         return list(map(GraphicsScene.translateGraphicsItem, self._qtBaseClass.childItems(self)))
 
+
     def sceneTransform(self):
         ## Qt bug: do no allow access to sceneTransform() until 
         ## the item has a scene.
-
+        
         if self.scene() is None:
             return self.transform()
         else:
             return self._qtBaseClass.sceneTransform(self)
+
 
     def transformAngle(self, relativeItem=None):
         """Return the rotation produced by this item's transform (this assumes there is no shear in the transform)
@@ -463,12 +466,12 @@ class GraphicsItem(object):
                 except (TypeError, AttributeError, RuntimeError):
                     # TypeError and RuntimeError are from pyqt and pyside, respectively
                     pass
-
+            
             self._connectedView = None
 
         ## connect to new view
         if view is not None:
-            # print "connect:", self, view
+            #print "connect:", self, view
             if hasattr(view, 'sigDeviceRangeChanged'):
                 # connect signals from GraphicsView
                 view.sigDeviceRangeChanged.connect(self.viewRangeChanged)
@@ -480,17 +483,17 @@ class GraphicsItem(object):
             self._connectedView = weakref.ref(view)
             self.viewRangeChanged()
             self.viewTransformChanged()
-
+        
         ## inform children that their view might have changed
         self._replaceView(oldView)
 
         self.viewChanged(view, oldView)
-
+        
     def viewChanged(self, view, oldView):
         """Called when this item's view has changed
         (ie, the item has been added to or removed from a ViewBox)"""
         pass
-
+        
     def _replaceView(self, oldView, item=None):
         if item is None:
             item = self
@@ -498,7 +501,7 @@ class GraphicsItem(object):
             if isinstance(child, GraphicsItem):
                 if child.getViewBox() is oldView:
                     child._updateView()
-                    # self._replaceView(oldView, child)
+                    #self._replaceView(oldView, child)
             else:
                 self._replaceView(oldView, child)
 
@@ -527,13 +530,13 @@ class GraphicsItem(object):
         view = self.getViewBox()
         if view is not None and hasattr(view, 'implements') and view.implements('ViewBox'):
             view.itemBoundsChanged(self)  ## inform view so it can update its range if it wants
-
+    
     def childrenShape(self):
         """Return the union of the shapes of all descendants of this item in local coordinates."""
         childs = self.allChildItems()
         shapes = [self.mapFromItem(c, c.shape()) for c in self.allChildItems()]
         return reduce(operator.add, shapes)
-
+    
     def allChildItems(self, root=None):
         """Return list of the entire item tree descending from this item."""
         if root is None:
@@ -543,7 +546,8 @@ class GraphicsItem(object):
             tree.append(ch)
             tree.extend(self.allChildItems(ch))
         return tree
-
+    
+    
     def setExportMode(self, export, opts=None):
         """
         This method is called by exporters to inform items that they are being drawn for export

@@ -9,7 +9,6 @@ from ..Qt import QtCore, QtGui, USE_PYSIDE
 
 try:
     from ..Qt import QtOpenGL
-
     HAVE_OPENGL = True
 except ImportError:
     HAVE_OPENGL = False
@@ -21,7 +20,6 @@ from .. import functions as fn
 from .. import getConfigOption
 
 __all__ = ['GraphicsView']
-
 
 class GraphicsView(QtGui.QGraphicsView):
     """Re-implementation of QGraphicsView that removes scrollbars and allows unambiguous control of the 
@@ -278,7 +276,7 @@ class GraphicsView(QtGui.QGraphicsView):
         if self.range.width() != newRect.width() or self.range.height() != newRect.height():
             scaleChanged = True
         self.range = newRect
-        # print "New Range:", self.range
+        #print "New Range:", self.range
         if self.centralWidget is not None:
             self.centralWidget.setGeometry(self.range)
         self.updateMatrix(propagate)

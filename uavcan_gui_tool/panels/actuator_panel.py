@@ -21,9 +21,11 @@ __all__ = 'PANEL_NAME', 'spawn', 'get_icon'
 
 PANEL_NAME = 'Actuator Panel'
 
+
 logger = getLogger(__name__)
 
 _singleton = None
+
 
 
 class PercentSlider(QWidget):

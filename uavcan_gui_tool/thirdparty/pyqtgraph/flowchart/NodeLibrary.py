@@ -11,6 +11,7 @@ def isNodeClass(cls):
     return hasattr(cls, 'nodeName')
 
 
+
 class NodeLibrary:
     """
     A library of flowchart Node types. Custom libraries may be built to provide 

@@ -9,7 +9,6 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
@@ -151,7 +150,6 @@ class Ui_Form(object):
         self.normOffRadio.setText(_translate("Form", "Off"))
         self.normTimeRangeCheck.setText(_translate("Form", "Time range"))
         self.normFrameCheck.setText(_translate("Form", "Frame"))
-
 
 from ..widgets.HistogramLUTWidget import HistogramLUTWidget
 from ..widgets.PlotWidget import PlotWidget

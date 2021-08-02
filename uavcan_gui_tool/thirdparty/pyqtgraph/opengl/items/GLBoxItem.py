@@ -6,14 +6,12 @@ from ...Qt import QtGui
 
 __all__ = ['GLBoxItem']
 
-
 class GLBoxItem(GLGraphicsItem):
     """
     **Bases:** :class:`GLGraphicsItem <pyqtgraph.opengl.GLGraphicsItem>`
     
     Displays a wire-frame box.
     """
-
     def __init__(self, size=None, color=None, glOptions='translucent'):
         GLGraphicsItem.__init__(self)
         if size is None:

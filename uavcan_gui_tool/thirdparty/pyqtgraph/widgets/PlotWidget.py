@@ -10,8 +10,6 @@ from ..Qt import QtCore, QtGui
 from ..graphicsItems.PlotItem import *
 
 __all__ = ['PlotWidget']
-
-
 class PlotWidget(GraphicsView):
     # signals wrapped from PlotItem / ViewBox
     sigRangeChanged = QtCore.Signal(object, object)
@@ -44,7 +42,6 @@ class PlotWidget(GraphicsView):
     For all 
     other methods, use :func:`getPlotItem <pyqtgraph.PlotWidget.getPlotItem>`.
     """
-
     def __init__(self, parent=None, background='default', **kargs):
         """When initializing PlotWidget, *parent* and *background* are passed to 
         :func:`GraphicsWidget.__init__() <pyqtgraph.GraphicsWidget.__init__>`
@@ -81,7 +78,7 @@ class PlotWidget(GraphicsView):
         raise NameError(attr)
 
     def viewRangeChanged(self, view, range):
-        # self.emit(QtCore.SIGNAL('viewChanged'), *args)
+        #self.emit(QtCore.SIGNAL('viewChanged'), *args)
         self.sigRangeChanged.emit(self, range)
 
     def widgetGroupInterface(self):

@@ -384,7 +384,7 @@ class MeshData(object):
 
             # remove duplicate entries
             self._edges = np.unique(edges)['i']
-            # print self._edges
+            #print self._edges
         elif self._vertexesIndexedByFaces is not None:
             verts = self._vertexesIndexedByFaces
             edges = np.empty((verts.shape[0], 3, 2), dtype=np.uint)
@@ -398,7 +398,8 @@ class MeshData(object):
             self._edges = edges
         else:
             raise Exception("MeshData cannot generate edges--no faces in this data.")
-
+        
+        
     def save(self):
         """Serialize this mesh to a string appropriate for disk storage"""
         import pickle
@@ -419,7 +420,7 @@ class MeshData(object):
 
         state = dict([(n, getattr(self, n)) for n in names])
         return pickle.dumps(state)
-
+        
     def restore(self, state):
         """Restore the state of a mesh previously saved using save()"""
         import pickle
@@ -430,6 +431,8 @@ class MeshData(object):
                     state[k] = [[v.x(), v.y(), v.z()] for v in state[k]]
                 state[k] = np.array(state[k])
             setattr(self, k, state[k])
+
+
 
     @staticmethod
     def sphere(rows, cols, radius=1.0, offset=True):
@@ -469,7 +472,7 @@ class MeshData(object):
         faces[faces > vmax] = vmax
 
         return MeshData(vertexes=verts, faces=faces)
-
+        
     @staticmethod
     def cylinder(rows, cols, radius=[1.0, 1.0], length=1.0, offset=False):
         """

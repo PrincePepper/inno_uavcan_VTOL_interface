@@ -42,13 +42,13 @@ class Container(object):
                 index += 1
 
         for n in new:
-            # print "change container", n, " -> ", self
+            #print "change container", n, " -> ", self
             n.containerChanged(self)
-            # print "insert", n, " -> ", self, index
+            #print "insert", n, " -> ", self, index
             self._insertItem(n, index)
             index += 1
             n.sigStretchChanged.connect(self.childStretchChanged)
-        # print "child added", self
+        #print "child added", self
         self.updateStretch()
 
     def apoptose(self, propagate=True):
@@ -61,7 +61,7 @@ class Container(object):
             if self is self.area.topContainer:
                 return
             self.container().insert(self.widget(0), 'before', self)
-        # print "apoptose:", self
+        #print "apoptose:", self
         self.close()
         if propagate and cont is not None:
             cont.apoptose()
@@ -74,7 +74,7 @@ class Container(object):
     def childEvent(self, ev):
         ch = ev.child()
         if ev.removed() and hasattr(ch, 'sigStretchChanged'):
-            # print "Child", ev.child(), "removed, updating", self
+            #print "Child", ev.child(), "removed, updating", self
             try:
                 ch.sigStretchChanged.disconnect(self.childStretchChanged)
             except:
@@ -82,11 +82,11 @@ class Container(object):
             self.updateStretch()
 
     def childStretchChanged(self):
-        # print "child", QtCore.QObject.sender(self), "changed shape, updating", self
+        #print "child", QtCore.QObject.sender(self), "changed shape, updating", self
         self.updateStretch()
 
     def setStretch(self, x=None, y=None):
-        # print "setStretch", self, x, y
+        #print "setStretch", self, x, y
         self._stretch = (x, y)
         self.sigStretchChanged.emit()
 
@@ -145,7 +145,7 @@ class HContainer(SplitContainer):
 
     def updateStretch(self):
         ##Set the stretch values for this container to reflect its contents
-        # print "updateStretch", self
+        #print "updateStretch", self
         x = 0
         y = 0
         sizes = []
@@ -175,7 +175,7 @@ class VContainer(SplitContainer):
 
     def updateStretch(self):
         ##Set the stretch values for this container to reflect its contents
-        # print "updateStretch", self
+        #print "updateStretch", self
         x = 0
         y = 0
         sizes = []
@@ -184,10 +184,10 @@ class VContainer(SplitContainer):
             y += wy
             x = max(x, wx)
             sizes.append(wy)
-            # print "  child", self.widget(i), wx, wy
+            #print "  child", self.widget(i), wx, wy
         self.setStretch(x, y)
 
-        # print sizes
+        #print sizes
         tot = float(sum(sizes))
         if tot == 0:
             scale = 1.0
@@ -198,7 +198,6 @@ class VContainer(SplitContainer):
 
 class TContainer(Container, QtGui.QWidget):
     sigStretchChanged = QtCore.Signal()
-
     def __init__(self, area):
         QtGui.QWidget.__init__(self)
         Container.__init__(self, area)
@@ -218,16 +217,18 @@ class TContainer(Container, QtGui.QWidget):
         self.layout.addWidget(self.stack, 1, 1)
         self.stack.childEvent = self.stackChildEvent
 
+
         self.setLayout(self.layout)
         for n in ['count', 'widget', 'indexOf']:
             setattr(self, n, getattr(self.stack, n))
+
 
     def _insertItem(self, item, index):
         if not isinstance(item, Dock.Dock):
             raise Exception("Tab containers may hold only docks, not other containers.")
         self.stack.insertWidget(index, item)
         self.hTabLayout.insertWidget(index, item.label)
-        # QtCore.QObject.connect(item.label, QtCore.SIGNAL('clicked'), self.tabClicked)
+        #QtCore.QObject.connect(item.label, QtCore.SIGNAL('clicked'), self.tabClicked)
         item.label.sigClicked.connect(self.tabClicked)
         self.tabClicked(item.label)
 

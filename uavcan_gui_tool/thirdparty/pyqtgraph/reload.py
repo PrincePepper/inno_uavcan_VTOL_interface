@@ -21,6 +21,7 @@ Does NOT:
        print module.someObject
 """
 
+
 import gc
 import inspect
 import sys
@@ -30,7 +31,6 @@ try:
 except ImportError:
     import builtins
 from .debug import printExc
-
 
 def reloadAll(prefix=None, debug=False):
     """Automatically reload everything whose __file__ begins with prefix.
@@ -70,7 +70,6 @@ def reloadAll(prefix=None, debug=False):
 
     if len(failed) > 0:
         raise Exception("Some modules failed to reload: %s" % ', '.join(failed))
-
 
 def reload(module, debug=False, lists=False, dicts=False):
     """Replacement for the builtin reload function:
@@ -152,10 +151,12 @@ def updateFunction(old, new, debug, depth=0, visited=None):
     return maxDepth
 
 
+
 ## For classes:
 ##  1) find all instances of the old class and set instance.__class__ to the new class
 ##  2) update all old class methods to use code from the new class methods
 def updateClass(old, new, debug):
+
     ## Track town all instances and subclasses of old
     refs = gc.get_referrers(old)
     for ref in refs:
@@ -182,7 +183,7 @@ def updateClass(old, new, debug):
                     print("    Changed superclass for %s" % safeStr(ref))
             # else:
             # if debug:
-            # print "    Ignoring reference", type(ref)
+            #print "    Ignoring reference", type(ref)
         except:
             print("Error updating reference (%s) for class change (%s -> %s)" % (
             safeStr(ref), safeStr(old), safeStr(new)))
@@ -203,7 +204,7 @@ def updateClass(old, new, debug):
 
             if hasattr(oa, 'im_func') and hasattr(na, 'im_func') and oa.__func__ is not na.__func__:
                 depth = updateFunction(oa.__func__, na.__func__, debug)
-                # oa.im_class = new  ## bind old method to new class  ## not allowed
+                #oa.im_class = new  ## bind old method to new class  ## not allowed
                 if debug:
                     extra = ""
                     if depth > 0:
@@ -235,25 +236,24 @@ def safeStr(obj):
     return s
 
 
+
+
+
 ## Tests:
 #  write modules to disk, import, then re-write and run again
 if __name__ == '__main__':
     doQtTest = True
     try:
         from PyQt4 import QtCore
-
         if not hasattr(QtCore, 'Signal'):
             QtCore.Signal = QtCore.pyqtSignal
 
 
-        # app = QtGui.QApplication([])
+        #app = QtGui.QApplication([])
         class Btn(QtCore.QObject):
             sig = QtCore.Signal()
-
             def emit(self):
                 self.sig.emit()
-
-
         btn = Btn()
     except:
         raise
@@ -261,7 +261,6 @@ if __name__ == '__main__':
         doQtTest = False
 
     import os
-
     if not os.path.isdir('test1'):
         os.mkdir('test1')
     open('test1/__init__.py', 'w')
@@ -315,7 +314,7 @@ def fn():
     b1 = test1.B("b1")
     a1.fn()
     b1.fn()
-    # print "function IDs  a1 bound method: %d a1 func: %d  a1 class: %d  b1 func: %d  b1 class: %d" % (id(a1.fn), id(a1.fn.im_func), id(a1.fn.im_class), id(b1.fn.im_func), id(b1.fn.im_class))
+    #print "function IDs  a1 bound method: %d a1 func: %d  a1 class: %d  b1 func: %d  b1 class: %d" % (id(a1.fn), id(a1.fn.im_func), id(a1.fn.im_class), id(b1.fn.im_func), id(b1.fn.im_class))
 
     from test2 import fn
 
@@ -357,18 +356,18 @@ def fn():
         btn.emit()
         # btn.sig.emit()
 
-    # print "a1.fn referrers:", sys.getrefcount(a1.fn.im_func), gc.get_referrers(a1.fn.im_func)
+    #print "a1.fn referrers:", sys.getrefcount(a1.fn.im_func), gc.get_referrers(a1.fn.im_func)
 
     print("Test2 after reload:")
     fn()
     test2.a1.fn()
     test2.b1.fn()
-
+    
     print("\n==> Test 1 Old instances:")
     a1.fn()
     b1.fn()
     c1.fn()
-    # print "function IDs  a1 bound method: %d a1 func: %d  a1 class: %d  b1 func: %d  b1 class: %d" % (id(a1.fn), id(a1.fn.im_func), id(a1.fn.im_class), id(b1.fn.im_func), id(b1.fn.im_class))
+    #print "function IDs  a1 bound method: %d a1 func: %d  a1 class: %d  b1 func: %d  b1 class: %d" % (id(a1.fn), id(a1.fn.im_func), id(a1.fn.im_class), id(b1.fn.im_func), id(b1.fn.im_class))
 
     print("\n==> Test 1 New instances:")
     a2 = test1.A("a2")
@@ -392,7 +391,7 @@ def fn():
         btn.emit()
         # btn.sig.emit()
 
-    # print "a1.fn referrers:", sys.getrefcount(a1.fn.im_func), gc.get_referrers(a1.fn.im_func)
+    #print "a1.fn referrers:", sys.getrefcount(a1.fn.im_func), gc.get_referrers(a1.fn.im_func)
 
     print("Test2 after reload:")
     fn()
@@ -507,4 +506,4 @@ Hooks into import system to
 # visited.add(mod)
 # for dep in modDeps.get(mod, []):
 # reload(dep, visited)
-# __builtins__.reload(mod)
+#__builtins__.reload(mod)

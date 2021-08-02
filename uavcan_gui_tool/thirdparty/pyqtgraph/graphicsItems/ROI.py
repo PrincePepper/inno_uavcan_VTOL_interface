@@ -32,7 +32,6 @@ __all__ = [
 def rectStr(r):
     return "[%f, %f] + [%f, %f]" % (r.x(), r.y(), r.width(), r.height())
 
-
 class ROI(GraphicsObject):
     """
     Generic region-of-interest widget.
@@ -329,7 +328,7 @@ class ROI(GraphicsObject):
         finish = kargs.get('finish', True)
         self.setPos(newState['pos'], update=update, finish=finish)
         # if 'update' not in kargs or kargs['update'] is True:
-        # self.stateChanged()
+        #self.stateChanged()
 
     def rotate(self, angle, update=True, finish=True):
         """
@@ -545,7 +544,7 @@ class ROI(GraphicsObject):
         if len(handle.rois) == 0:
             self.scene().removeItem(handle)
         self.stateChanged()
-
+    
     def replaceHandle(self, oldHandle, newHandle):
         """Replace one handle in the ROI for another. This is useful when 
         connecting multiple ROIs together.
@@ -597,19 +596,20 @@ class ROI(GraphicsObject):
         Return a list of this ROI's Handles.
         """
         return [h['item'] for h in self.handles]
-
+    
     def mapSceneToParent(self, pt):
         return self.mapToParent(self.mapFromScene(pt))
 
     def setSelected(self, s):
         QtGui.QGraphicsItem.setSelected(self, s)
-        # print "select", self, s
+        #print "select", self, s
         if s:
             for h in self.handles:
                 h['item'].show()
         else:
             for h in self.handles:
                 h['item'].hide()
+
 
     def hoverEvent(self, ev):
         hover = False
@@ -646,7 +646,7 @@ class ROI(GraphicsObject):
 
     def contextMenuEnabled(self):
         return self.removable
-
+    
     def raiseContextMenu(self, ev):
         if not self.contextMenuEnabled():
             return
@@ -697,7 +697,7 @@ class ROI(GraphicsObject):
             snap = True if (ev.modifiers() & QtCore.Qt.ControlModifier) else None
             newPos = self.mapToParent(ev.pos()) + self.cursorOffset
             self.translate(newPos - self.pos(), snap=snap, finish=False)
-
+        
     def mouseClickEvent(self, ev):
         if ev.button() == QtCore.Qt.RightButton and self.isMoving:
             ev.accept()
@@ -776,7 +776,7 @@ class ROI(GraphicsObject):
 
             ## preserve aspect ratio (this can override snapping)
             if h['lockAspect'] or (modifiers & QtCore.Qt.AltModifier):
-                # arv = Point(self.preMoveState['size']) -
+                #arv = Point(self.preMoveState['size']) - 
                 lp1 = lp1.proj(lp0)
 
             ## determine scale factors and new size of ROI
@@ -815,7 +815,7 @@ class ROI(GraphicsObject):
 
             self.setPos(newState['pos'], update=False)
             self.setSize(newState['size'], update=False)
-
+        
         elif h['type'] in ['r', 'rf']:
             if h['type'] == 'rf':
                 self.freeHandleMoved = True
@@ -878,12 +878,12 @@ class ROI(GraphicsObject):
             if ang is None:
                 return
             if self.rotateSnap or (modifiers & QtCore.Qt.ControlModifier):
-                # ang = round(ang / (np.pi/12.)) * (np.pi/12.)
+                #ang = round(ang / (np.pi/12.)) * (np.pi/12.)
                 ang = round(ang / 15.) * 15.
 
             hs = abs(h['pos'][scaleAxis] - c[scaleAxis])
             newState['size'][scaleAxis] = lp1.length() / hs
-            # if self.scaleSnap or (modifiers & QtCore.Qt.ControlModifier):
+            #if self.scaleSnap or (modifiers & QtCore.Qt.ControlModifier):
             if self.scaleSnap:  ## use CTRL only for angular snap here.
                 newState['size'][scaleAxis] = round(newState['size'][scaleAxis] / self.snapSize) * self.snapSize
             if newState['size'][scaleAxis] == 0:
@@ -907,15 +907,15 @@ class ROI(GraphicsObject):
             # self.prepareGeometryChange()
             # self.state = newState
             self.setState(newState, update=False)
-
+        
         self.stateChanged(finish=finish)
-
+    
     def stateChanged(self, finish=True):
         """Process changes to the state of the ROI.
         If there are any changes, then the positions of handles are updated accordingly
         and sigRegionChanged is emitted. If finish is True, then 
         sigRegionChangeFinished will also be emitted."""
-
+        
         changed = False
         if self.lastState is None:
             changed = True
@@ -923,7 +923,7 @@ class ROI(GraphicsObject):
             for k in list(self.state.keys()):
                 if self.state[k] != self.lastState[k]:
                     changed = True
-
+        
         self.prepareGeometryChange()
         if changed:
             ## Move all handles to match the current configuration of the ROI
@@ -939,39 +939,40 @@ class ROI(GraphicsObject):
             self.sigRegionChanged.emit(self)
         elif self.freeHandleMoved:
             self.sigRegionChanged.emit(self)
-
+            
         self.freeHandleMoved = False
         self.lastState = self.stateCopy()
-
+            
         if finish:
             self.stateChangeFinished()
-
+    
     def stateChangeFinished(self):
         self.sigRegionChangeFinished.emit(self)
-
+    
     def stateRect(self, state):
         r = QtCore.QRectF(0, 0, state['size'][0], state['size'][1])
         tr = QtGui.QTransform()
-        # tr.rotate(-state['angle'] * 180 / np.pi)
+        #tr.rotate(-state['angle'] * 180 / np.pi)
         tr.rotate(-state['angle'])
         r = tr.mapRect(r)
         return r.adjusted(state['pos'][0], state['pos'][1], state['pos'][0], state['pos'][1])
-
+    
+    
     def getSnapPosition(self, pos, snap=None):
         ## Given that pos has been requested, return the nearest snap-to position
         ## optionally, snap may be passed in to specify a rectangular snap grid.
         ## override this function for more interesting snap functionality..
-
+        
         if snap is None or snap is True:
             if self.snapSize is None:
                 return pos
             snap = Point(self.snapSize, self.snapSize)
-
+        
         return Point(
             round(pos[0] / snap[0]) * snap[0],
             round(pos[1] / snap[1]) * snap[1]
         )
-
+    
     def boundingRect(self):
         return QtCore.QRectF(0, 0, self.state['size'][0], self.state['size'][1]).normalized()
 
@@ -979,7 +980,7 @@ class ROI(GraphicsObject):
         # p.save()
         # Note: don't use self.boundingRect here, because subclasses may need to redefine it.
         r = QtCore.QRectF(0, 0, self.state['size'][0], self.state['size'][1]).normalized()
-
+        
         p.setRenderHint(QtGui.QPainter.Antialiasing)
         p.setPen(self.currentPen)
         p.translate(r.left(), r.top())
@@ -1072,14 +1073,14 @@ class ROI(GraphicsObject):
         
         All extra keyword arguments are passed to :func:`affineSlice <pyqtgraph.affineSlice>`.
         """
-
+        
         shape, vectors, origin = self.getAffineSliceParams(data, img, axes)
         if not returnMappedCoords:
             return fn.affineSlice(data, shape=shape, vectors=vectors, origin=origin, axes=axes, **kwds)
         else:
             kwds['returnCoords'] = True
             result, coords = fn.affineSlice(data, shape=shape, vectors=vectors, origin=origin, axes=axes, **kwds)
-
+            
             ### map coordinates and return
             mapped = fn.transformCoordinates(img.transform(), coords)
             return result, mapped
@@ -1117,7 +1118,7 @@ class ROI(GraphicsObject):
 
         origin = (origin.x(), origin.y())
         return shape, vectors, origin
-
+        
     def getGlobalTransform(self, relativeTo=None):
         """Return global transformation (rotation angle+translation) required to move 
         from relative state to current state. If relative state isn't specified,
@@ -1151,12 +1152,12 @@ class ROI(GraphicsObject):
         ### base position, rotated
         # p1 = rot.map(p0)
 
-        # trans = Point(st['pos']) - p1
-        # return trans, ang
+        #trans = Point(st['pos']) - p1
+        #return trans, ang
 
     def applyGlobalTransform(self, tr):
         st = self.getState()
-
+        
         st['scale'] = st['size']
         st = SRTTransform(st)
         st = (st * tr).saveState()
@@ -1205,7 +1206,7 @@ class Handle(UIGraphicsItem):
         self.buildPath()
         self._shape = None
         self.menu = self.buildMenu()
-
+        
         UIGraphicsItem.__init__(self, parent=parent)
         self.setAcceptedMouseButtons(QtCore.Qt.NoButton)
         self.deletable = deletable
@@ -1320,7 +1321,7 @@ class Handle(UIGraphicsItem):
             self.isMoving = True
             self.startPos = self.scenePos()
             self.cursorOffset = self.scenePos() - ev.buttonDownScenePos()
-
+            
         if self.isMoving:  ## note: isMoving may become False in mid-drag due to right-click.
             pos = ev.scenePos() + self.cursorOffset
             self.movePoint(pos, ev.modifiers(), finish=False)
@@ -1394,7 +1395,7 @@ class Handle(UIGraphicsItem):
         s1 = self.shape()
         # print "   s1:", s1
         # s2 = self.shape()
-        # print "   s2:", s2
+        #print "   s2:", s2
 
         return self.shape().boundingRect()
 
@@ -1424,16 +1425,16 @@ class Handle(UIGraphicsItem):
         self._shape = None  ## invalidate shape, recompute later if requested.
         self.update()
 
-    # def itemChange(self, change, value):
-    # if change == self.ItemScenePositionHasChanged:
-    # self.updateShape()
+    #def itemChange(self, change, value):
+        #if change == self.ItemScenePositionHasChanged:
+            #self.updateShape()
 
 
 class TestROI(ROI):
     def __init__(self, pos, size, **args):
-        # QtGui.QGraphicsRectItem.__init__(self, pos[0], pos[1], size[0], size[1])
+        #QtGui.QGraphicsRectItem.__init__(self, pos[0], pos[1], size[0], size[1])
         ROI.__init__(self, pos, size, **args)
-        # self.addTranslateHandle([0, 0])
+        #self.addTranslateHandle([0, 0])
         self.addTranslateHandle([0.5, 0.5])
         self.addScaleHandle([1, 1], [0, 0])
         self.addScaleHandle([0, 0], [1, 1])
@@ -1441,6 +1442,7 @@ class TestROI(ROI):
         self.addScaleHandle([0.5, 1], [0.5, 0.5])
         self.addRotateHandle([1, 0], [0, 0])
         self.addRotateHandle([0, 1], [1, 1])
+
 
 
 class RectROI(ROI):
@@ -1475,7 +1477,6 @@ class RectROI(ROI):
             self.addScaleHandle([1, 0.5], [center[0], 0.5])
             self.addScaleHandle([0.5, 1], [0.5, center[1]])
 
-
 class LineROI(ROI):
     """
     Rectangular ROI subclass with scale-rotate handles on either side. This
@@ -1501,15 +1502,16 @@ class LineROI(ROI):
         l = d.length()
         ang = Point(1, 0).angle(d)
         ra = ang * np.pi / 180.
-        c = Point(-width / 2. * sin(ra), -width / 2. * cos(ra))
+        c = Point(-width/2. * sin(ra), -width/2. * cos(ra))
         pos1 = pos1 + c
-
+        
         ROI.__init__(self, pos1, size=Point(l, width), angle=ang, **args)
         self.addScaleRotateHandle([0, 0.5], [1, 0.5])
         self.addScaleRotateHandle([1, 0.5], [0, 0.5])
         self.addScaleHandle([0.5, 1], [0.5, 0.5])
+        
 
-
+        
 class MultiRectROI(QtGui.QGraphicsObject):
     """
     Chain of rectangular ROIs connected by handles. 
@@ -1528,7 +1530,7 @@ class MultiRectROI(QtGui.QGraphicsObject):
     sigRegionChangeFinished = QtCore.Signal(object)
     sigRegionChangeStarted = QtCore.Signal(object)
     sigRegionChanged = QtCore.Signal(object)
-
+    
     def __init__(self, points, width, pen=None, **args):
         QtGui.QGraphicsObject.__init__(self)
         self.pen = pen
@@ -1536,27 +1538,28 @@ class MultiRectROI(QtGui.QGraphicsObject):
         self.lines = []
         if len(points) < 2:
             raise Exception("Must start with at least 2 points")
-
+        
         ## create first segment
         self.addSegment(points[1], connectTo=points[0], scaleHandle=True)
 
         ## create remaining segments
         for p in points[2:]:
             self.addSegment(p)
-
+        
+        
     def paint(self, *args):
         pass
-
+    
     def boundingRect(self):
         return QtCore.QRectF()
-
+        
     def roiChangedEvent(self):
         w = self.lines[0].state['size'][1]
         for l in self.lines[1:]:
             w0 = l.state['size'][1]
             if w == w0:
                 continue
-            l.scale([1.0, w / w0], center=[0.5, 0.5])
+            l.scale([1.0, w/w0], center=[0.5,0.5])
         self.sigRegionChanged.emit(self)
 
     def roiChangeStartedEvent(self):
@@ -1673,7 +1676,7 @@ class EllipseROI(ROI):
         p.setPen(self.currentPen)
 
         p.scale(r.width(), r.height())  ## workaround for GL bug
-        r = QtCore.QRectF(r.x() / r.width(), r.y() / r.height(), 1, 1)
+        r = QtCore.QRectF(r.x()/r.width(), r.y()/r.height(), 1,1)
 
         p.drawEllipse(r)
 
@@ -1688,17 +1691,16 @@ class EllipseROI(ROI):
         w = arr.shape[0]
         h = arr.shape[1]
         ## generate an ellipsoidal mask
-        mask = np.fromfunction(
-            lambda x, y: (((x + 0.5) / (w / 2.) - 1) ** 2 + ((y + 0.5) / (h / 2.) - 1) ** 2) ** 0.5 < 1, (w, h))
-
+        mask = np.fromfunction(lambda x, y: (((x + 0.5)/(w/2.)-1)**2+ ((y+0.5)/(h/2.)-1)**2)**0.5 < 1, (w, h))
+    
         return arr * mask
-
+    
     def shape(self):
         self.path = QtGui.QPainterPath()
         self.path.addEllipse(self.boundingRect())
         return self.path
-
-
+        
+        
 class CircleROI(EllipseROI):
     """
     Circular ROI subclass. Behaves exactly as EllipseROI, but may only be scaled
@@ -1716,7 +1718,7 @@ class CircleROI(EllipseROI):
     def __init__(self, pos, size, **args):
         ROI.__init__(self, pos, size, **args)
         self.aspectLocked = True
-        # self.addTranslateHandle([0.5, 0.5])
+        #self.addTranslateHandle([0.5, 0.5])
         self.addScaleHandle([0.5 * 2. ** -0.5 + 0.5, 0.5 * 2. ** -0.5 + 0.5], [0.5, 0.5])
 
 
@@ -1753,25 +1755,23 @@ class PolygonROI(ROI):
     def boundingRect(self):
         r = QtCore.QRectF()
         for h in self.handles:
-            r |= self.mapFromItem(h['item'],
-                                  h['item'].boundingRect()).boundingRect()  ## |= gives the union of the two QRectFs
+            r |= self.mapFromItem(h['item'], h['item'].boundingRect()).boundingRect()   ## |= gives the union of the two QRectFs
         return r
-
+    
     def shape(self):
         p = QtGui.QPainterPath()
         p.moveTo(self.handles[0]['item'].pos())
         for i in range(len(self.handles)):
             p.lineTo(self.handles[i]['item'].pos())
         return p
-
+    
     def stateCopy(self):
         sc = {}
         sc['pos'] = Point(self.state['pos'])
         sc['size'] = Point(self.state['size'])
         sc['angle'] = self.state['angle']
-        # sc['handles'] = self.handles
+        #sc['handles'] = self.handles
         return sc
-
 
 class PolyLineROI(ROI):
     """
@@ -1807,8 +1807,8 @@ class PolyLineROI(ROI):
         # self.addFreeHandle(p)
 
         # start = -1 if self.closed else 0
-        # for i in range(start, len(self.handles)-1):
-        # self.addSegment(self.handles[i]['item'], self.handles[i+1]['item'])
+        #for i in range(start, len(self.handles)-1):
+            #self.addSegment(self.handles[i]['item'], self.handles[i+1]['item'])
 
     def setPoints(self, points, closed=None):
         """
@@ -1885,12 +1885,12 @@ class PolyLineROI(ROI):
             raise Exception("Either an event or a position must be given.")
         h1 = segment.handles[0]['item']
         h2 = segment.handles[1]['item']
-
+        
         i = self.segments.index(segment)
         h3 = self.addFreeHandle(pos, index=self.indexOfHandle(h2))
-        self.addSegment(h3, h2, index=i + 1)
+        self.addSegment(h3, h2, index=i+1)
         segment.replaceHandle(h2, h3)
-
+        
     def removeHandle(self, handle, updateSegments=True):
         ROI.removeHandle(self, handle)
         handle.sigRemoveRequested.disconnect(self.removeHandle)
@@ -1898,7 +1898,7 @@ class PolyLineROI(ROI):
         if not updateSegments:
             return
         segments = handle.rois[:]
-
+        
         if len(segments) == 1:
             self.removeSegment(segments[0])
         else:
@@ -1906,14 +1906,14 @@ class PolyLineROI(ROI):
             handles.remove(handle)
             segments[0].replaceHandle(handle, handles[0])
             self.removeSegment(segments[1])
-
+        
     def removeSegment(self, seg):
         for handle in seg.handles[:]:
             seg.removeHandle(handle['item'])
         self.segments.remove(seg)
         seg.sigClicked.disconnect(self.segmentClicked)
         self.scene().removeItem(seg)
-
+        
     def checkRemoveHandle(self, h):
         ## called when a handle is about to display its context menu
         if self.closed:
@@ -1925,8 +1925,8 @@ class PolyLineROI(ROI):
         # for s in self.segments:
         # s.update()
         # p.setPen(self.currentPen)
-        # p.setPen(fn.mkPen('w'))
-        # p.drawRect(self.boundingRect())
+        #p.setPen(fn.mkPen('w'))
+        #p.drawRect(self.boundingRect())
         # p.drawPath(self.shape())
         pass
 
@@ -2007,14 +2007,14 @@ class LineSegmentROI(ROI):
 
     def listPoints(self):
         return [p['item'].pos() for p in self.handles]
-
+            
     def paint(self, p, *args):
         p.setRenderHint(QtGui.QPainter.Antialiasing)
         p.setPen(self.currentPen)
         h1 = self.handles[0]['item'].pos()
         h2 = self.handles[1]['item'].pos()
         p.drawLine(h1, h2)
-
+        
     def boundingRect(self):
         return self.shape().boundingRect()
 
@@ -2113,14 +2113,15 @@ class SpiralROI(ROI):
                 x0 = x1
                 y0 = y1
                 i += 1
-
+           
+                
             return self.path
 
     def shape(self):
         p = QtGui.QPainterPath()
         p.addEllipse(self.boundingRect())
         return p
-
+    
     def paint(self, p, *args):
         p.setRenderHint(QtGui.QPainter.Antialiasing)
         # path = self.shape()
@@ -2128,19 +2129,19 @@ class SpiralROI(ROI):
         p.drawPath(self.path)
         p.setPen(QtGui.QPen(QtGui.QColor(255, 0, 0)))
         p.drawPath(self.shape())
-        p.setPen(QtGui.QPen(QtGui.QColor(0, 0, 255)))
+        p.setPen(QtGui.QPen(QtGui.QColor(0,0,255)))
         p.drawRect(self.boundingRect())
-
-
+        
+    
 class CrosshairROI(ROI):
     """A crosshair ROI whose position is at the center of the crosshairs. By default, it is scalable, rotatable and translatable."""
 
     def __init__(self, pos=None, size=None, **kargs):
         if size == None:
-            # size = [100e-6,100e-6]
-            size = [1, 1]
+            #size = [100e-6,100e-6]
+            size=[1, 1]
         if pos == None:
-            pos = [0, 0]
+            pos = [0,0]
         self._shape = None
         ROI.__init__(self, pos, size, **kargs)
 
@@ -2223,7 +2224,7 @@ class CrosshairROI(ROI):
         # p.scale(r.width()/10., r.height()/10.) ## need to scale up a little because drawLine has trouble dealing with 0.5
         # p.drawLine(0,5, 10,5)
         # p.drawLine(5,0, 5,10)
-        # p.restore()
+        #p.restore()
 
         p.drawLine(Point(0, -radius), Point(0, radius))
         p.drawLine(Point(-radius, 0), Point(radius, 0))

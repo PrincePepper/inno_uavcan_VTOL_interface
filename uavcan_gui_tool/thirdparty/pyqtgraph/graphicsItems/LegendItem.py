@@ -9,7 +9,6 @@ from ..Qt import QtGui, QtCore
 
 __all__ = ['LegendItem']
 
-
 class LegendItem(GraphicsWidget, GraphicsWidgetAnchor):
     """
     Displays a legend used for describing the contents of a plot.
@@ -21,7 +20,6 @@ class LegendItem(GraphicsWidget, GraphicsWidgetAnchor):
         legend.setParentItem(plotItem)
 
     """
-
     def __init__(self, size=None, offset=None):
         """
         ==============  ===============================================================
@@ -139,7 +137,6 @@ class ItemSample(GraphicsWidget):
     
     This may be subclassed to draw custom graphics in a Legend.
     """
-
     ## Todo: make this more generic; let each item decide how it should be represented.
     def __init__(self, item):
         GraphicsWidget.__init__(self)

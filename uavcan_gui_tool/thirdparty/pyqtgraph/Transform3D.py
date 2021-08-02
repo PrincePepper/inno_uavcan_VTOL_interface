@@ -9,7 +9,6 @@ class Transform3D(QtGui.QMatrix4x4):
     """
     Extension of QMatrix4x4 with some helpful methods added.
     """
-
     def __init__(self, *args):
         QtGui.QMatrix4x4.__init__(self, *args)
 

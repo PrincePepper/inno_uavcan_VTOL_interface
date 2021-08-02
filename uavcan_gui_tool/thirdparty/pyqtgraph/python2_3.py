@@ -3,7 +3,6 @@ Helper functions that smooth out the differences between python 2 and 3.
 """
 import sys
 
-
 def asUnicode(x):
     if sys.version_info[0] == 2:
         if isinstance(x, unicode):
@@ -18,38 +17,28 @@ def asUnicode(x):
 
 def cmpToKey(mycmp):
     'Convert a cmp= function into a key= function'
-
     class K(object):
         def __init__(self, obj, *args):
             self.obj = obj
-
         def __lt__(self, other):
             return mycmp(self.obj, other.obj) < 0
-
         def __gt__(self, other):
             return mycmp(self.obj, other.obj) > 0
-
         def __eq__(self, other):
             return mycmp(self.obj, other.obj) == 0
-
         def __le__(self, other):
             return mycmp(self.obj, other.obj) <= 0
-
         def __ge__(self, other):
             return mycmp(self.obj, other.obj) >= 0
-
         def __ne__(self, other):
             return mycmp(self.obj, other.obj) != 0
-
     return K
-
 
 def sortList(l, cmpFunc):
     if sys.version_info[0] == 2:
         l.sort(cmpFunc)
     else:
         l.sort(key=cmpToKey(cmpFunc))
-
 
 if sys.version_info[0] == 3:
     import builtins

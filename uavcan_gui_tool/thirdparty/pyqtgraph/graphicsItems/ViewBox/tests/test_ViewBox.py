@@ -4,13 +4,11 @@ import pyqtgraph as pg
 app = pg.mkQApp()
 qtest = pg.Qt.QtTest.QTest
 
-
 def assertMapping(vb, r1, r2):
     assert vb.mapFromView(r1.topLeft()) == r2.topLeft()
     assert vb.mapFromView(r1.bottomLeft()) == r2.bottomLeft()
     assert vb.mapFromView(r1.topRight()) == r2.topRight()
     assert vb.mapFromView(r1.bottomRight()) == r2.bottomRight()
-
 
 def test_ViewBox():
     global app, win, vb

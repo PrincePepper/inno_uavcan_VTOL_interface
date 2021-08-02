@@ -5,7 +5,6 @@ import pyqtgraph as pg
 
 app = pg.mkQApp()
 
-
 def test_isQObjectAlive():
     o1 = pg.QtCore.QObject()
     o2 = pg.QtCore.QObject()
@@ -23,3 +22,4 @@ def test_loadUiType():
     ui.setupUi(w)
     w.show()
     app.processEvents()
+

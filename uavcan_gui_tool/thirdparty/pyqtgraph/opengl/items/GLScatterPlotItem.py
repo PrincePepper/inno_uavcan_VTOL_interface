@@ -7,7 +7,6 @@ from ... import QtGui
 
 __all__ = ['GLScatterPlotItem']
 
-
 class GLScatterPlotItem(GLGraphicsItem):
     """Draws points at a list of 3D positions."""
 
@@ -177,4 +176,4 @@ class GLScatterPlotItem(GLGraphicsItem):
         # glColor4f(*color)  # x is blue
         ##glNormal3f(size, 0, 0)
         # glVertex3f(*pos)
-        # glEnd()
+        #glEnd()

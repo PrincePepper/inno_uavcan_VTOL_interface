@@ -9,7 +9,6 @@ from ..python2_3 import asUnicode
 PARAM_TYPES = {}
 PARAM_NAMES = {}
 
-
 def registerParameterType(name, cls, override=False):
     global PARAM_TYPES
     if name in PARAM_TYPES and not override:
@@ -17,11 +16,9 @@ def registerParameterType(name, cls, override=False):
     PARAM_TYPES[name] = cls
     PARAM_NAMES[cls] = name
 
-
 def __reload__(old):
     PARAM_TYPES.update(old.get('PARAM_TYPES', {}))
     PARAM_NAMES.update(old.get('PARAM_NAMES', {}))
-
 
 class Parameter(QtCore.QObject):
     """
@@ -365,9 +362,9 @@ class Parameter(QtCore.QObject):
 
                 if not gotChild:
                     if not addChildren:
-                        # print "  ignored child"
+                        #print "  ignored child"
                         continue
-                    # print "    created new"
+                    #print "    created new"
                     ch2 = Parameter.create(**ch)
                     self.insertChild(ptr, ch2)
                     foundChilds.add(ch2)
@@ -377,7 +374,7 @@ class Parameter(QtCore.QObject):
             if removeChildren:
                 for ch in self.childs[:]:
                     if ch not in foundChilds:
-                        # print "  remove:", ch
+                        #print "  remove:", ch
                         self.removeChild(ch)
         finally:
             if blockSignals:
@@ -386,7 +383,7 @@ class Parameter(QtCore.QObject):
     def defaultValue(self):
         """Return the default value for this parameter."""
         return self.opts['default']
-
+        
     def setDefault(self, val):
         """Set the default value for this parameter."""
         if self.opts['default'] == val:
@@ -402,11 +399,11 @@ class Parameter(QtCore.QObject):
     def hasDefault(self):
         """Returns True if this parameter has a default value."""
         return 'default' in self.opts
-
+        
     def valueIsDefault(self):
         """Returns True if this parameter's value is equal to the default value."""
         return self.value() == self.defaultValue()
-
+        
     def setLimits(self, limits):
         """Set limits on the acceptable values for this parameter. 
         The format of limits depends on the type of the parameter and
@@ -429,18 +426,18 @@ class Parameter(QtCore.QObject):
         """Set whether this Parameter should be editable by the user. (This is 
         exactly the opposite of setReadonly)."""
         self.setOpts(readonly=not writable)
-
+        
     def readonly(self):
         """
         Return True if this parameter is read-only. (this is the opposite of writable())
         """
         return self.opts.get('readonly', False)
-
+        
     def setReadonly(self, readonly=True):
         """Set whether this Parameter's value may be edited by the user
         (this is the opposite of setWritable())."""
         self.setOpts(readonly=readonly)
-
+        
     def setOpts(self, **opts):
         """
         Set any arbitrary options on this parameter.
@@ -467,12 +464,12 @@ class Parameter(QtCore.QObject):
 
         if len(changed) > 0:
             self.sigOptionsChanged.emit(self, changed)
-
+        
     def emitStateChanged(self, changeDesc, data):
         ## Emits stateChanged signal and 
         ## requests emission of new treeStateChanged signal
         self.sigStateChanged.emit(self, changeDesc, data)
-        # self.treeStateChanged(self, changeDesc, data)
+        #self.treeStateChanged(self, changeDesc, data)
         self.treeStateChanges.append((self, changeDesc, data))
         self.emitTreeChanges()
 
@@ -484,10 +481,11 @@ class Parameter(QtCore.QObject):
         Most subclasses will want to override this function.
         """
         if hasattr(self, 'itemClass'):
-            # print "Param:", self, "Make item from itemClass:", self.itemClass
+            #print "Param:", self, "Make item from itemClass:", self.itemClass
             return self.itemClass(self, depth)
         else:
             return ParameterItem(self, depth=depth)
+
 
     def addChild(self, child, autoIncrementName=None):
         """
@@ -514,7 +512,7 @@ class Parameter(QtCore.QObject):
             children = ch2
 
         for chOpts in children:
-            # print self, "Add child:", type(chOpts), id(chOpts)
+            #print self, "Add child:", type(chOpts), id(chOpts)
             self.addChild(chOpts)
 
     def insertChild(self, pos, child, autoIncrementName=None):
@@ -553,7 +551,7 @@ class Parameter(QtCore.QObject):
             self.sigChildAdded.emit(self, child, pos)
             child.sigTreeStateChanged.connect(self.treeStateChanged)
         return child
-
+        
     def removeChild(self, child):
         """Remove a child parameter."""
         name = child.name()
@@ -578,7 +576,7 @@ class Parameter(QtCore.QObject):
         Warning: this overrides QObject.children
         """
         return self.childs[:]
-
+    
     def hasChildren(self):
         """Return True if this Parameter has children."""
         return len(self.childs) > 0
@@ -588,11 +586,11 @@ class Parameter(QtCore.QObject):
         It may be useful to extend this method in subclasses."""
         self._parent = parent
         self.sigParentChanged.emit(self, parent)
-
+        
     def parent(self):
         """Return the parent of this parameter."""
         return self._parent
-
+        
     def remove(self):
         """Remove this parameter from its parent's child list"""
         parent = self.parent()
@@ -611,7 +609,7 @@ class Parameter(QtCore.QObject):
         else:
             num = int(num)
         while True:
-            newName = base + ("%%0%dd" % numLen) % num
+            newName = base + ("%%0%dd"%numLen) % num
             if newName not in self.names:
                 return newName
             num += 1
@@ -655,14 +653,14 @@ class Parameter(QtCore.QObject):
             return param.param(*names[1:])
         else:
             return param
-
+        
     def param(self, *names):
         # for backward compatibility.
         return self.child(*names)
 
     def __repr__(self):
         return asUnicode("<%s '%s' at 0x%x>") % (self.__class__.__name__, self.name(), id(self))
-
+       
     def __getattr__(self, attr):
         ## Leaving this undocumented because I might like to remove it in the future..
         # print type(self), attr
@@ -676,7 +674,7 @@ class Parameter(QtCore.QObject):
             return self.param(attr)
         else:
             raise AttributeError(attr)
-
+       
     def _renameChild(self, child, name):
         ## Only to be called from Parameter.rename
         if name in self.names:
@@ -687,16 +685,17 @@ class Parameter(QtCore.QObject):
 
     def registerItem(self, item):
         self.items[item] = None
-
+        
     def hide(self):
         """Hide this parameter. It and its children will no longer be visible in any ParameterTree
         widgets it is connected to."""
         self.show(False)
-
+        
     def show(self, s=True):
         """Show this parameter. """
         self.opts['visible'] = s
         self.sigOptionsChanged.emit(self, {'visible': s})
+
 
     def treeChangeBlocker(self):
         """
@@ -742,7 +741,7 @@ class Parameter(QtCore.QObject):
         """
         self.treeStateChanges.extend(changes)
         self.emitTreeChanges()
-
+    
     def emitTreeChanges(self):
         if self.blockTreeChangeEmit == 0:
             changes = self.treeStateChanges
@@ -755,9 +754,9 @@ class SignalBlocker(object):
     def __init__(self, enterFn, exitFn):
         self.enterFn = enterFn
         self.exitFn = exitFn
-
+        
     def __enter__(self):
         self.enterFn()
-
+        
     def __exit__(self, exc_type, exc_value, tb):
         self.exitFn()

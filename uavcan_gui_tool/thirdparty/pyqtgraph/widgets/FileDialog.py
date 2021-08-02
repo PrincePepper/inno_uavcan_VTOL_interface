@@ -4,7 +4,6 @@ from ..Qt import QtGui
 
 __all__ = ['FileDialog']
 
-
 class FileDialog(QtGui.QFileDialog):
     ## Compatibility fix for OSX:
     ## For some reason the native dialog doesn't show up when you set AcceptMode to AcceptSave on OS X, so we don't use the native dialog    

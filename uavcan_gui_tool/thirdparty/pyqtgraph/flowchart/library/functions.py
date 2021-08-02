@@ -92,8 +92,7 @@ def besselFilter(data, cutoff, order=1, dt=None, btype='low', bidir=True):
     # d1 = scipy.signal.lfilter(b, a, data.view(ndarray)-base) + base
     # if (hasattr(data, 'implements') and data.implements('MetaArray')):
     # return MetaArray(d1, info=data.infoCopy())
-    # return d1
-
+    #return d1
 
 def butterworthFilter(data, wPass, wStop=None, gPass=2.0, gStop=20.0, order=1, dt=None, btype='low', bidir=True):
     """return data passed through bessel filter"""
@@ -135,10 +134,9 @@ def mode(data, bins=None):
             bins = 2
     y, x = np.histogram(data, bins=bins)
     ind = np.argmax(y)
-    mode = 0.5 * (x[ind] + x[ind + 1])
+    mode = 0.5 * (x[ind] + x[ind+1])
     return mode
-
-
+    
 def modeFilter(data, window=500, step=None, bins=None):
     """Filter based on histogram-based mode function"""
     d1 = data.view(np.ndarray)
@@ -163,7 +161,6 @@ def modeFilter(data, window=500, step=None, bins=None):
     if (hasattr(data, 'implements') and data.implements('MetaArray')):
         return MetaArray(d2, info=data.infoCopy())
     return d2
-
 
 def denoise(data, radius=2, threshold=4):
     """Very simple noise removal function. Compares a point to surrounding points,
@@ -192,7 +189,6 @@ def denoise(data, radius=2, threshold=4):
         return MetaArray(d6, info=data.infoCopy())
     return d6
 
-
 def adaptiveDetrend(data, x=None, threshold=3.0):
     """Return the signal with baseline removed. Discards outliers from baseline measurement."""
     try:
@@ -219,7 +215,7 @@ def adaptiveDetrend(data, x=None, threshold=3.0):
     if (hasattr(data, 'implements') and data.implements('MetaArray')):
         return MetaArray(d4, info=data.infoCopy())
     return d4
-
+    
 
 def histogramDetrend(data, window=500, bins=50, threshold=3.0, offsetOnly=False):
     """Linear detrend. Works by finding the most common value at the beginning and end of a trace, excluding outliers.
@@ -247,13 +243,12 @@ def histogramDetrend(data, window=500, bins=50, threshold=3.0, offsetOnly=False)
     if (hasattr(data, 'implements') and data.implements('MetaArray')):
         return MetaArray(d3, info=data.infoCopy())
     return d3
-
-
+    
 def concatenateColumns(data):
     """Returns a single record array with columns taken from the elements in data. 
     data should be a list of elements, which can be either record arrays or tuples (name, type, data)
     """
-
+    
     ## first determine dtype
     dtype = []
     names = set()
@@ -278,7 +273,7 @@ def concatenateColumns(data):
 
     ## create empty array
     out = np.empty(maxLen, dtype)
-
+    
     ## fill columns
     for element in data:
         if isinstance(element, np.ndarray):
@@ -296,8 +291,7 @@ def concatenateColumns(data):
             out[name] = d
 
     return out
-
-
+    
 def suggestDType(x):
     """Return a suitable dtype for x"""
     if isinstance(x, list) or isinstance(x, tuple):
@@ -315,7 +309,6 @@ def suggestDType(x):
     # return '<U%d' % len(x)
     else:
         return object
-
 
 def removePeriodic(data, f0=60.0, dt=None, harmonics=10, samples=4):
     if (hasattr(data, 'implements') and data.implements('MetaArray')):

@@ -17,6 +17,7 @@ from .. import debug
 
 __all__ = ['ScatterPlotItem', 'SpotItem']
 
+
 ## Build all symbol paths
 Symbols = OrderedDict([(name, QtGui.QPainterPath()) for name in ['o', 's', 't', 'd', '+', 'x']])
 Symbols['o'].addEllipse(QtCore.QRectF(-0.5, -0.5, 1, 1))
@@ -75,7 +76,6 @@ def renderSymbol(symbol, size, pen, brush, device=None):
         p.end()
     return device
 
-
 def makeSymbolPixmap(size, pen, brush, symbol):
     ## deprecated
     img = renderSymbol(symbol, size, pen, brush)
@@ -94,7 +94,6 @@ class SymbolAtlas(object):
         pm = atlas.getAtlas()
         
     """
-
     def __init__(self):
         # symbol key : QRect(...) coordinates where symbol can be found in atlas.
         # note that the coordinate list will always be the same list object as 
@@ -222,7 +221,6 @@ class ScatterPlotItem(GraphicsObject):
     # sigPointClicked = QtCore.Signal(object, object)
     sigClicked = QtCore.Signal(object, object)  ## self, points
     sigPlotChanged = QtCore.Signal(object)
-
     def __init__(self, *args, **kargs):
         """
         Accepts the same arguments as setData()
@@ -319,7 +317,7 @@ class ScatterPlotItem(GraphicsObject):
             pos = kargs['pos']
             if isinstance(pos, np.ndarray):
                 kargs['x'] = pos[:, 0]
-                kargs['y'] = pos[:, 1]
+                kargs['y'] = pos[:,1]
             else:
                 x = []
                 y = []
@@ -615,7 +613,7 @@ class ScatterPlotItem(GraphicsObject):
 
     def clear(self):
         """Remove all spots from the scatter plot"""
-        # self.clearItems()
+        #self.clearItems()
         self.data = np.empty(0, dtype=self.data.dtype)
         self.bounds = [None, None]
         self.invalidate()
@@ -691,6 +689,7 @@ class ScatterPlotItem(GraphicsObject):
     def setExportMode(self, *args, **kwds):
         GraphicsObject.setExportMode(self, *args, **kwds)
         self.invalidate()
+
 
     def mapPointsToDevice(self, pts):
         # Map point locations to device        
@@ -771,7 +770,7 @@ class ScatterPlotItem(GraphicsObject):
                 p.setRenderHint(p.Antialiasing, aa)
 
                 data = self.data[viewMask]
-                pts = pts[:, viewMask]
+                pts = pts[:,viewMask]
                 for i, rec in enumerate(data):
                     p.resetTransform()
                     p.translate(pts[0, i] + rec['width'], pts[1, i] + rec['width'])
@@ -791,13 +790,13 @@ class ScatterPlotItem(GraphicsObject):
 
             p.setRenderHint(p.Antialiasing, aa)
             self.picture.play(p)
-
+        
     def points(self):
         for rec in self.data:
             if rec['item'] is None:
                 rec['item'] = SpotItem(rec, self)
         return self.data['item']
-
+        
     def pointsAt(self, pos):
         x = pos.x()
         y = pos.y()
@@ -830,7 +829,7 @@ class ScatterPlotItem(GraphicsObject):
                 self.sigClicked.emit(self, self.ptsClicked)
                 ev.accept()
             else:
-                # print "no spots"
+                #print "no spots"
                 ev.ignore()
         else:
             ev.ignore()
@@ -862,20 +861,20 @@ class SpotItem(object):
             return self._plot.opts['size']
         else:
             return self._data['size']
-
+    
     def pos(self):
         return Point(self._data['x'], self._data['y'])
-
+        
     def viewPos(self):
         return self._plot.mapToView(self.pos())
-
+    
     def setSize(self, size):
         """Set the size of this spot. 
         If the size is set to -1, then the ScatterPlotItem's default size 
         will be used instead."""
         self._data['size'] = size
         self.updateItem()
-
+    
     def symbol(self):
         """Return the symbol of this spot. 
         If the spot has no explicit symbol set, then return the ScatterPlotItem's default symbol instead.
@@ -889,7 +888,7 @@ class SpotItem(object):
         except:
             pass
         return symbol
-
+    
     def setSymbol(self, symbol):
         """Set the symbol for this spot.
         If the symbol is set to '', then the ScatterPlotItem's default symbol will be used instead."""
@@ -901,24 +900,24 @@ class SpotItem(object):
         if pen is None:
             pen = self._plot.opts['pen']
         return fn.mkPen(pen)
-
+    
     def setPen(self, *args, **kargs):
         """Set the outline pen for this spot"""
         pen = fn.mkPen(*args, **kargs)
         self._data['pen'] = pen
         self.updateItem()
-
+    
     def resetPen(self):
         """Remove the pen set for this spot; the scatter plot's default pen will be used instead."""
         self._data['pen'] = None  ## Note this is NOT the same as calling setPen(None)
         self.updateItem()
-
+    
     def brush(self):
         brush = self._data['brush']
         if brush is None:
             brush = self._plot.opts['brush']
         return fn.mkBrush(brush)
-
+    
     def setBrush(self, *args, **kargs):
         """Set the fill brush for this spot"""
         brush = fn.mkBrush(*args, **kargs)
@@ -971,4 +970,4 @@ class SpotItem(object):
 # QtGui.QGraphicsPathItem.setBrush(self, self.brush())
 # size = self.size()
 # self.resetTransform()
-# self.scale(size, size)
+#self.scale(size, size)

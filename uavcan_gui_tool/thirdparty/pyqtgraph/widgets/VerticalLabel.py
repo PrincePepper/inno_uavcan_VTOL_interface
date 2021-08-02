@@ -88,7 +88,7 @@ if __name__ == '__main__':
     w = QtGui.QWidget()
     l = QtGui.QGridLayout()
     w.setLayout(l)
-
+    
     l1 = VerticalLabel("text 1", orientation='horizontal')
     l2 = VerticalLabel("text 2")
     l3 = VerticalLabel("text 3")

@@ -9,7 +9,6 @@
 
 from PySide import QtCore, QtGui
 
-
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
@@ -112,6 +111,5 @@ class Ui_Form(object):
             QtGui.QApplication.translate("Form", "Exception Info", None, QtGui.QApplication.UnicodeUTF8))
         self.clearExceptionBtn.setText(
             QtGui.QApplication.translate("Form", "Clear Exception", None, QtGui.QApplication.UnicodeUTF8))
-
 
 from .CmdInput import CmdInput

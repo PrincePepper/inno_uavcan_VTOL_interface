@@ -8,7 +8,6 @@ class FillBetweenItem(QtGui.QGraphicsPathItem):
     """
     GraphicsItem filling the space between two PlotDataItems.
     """
-
     def __init__(self, curve1=None, curve2=None, brush=None, pen=None):
         QtGui.QGraphicsPathItem.__init__(self)
         self.curves = None

@@ -2,8 +2,6 @@ from .GraphicsObject import GraphicsObject
 from ..Qt import QtCore
 
 __all__ = ['ItemGroup']
-
-
 class ItemGroup(GraphicsObject):
     """
     Replacement for QGraphicsItemGroup
@@ -22,3 +20,4 @@ class ItemGroup(GraphicsObject):
 
     def addItem(self, item):
         item.setParentItem(self)
+

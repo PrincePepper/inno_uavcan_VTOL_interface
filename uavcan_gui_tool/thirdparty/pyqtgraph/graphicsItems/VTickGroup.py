@@ -1,6 +1,5 @@
 if __name__ == '__main__':
     import os, sys
-
     path = os.path.abspath(os.path.dirname(__file__))
     sys.path.insert(0, os.path.join(path, '..', '..'))
 
@@ -9,8 +8,6 @@ from .. import functions as fn
 from ..Qt import QtGui
 
 __all__ = ['VTickGroup']
-
-
 class VTickGroup(UIGraphicsItem):
     """
     **Bases:** :class:`UIGraphicsItem <pyqtgraph.UIGraphicsItem>`
@@ -19,7 +16,6 @@ class VTickGroup(UIGraphicsItem):
     but have x coordinates relative to the data within the view.
     
     """
-
     def __init__(self, xvals=None, yrange=None, pen=None):
         """
         ==============  ===================================================================

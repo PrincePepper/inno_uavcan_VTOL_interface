@@ -14,7 +14,6 @@ else:
 
 from matplotlib.figure import Figure
 
-
 class MatplotlibWidget(QtGui.QWidget):
     """
     Implements a Matplotlib figure inside a QWidget.

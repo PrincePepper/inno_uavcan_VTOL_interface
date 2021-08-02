@@ -12,7 +12,6 @@ from .widgets.PlotWidget import *
 
 QAPP = None
 
-
 def mkQApp():
     if QtGui.QApplication.instance() is None:
         global QAPP
@@ -25,7 +24,6 @@ class GraphicsWindow(GraphicsLayoutWidget):
     <pyqtgraph.GraphicsLayoutWidget>`. This class is intended for use from 
     the interactive python prompt.
     """
-
     def __init__(self, title=None, size=(800, 600), **kargs):
         mkQApp()
         GraphicsLayoutWidget.__init__(self, **kargs)
@@ -33,7 +31,7 @@ class GraphicsWindow(GraphicsLayoutWidget):
         if title is not None:
             self.setWindowTitle(title)
         self.show()
-
+        
 
 class TabWindow(QtGui.QMainWindow):
     def __init__(self, title=None, size=(800, 600)):

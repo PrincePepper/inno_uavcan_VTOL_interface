@@ -25,6 +25,7 @@ except ImportError:
     JUPYTER_AVAILABLE = False
     logger.info('Jupyter is not available', exc_info=True)
 
+
 if JUPYTER_AVAILABLE:
     class JupyterWidget(RichJupyterWidget):
         def __init__(self, parent, kernel_manager, banner=None):

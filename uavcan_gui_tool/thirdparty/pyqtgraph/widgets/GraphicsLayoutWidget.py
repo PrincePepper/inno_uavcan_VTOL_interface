@@ -2,8 +2,6 @@ from .GraphicsView import GraphicsView
 from ..graphicsItems.GraphicsLayout import GraphicsLayout
 
 __all__ = ['GraphicsLayoutWidget']
-
-
 class GraphicsLayoutWidget(GraphicsView):
     """
     Convenience class consisting of a :class:`GraphicsView 
@@ -23,7 +21,6 @@ class GraphicsLayoutWidget(GraphicsView):
     :func:`itemIndex <pyqtgraph.GraphicsLayout.itemIndex>`
     :func:`clear <pyqtgraph.GraphicsLayout.clear>`
     """
-
     def __init__(self, parent=None, **kargs):
         GraphicsView.__init__(self, parent)
         self.ci = GraphicsLayout(**kargs)

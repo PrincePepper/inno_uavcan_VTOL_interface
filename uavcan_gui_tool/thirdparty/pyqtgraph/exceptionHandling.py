@@ -22,11 +22,10 @@ import traceback
 
 # from log import *
 
-# logging = False
+#logging = False
 
 callbacks = []
 clear_tracebacks = False
-
 
 def register(fn):
     """
@@ -40,7 +39,6 @@ def register(fn):
 def unregister(fn):
     """Unregister a previously registered callback."""
     callbacks.remove(fn)
-
 
 def setTracebackClearing(clear=True):
     """
@@ -97,6 +95,7 @@ class ExceptionHandler(object):
             return ['ExceptionHandler']
         else:
             return interface == 'ExceptionHandler'
+    
 
 
 ## replace built-in excepthook only if this has not already been done

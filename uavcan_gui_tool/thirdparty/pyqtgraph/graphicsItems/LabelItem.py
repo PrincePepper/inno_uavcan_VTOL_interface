@@ -6,7 +6,6 @@ from ..Qt import QtGui, QtCore
 
 __all__ = ['LabelItem']
 
-
 class LabelItem(GraphicsWidget, GraphicsWidgetAnchor):
     """
     GraphicsWidget displaying text.
@@ -136,4 +135,4 @@ class LabelItem(GraphicsWidget, GraphicsWidgetAnchor):
     # p.setPen(fn.mkPen('r'))
     # p.drawRect(self.rect())
     # p.setPen(fn.mkPen('g'))
-    # p.drawRect(self.itemRect())
+    #p.drawRect(self.itemRect())
