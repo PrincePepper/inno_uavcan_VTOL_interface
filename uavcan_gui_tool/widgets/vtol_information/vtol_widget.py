@@ -2,7 +2,7 @@
 import os
 from logging import getLogger
 
-import uavcan
+import pyuavcan_v0
 from PyQt5.QtCore import QTimer, Qt
 from PyQt5.QtWidgets import QGroupBox, QPushButton, QHBoxLayout
 
@@ -35,7 +35,7 @@ class VTOLWidget(QGroupBox):
 
         self.setLayout(layout)
 
-        self._monitor = uavcan.app.node_monitor.NodeMonitor(node)
+        self._monitor = pyuavcan_v0.app.node_monitor.NodeMonitor(node)
 
         self.window = lambda *_: None
 
