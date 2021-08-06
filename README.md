@@ -72,9 +72,10 @@ as well as which VTOL we use.
 ```
 The first release of the project was made😻:
 ```
-The first prototype of the program was implemented. It has an implementation (crutch) of displaying the VTOL image
-of the device. There is a Scroll menu with UAVCAN. All the configuration takes place thanks to the JSON file, 
-and there is also a certain implementation of testing this file.
+The first prototype of the program was implemented. It has an implementation (crutch)
+of displaying the VTOL image of the device. There is a Scroll menu with UAVCAN. 
+All the configuration takes place thanks to the JSON file, and there is also a certain
+implementation of testing this file.
 ```
 ### v3.0
 - [It's him](https://github.com/PrincePepper/inno_uavcan_VTOL_interface/commit/70329a0bf080ac9649b3bc72fbf0a5602e46741a)
