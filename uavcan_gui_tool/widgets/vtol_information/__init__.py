@@ -31,53 +31,45 @@ class JsonFileValidator:
             with open(self.file_name, 'r') as f:
                 self.AIRFRAME = json.load(f)
                 self.len = len(self.AIRFRAME)
-                with open("../data_types", 'r') as d:
+                with open("../uavcan_gui_tool/widgets/vtol_information/data_types", 'r') as d:
                     self.data_types = d.read().split()
         except FileNotFoundError as e:
             logger.error("For some reason the file fell: " + str(e))
 
     # testing the AIRFRAME object to remove errors and warn the user about them
     def _test_file(self):
-        if not "_control_widget" in self.AIRFRAME.keys() \
-                or not "vtol_object" in self.AIRFRAME.keys():
-            logger.info(LoggerCustomColor.WARNING +
-                        "Json file dont have _control_widget or vtol_object" +
-                        LoggerCustomColor.ENDC)
+        if not "vtol_object" in self.AIRFRAME.keys():
+            logger.info(LoggerCustomColor.WARNING + "Json file dont have vtol_object" + LoggerCustomColor.ENDC)
         for i, node in enumerate(self.AIRFRAME.items()):
-            if node[0] != "_control_widget" and node[0] != "vtol_object":
+            if node[0] != "vtol_object":
                 self.name_node.append(node[0])
                 node[1].setdefault("id", -1)
-                node[1].setdefault("item", -1)
                 node[1].setdefault("name", "def_name")
-
-                popped_value = []
+                node[1].setdefault("fields", [])
                 for data_node in node[1]:
-                    if data_node != "id" and data_node != "item" and data_node != "name":
-                        if not node[1][data_node] == "":
-                            split_temp_data = node[1][data_node].split()
-                            if not split_temp_data[0] in self.data_types:
-                                logger.info(LoggerCustomColor.WARNING +
-                                            "This data type does not exist:" +
-                                            "«" +
-                                            str(split_temp_data[0]) +
-                                            "»" +
-                                            LoggerCustomColor.ENDC)
-                                popped_value.append(data_node)
-                        else:
-                            popped_value.append(data_node)
-                for delete_item in popped_value:
-                    node[1].pop(delete_item)
-            else:
-                if node[0] == "_control_widget":
-                    for j in self.name_node[:8]:
-                        if j not in node[1].keys():
-                            node[1].setdefault(str(j), -1)
+                    if data_node == "fields":
+                        if node[1][data_node]:
+                            for type in node[1][data_node]:
+                                split_temp_data = type.split()
+                                if not split_temp_data[1] in self.data_types:
+                                    logger.error(LoggerCustomColor.WARNING +
+                                                 "This data type does not exist:" + "«" + str(split_temp_data[1]) + "»"
+                                                 + LoggerCustomColor.ENDC)
+                    if data_node == "channels":
+                        stroke = str(node[1][data_node])
+                        if stroke[0] != '[' or stroke[-1] != ']':
+                            logger.error(LoggerCustomColor.WARNING + "not closed or open parenthesis" +
+                                         LoggerCustomColor.ENDC)
+                    #
+                    # TODO: сделать проверку на верность написание параметров
+                    #
+                    if data_node == "params":
+                        pass
 
     # check for the existence of the configuration file otherwise use the default settings
     def parse_config(self):
-        config_control_widget = self.AIRFRAME.pop('_control_widget')
         vtol_type = self.AIRFRAME.pop('vtol_object')
-        return self.AIRFRAME, config_control_widget, vtol_type
+        return self.AIRFRAME, vtol_type
 
 
 # method that allows you to more quickly draw elements horizontally
@@ -86,10 +78,10 @@ def make_hbox(*widgets, stretch_index=None, s=1):
     for idx, w in enumerate(widgets):
         box.addWidget(w, 0 if stretch_index is None else stretch_index[idx])
     box.addStretch(s)
-    box.setContentsMargins(0, 0, 0, 0)
+    box.setContentsMargins(1, 1, 1, 1)
     container = QWidget()
     container.setLayout(box)
-    container.setContentsMargins(0, 0, 0, 0)
+    container.setContentsMargins(2, 2, 2, 2)
     return container
 
 
@@ -99,7 +91,7 @@ def make_vbox(*widgets, stretch_index=None):
         box.addWidget(w, 1 if idx == stretch_index else 0)
     container = QWidget()
     container.setLayout(box)
-    container.setContentsMargins(0, 0, 0, 0)
+    container.setContentsMargins(2, 2, 2, 2)
     return container
 
 
@@ -129,3 +121,7 @@ def node_health_to_str_color(health):
         2: ("ERROR", "color: magenta"),
         3: ("CRITICAL", "color: red"),
     }.get(health)
+
+
+def remap(value, fromLow, fromHigh, toLow, toHigh):
+    return (value - fromLow) * (toHigh - toLow) / (fromHigh - fromLow) + toLow
