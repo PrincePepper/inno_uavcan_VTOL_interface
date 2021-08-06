@@ -1,105 +1,163 @@
 {
-  "motor_front_left": {
-    "id": -1,
-    "item": 1,
-    "name": "FL_motor",
-    "turnovers": "",
-    "voltage": "uavcan.equipment.power.CircuitStatus voltage"
-  },
   "motor_front_right": {
-    "id": -1,
-    "item": 2,
-    "name": "FR_motor",
-    "turnovers": "",
-    "voltage": "uavcan.equipment.power.CircuitStatus voltage"
+    "id": 50,
+    "name": "FL_motor",
+    "fields": [
+      "voltage uavcan.equipment.power.CircuitStatus voltage",
+      "rpm uavcan.equipment.esc.Status rpm"
+    ],
+    "channels": "[0]"
   },
   "motor_back_left": {
-    "id": -1,
-    "item": 3,
-    "name": "BL_motor",
-    "turnovers": ""
+    "id": 51,
+    "name": "FL_motor",
+    "fields": [
+      "voltage uavcan.equipment.power.CircuitStatus voltage",
+      "rpm uavcan.equipment.esc.Status rpm"
+    ],
+    "channels": "[1]"
+  },
+  "motor_front_left": {
+    "id": 52,
+    "name": "FL_motor",
+    "fields": [
+      "voltage uavcan.equipment.power.CircuitStatus voltage",
+      "rpm uavcan.equipment.esc.Status rpm"
+    ],
+    "channels": "[2]"
   },
   "motor_back_right": {
-    "id": -1,
-    "item": 4,
+    "id": 53,
     "name": "BR_motor",
-    "turnovers": ""
+    "fields": [
+      "voltage uavcan.equipment.power.CircuitStatus voltage",
+      "rpm uavcan.equipment.esc.Status rpm"
+    ],
+    "channels": "[3]"
   },
   "aileron_left": {
-    "id": -1,
-    "item": 5,
+    "id": 14,
     "name": "L_aileron",
-    "min": "",
-    "max": "",
-    "def": ""
+    "fields": [
+      "voltage uavcan.equipment.power.CircuitStatus voltage"
+    ],
+    "channels": "[4]",
+    "params": [
+      "A1_ch/mode 4",
+      "A1_min 1000",
+      "A1_max 2000",
+      "A1_def 1000"
+    ]
   },
   "aileron_right": {
-    "id": -1,
-    "item": 6,
+    "id": 14,
     "name": "R_aileron",
-    "min": "",
-    "max": "",
-    "def": ""
+    "fields": [
+      "voltage uavcan.equipment.power.CircuitStatus voltage"
+    ],
+    "channels": "[4]",
+    "params": [
+      "A1_ch/mode 4",
+      "A1_min 2000",
+      "A1_max 1000",
+      "A1_def 2000"
+    ]
+  },
+  "elevator_left": {
+    "id": 66,
+    "name": "L_elvator",
+    "fields": [
+      "voltage uavcan.equipment.power.CircuitStatus voltage"
+    ],
+    "channels": "[5]",
+    "params": [
+      "A2_ch/mode 5",
+      "A2_min 1000",
+      "A2_max 2000",
+      "A2_def 1000"
+    ]
+  },
+  "elvator_right": {
+    "id": 66,
+    "name": "R_elvator",
+    "fields": [
+      "voltage uavcan.equipment.power.CircuitStatus voltage"
+    ],
+    "channels": "[5]",
+    "params": [
+      "A1_ch/mode 5",
+      "A1_min 2000",
+      "A1_max 1000",
+      "A1_def 2000"
+    ]
   },
   "rudder_left": {
-    "id": -1,
-    "item": 7,
+    "id": 63,
     "name": "L_rudder",
-    "min": "",
-    "max": "",
-    "def": ""
+    "fields": [
+      "voltage uavcan.equipment.power.CircuitStatus voltage"
+    ],
+    "channels": "[6]",
+    "params": [
+      "A1_ch/mode 6",
+      "A1_min 2000",
+      "A1_max 1000",
+      "A1_def 2000"
+    ]
   },
   "rudder_right": {
-    "id": -1,
-    "item": 8,
+    "id": 63,
     "name": "R_rudder",
-    "min": "",
-    "max": "",
-    "def": ""
+    "fields": [
+      "voltage uavcan.equipment.power.CircuitStatus voltage"
+    ],
+    "channels": "[6]",
+    "params": [
+      "A1_ch/mode 6",
+      "A1_min 2000",
+      "A1_max 1000",
+      "A1_def 2000"
+    ]
   },
   "magnetometer": {
-    "id": -1,
-    "item": 11,
+    "id": 71,
     "name": "Magnetometer",
-    "data_x": "uavcan.equipment.ahrs.MagneticFieldStrength magnetic_field_ga[0]",
-    "data_y": "uavcan.equipment.ahrs.MagneticFieldStrength magnetic_field_ga[1]",
-    "data_z": "uavcan.equipment.ahrs.MagneticFieldStrength magnetic_field_ga[2]"
+    "fields": [
+      "mag_x uavcan.equipment.ahrs.MagneticFieldStrength magnetic_field_ga[0]",
+      "mag_y uavcan.equipment.ahrs.MagneticFieldStrength magnetic_field_ga[1]",
+      "mag_z uavcan.equipment.ahrs.MagneticFieldStrength magnetic_field_ga[2]"
+    ]
   },
   "gps": {
-    "id": 51,
-    "item": 12,
+    "id": 71,
     "name": "gps",
-    "satellites": "",
-    "frequence": "",
-    "accuracy": ""
+    "fields": [
+      "satellites uavcan.equipment.gnss.Fix sats_used",
+      "accuracy uavcan.equipment.gnss.Fix pdop"
+    ]
+  },
+  "baromemer": {
+    "id": 71,
+    "name": "baromemer",
+    "fields": [
+      "pressure uavcan.equipment.air_data.StaticPressure static_pressure"
+    ]
   },
   "airspeed": {
-    "id": -1,
-    "item": 13,
+    "id": 74,
     "name": "airspeed",
-    "speed": "uavcan.equipment.air_data.TrueAirspeed true_airspeed"
-  },
-  "pressure": {
-    "id": -1,
-    "item": 14,
-    "name": "pressure"
+    "fields": [
+      "speed uavcan.equipment.air_data.TrueAirspeed true_airspeed"
+    ]
   },
   "engine": {
-    "id": -1,
-    "item": 15,
+    "id": 70,
     "name": "engine",
-    "fuel level": "",
-    "voltage": "uavcan.equipment.power.CircuitStatus voltage"
-  },
-  "_control_widget": {
-    "motor_front_left": -1,
-    "motor_front_right": -1,
-    "motor_back_left": -1,
-    "motor_back_right": -1,
-    "aileron_left": -1,
-    "aileron_right": -1,
-    "rudder_left": -1,
-    "rudder_right": -1
+    "fields": [
+      "voltage uavcan.equipment.power.CircuitStatus voltage",
+      "rpm uavcan.equipment.ice.reciprocating.Status engine_speed_rpm",
+      "fuel uavcan.equipment.ice.FuelTankStatus available_fuel_volume_percent"
+    ]
   },
   "vtol_object": 1
 }
