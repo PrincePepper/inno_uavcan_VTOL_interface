@@ -354,7 +354,23 @@ class VTOLWindow(QDialog):
         scroll.setMinimumWidth(widget2.width())
         scroll.setWidget(widget2)
 
-        layout.addWidget(scroll)
+        vbox = QVBoxLayout(self)
+        vbox.addWidget(scroll)
+
+        hbox = QHBoxLayout(self)
+
+        self._save_button = QPushButton('Save airframe', self)
+        self._save_button.setFocusPolicy(Qt.NoFocus)
+        self._save_button.clicked.connect(self.save_file)
+
+        self._restart_button = QPushButton('Restart all', self)
+        self._restart_button.setFocusPolicy(Qt.NoFocus)
+        self._restart_button.clicked.connect(self._do_restart_all)
+
+        hbox.addWidget(self._save_button)
+        hbox.addWidget(self._restart_button)
+        vbox.addLayout(hbox)
+        layout.addLayout(vbox)
 
         self.setLayout(layout)
 
@@ -379,13 +395,12 @@ class VTOLWindow(QDialog):
     #
     # TODO: требуется исправить сохранения json файла из за нового формата
     #
-    def save_file(self, temp_dist):
+    def save_file(self):
         name = QFileDialog.getSaveFileName(self, 'Save File', "airframe.json")
         AIRFRAME2 = {}
         for block in self.blocks:
             AIRFRAME2[block.name] = block.temp_data_fields
             AIRFRAME2[block.name]["id"] = block.id
-        AIRFRAME2["_control_widget"] = temp_dist
         AIRFRAME2["vtol_object"] = self.VTOL_TYPE
         with open(name[0], 'w') as f:
             json.dump(AIRFRAME2, f)
