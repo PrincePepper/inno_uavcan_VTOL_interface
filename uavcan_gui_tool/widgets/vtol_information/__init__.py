@@ -1,5 +1,4 @@
 #
-#
 # This software is distributed under the terms of the MIT License.
 #
 # Author: Sereda Semen
@@ -9,8 +8,6 @@ import json
 from logging import getLogger
 
 from PyQt5.QtWidgets import QHBoxLayout, QWidget, QVBoxLayout
-
-from uavcan_gui_tool.widgets import LoggerCustomColor
 
 logger = getLogger(__name__)
 
@@ -39,7 +36,7 @@ class JsonFileValidator:
     # testing the AIRFRAME object to remove errors and warn the user about them
     def _test_file(self):
         if not "vtol_object" in self.AIRFRAME.keys():
-            logger.info(LoggerCustomColor.WARNING + "Json file dont have vtol_object" + LoggerCustomColor.ENDC)
+            logger.info("Json file dont have vtol_object")
         for i, node in enumerate(self.AIRFRAME.items()):
             if node[0] != "vtol_object":
                 self.name_node.append(node[0])
@@ -52,14 +49,11 @@ class JsonFileValidator:
                             for type in node[1][data_node]:
                                 split_temp_data = type.split()
                                 if not split_temp_data[1] in self.data_types:
-                                    logger.error(LoggerCustomColor.WARNING +
-                                                 "This data type does not exist:" + "«" + str(split_temp_data[1]) + "»"
-                                                 + LoggerCustomColor.ENDC)
+                                    logger.error("This data type does not exist:" + "«" + str(split_temp_data[1]) + "»")
                     if data_node == "channels":
                         stroke = str(node[1][data_node])
                         if stroke[0] != '[' or stroke[-1] != ']':
-                            logger.error(LoggerCustomColor.WARNING + "not closed or open parenthesis" +
-                                         LoggerCustomColor.ENDC)
+                            logger.error("not closed or open parenthesis")
                     #
                     # TODO: сделать проверку на верность написание параметров
                     #

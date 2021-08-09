@@ -15,7 +15,7 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QDialog, QLabel, QPushButton, QComboBox, QScrollArea, QVBoxLayout, QWidget, QHBoxLayout, \
     QFileDialog, QMessageBox, QSlider, QSpinBox, QStyle, QProxyStyle
 
-from uavcan_gui_tool.widgets import request_confirmation, show_error, make_icon_button, LoggerCustomColor
+from uavcan_gui_tool.widgets import request_confirmation, show_error, make_icon_button
 from uavcan_gui_tool.widgets.vtol_information import JsonFileValidator, make_hbox, node_health_to_str_color, make_vbox
 from uavcan_gui_tool.widgets.vtol_information.vtol_subscriber import VTOLSubscriber
 
@@ -294,7 +294,7 @@ class NodeBlock(QDialog):
         # TODO: make a normal node styling
         #
         box.setStyleSheet("background-color: white;")
-        print(box.height())
+        # print(box.height())
         self.widget = box
         self.widget.setMinimumHeight(self.widget.height())
         self.widget.setMinimumWidth(self.widget.width())
@@ -318,7 +318,7 @@ class VTOLWindow(QDialog):
         self.circuit_subscriber = VTOLSubscriber(node, "uavcan.equipment.power.CircuitStatus")
 
         if not os.path.exists(FILE_PATCH):
-            logger.error(LoggerCustomColor.WARNING + "Json config not exist" + LoggerCustomColor.ENDC)
+            logger.error("Json config not exist")
             return
         self.AIRFRAME, self.VTOL_TYPE = JsonFileValidator(FILE_PATCH).parse_config()
         for i, item in enumerate(self.AIRFRAME):

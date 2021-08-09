@@ -650,17 +650,3 @@ def get_app_icon():
 
 def flash(sender, message, *format_args, duration=0):
     sender.window().statusBar().showMessage(message % format_args, duration * 1000)
-
-
-# helps to better navigate the displayed logs
-class LoggerCustomColor:
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKCYAN = '\033[96m'
-    OKGREEN = '\033[92m'
-
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
