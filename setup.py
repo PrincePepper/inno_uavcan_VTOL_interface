@@ -125,7 +125,6 @@ if sys.platform.startswith('linux') or sys.platform.startswith('darwin'):
     # Manually invoking the freedesktop extension - this should work even if we're getting installed via PIP
     sys.argv.append('install_desktop')
 
-
 #
 # Windows-specific options and hacks
 #
@@ -137,7 +136,7 @@ if ('bdist_msi' in sys.argv) or ('build_exe' in sys.argv):
 
     # cx_Freeze can't handle 3rd-party packages packed in .egg files, so we have to extract them for it
     dependency_eggs_to_unpack = [
-        'uavcan',
+        'pyuavcan_v0',
         'qtpy',
         'qtconsole',
     ]
@@ -203,6 +202,8 @@ if ('bdist_msi' in sys.argv) or ('build_exe' in sys.argv):
                              shortcutName=HUMAN_FRIENDLY_NAME,
                              shortcutDir='ProgramMenuFolder'),
     ]
+
+
     # Dispatching to cx_Freeze only if MSI build was requested explicitly. Otherwise continue with regular setup.
     # This is done in order to be able to install dependencies with regular setuptools.
     def setup(*args, **kwargs):

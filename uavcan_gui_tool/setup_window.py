@@ -299,8 +299,6 @@ def run_setup_window(icon, dsdl_path=None):
         timer.setSingleShot(False)
         timer.timeout.connect(update_iface_list)
         timer.start(int(BackgroundIfaceListUpdater.UPDATE_INTERVAL / 2 * 1000))
-        # TODO: used to skip the window, you need to remove
-        ok.click()
         win.exec()
 
     return result, kwargs, dir_selection.get_selection()
